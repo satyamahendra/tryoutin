@@ -22,6 +22,8 @@ model User {
   updatedAt     DateTime  @updatedAt
   sessions      Session[]
   accounts      Account[]
+  roles         UserRole[]
+  permissions   UserPermission[]
 
   @@unique([email])
   @@map("user")
@@ -76,7 +78,50 @@ model Verification {
   @@map("verification")
 }
 
-model Test {
-  id String @id @default(uuid())
-  name String
+model Role {
+  id          String  @id @default(uuid())
+  name        String
+  users       UserRole[]
+  permissions RolePermission[]
+
+  @@map("role")
+}
+
+model Permission {
+  id          String  @id @default(uuid())
+  name        String
+  users       UserPermission[]
+  roles       RolePermission[]
+
+  @@map("permission")
+}
+
+model UserRole {
+  id        String  @id @default(uuid())
+  role_id   String
+  user_id   String
+  user      User    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  role      Role    @relation(fields: [role_id], references: [id], onDelete: Cascade)
+
+  @@map("user_role")
+}
+
+model UserPermission {
+  id              String      @id @default(uuid())
+  permission_id   String
+  user_id         String
+  user            User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  permission      Permission  @relation(fields: [permission_id], references: [id], onDelete: Cascade)
+
+  @@map("user_permission")
+}
+
+model RolePermission {
+  id              String      @id @default(uuid())
+  role_id         String
+  permission_id   String
+  role            Role        @relation(fields: [role_id], references: [id], onDelete: Cascade)
+  permission      Permission  @relation(fields: [permission_id], references: [id], onDelete: Cascade)
+
+  @@map("role_permission")
 }
