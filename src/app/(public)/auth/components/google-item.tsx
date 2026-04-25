@@ -1,32 +1,37 @@
 "use client"
 
 import {Item, ItemContent, ItemMedia, ItemTitle} from "@/components/ui/item"
-import {signInSocial} from "../services/signin.service"
+import {authClient} from "@/lib/auth-client" // your Better Auth client instance
 import {FcGoogle} from "react-icons/fc"
+import {useSearchParams} from "next/navigation"
+import {useState} from "react"
+import {PiCircleDashed} from "react-icons/pi"
 import {toast} from "sonner"
-import {useMutation} from "@tanstack/react-query"
-import {useRouter} from "next/navigation"
 
 const GoogleItem = () => {
-    const router = useRouter()
-    const {mutate, isPending} = useMutation({
-        mutationFn: signInSocial,
-        onSuccess: () => {
-            toast.success("Signed in successfully!")
-            router.push("/")
-        },
-        onError: (data) => {
-            toast.error("Failed to sign in. Please try again.")
-        },
-    })
+    const [isLoading, setIsLoading] = useState(false)
+    const searchParams = useSearchParams()
+    const callback = searchParams.get("callback") || "/"
+
+    const handleSignIn = async () => {
+        setIsLoading(true)
+        const {error} = await authClient.signIn.social({
+            provider: "google",
+            callbackURL: callback,
+        })
+        if (error) {
+            toast.error(error.message ?? "Failed to sign in.")
+            setIsLoading(false)
+        }
+    }
 
     return (
-        <Item variant="muted" className="hover:cursor-pointer" onClick={() => mutate()} aria-disabled={isPending}>
-            <ItemMedia variant="icon">
-                <FcGoogle className="text-2xl" />
+        <Item variant="muted" className="hover:cursor-pointer" onClick={isLoading ? undefined : handleSignIn}>
+            <ItemMedia variant="icon" className="text-muted-foreground">
+                {isLoading ? <PiCircleDashed className="animate-spin text-base" /> : <FcGoogle className="text-2xl" />}
             </ItemMedia>
             <ItemContent>
-                <ItemTitle>{isPending ? "Signing in..." : "Sign in with Google"}</ItemTitle>
+                <ItemTitle className="text-muted-foreground">{isLoading ? "Loading..." : "Sign in with Google"}</ItemTitle>
             </ItemContent>
         </Item>
     )
