@@ -19,7 +19,7 @@ export function useQueryParams() {
                     params.set(key, value)
                 }
             })
-            router.replace(`${pathname}?${params.toString()}`)
+            router.push(`${pathname}?${params.toString()}`, {scroll: false})
         },
         [searchParams, pathname, router]
     )

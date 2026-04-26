@@ -1,17 +1,28 @@
 "use server"
 
+import {Prisma} from "@/generated/index"
 import prisma from "@/lib/prisma/client"
 
 const PAGE_SIZE = 10
 
+const userSelect = Prisma.validator<Prisma.UserSelect>()({
+    id: true,
+    name: true,
+    email: true,
+    image: true,
+    createdAt: true,
+    roles: {
+        select: {role_name: true},
+    },
+    permissions: {
+        select: {permission_name: true},
+    },
+})
+
+export type User = Prisma.UserGetPayload<{select: typeof userSelect}>
+
 export type UsersPage = {
-    users: {
-        id: string
-        name: string | null
-        email: string
-        image: string | null
-        createdAt: Date
-    }[]
+    users: User[]
     pagination: {
         total: number
         page: number
@@ -27,13 +38,7 @@ export async function getUsers(page: number = 1): Promise<UsersPage> {
             skip,
             take: PAGE_SIZE,
             orderBy: {createdAt: "desc"},
-            select: {
-                id: true,
-                name: true,
-                email: true,
-                image: true,
-                createdAt: true,
-            },
+            select: userSelect,
         }),
         prisma.user.count(),
     ])

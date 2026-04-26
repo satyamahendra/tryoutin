@@ -2,10 +2,12 @@ import {Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, Table
 import {getUsers} from "../services/get-users"
 import PaginationParams from "@/components/custom/pagination-params"
 import {Button} from "@/components/ui/button"
-import {PiCaretRight} from "react-icons/pi"
+import {PiCaretRight, PiPencil} from "react-icons/pi"
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar"
 import {PiUser} from "react-icons/pi"
 import {Empty, EmptyHeader, EmptyTitle, EmptyDescription, EmptyMedia} from "@/components/ui/empty"
+import UserItem from "./user-item"
+import UserFormModal from "./user-form-modal"
 
 type Props = {
     page: number
@@ -37,38 +39,21 @@ export async function UsersTable({page}: Props) {
                                     <TableHead className="font-semibold">#</TableHead>
                                     <TableHead className="font-semibold">Name</TableHead>
                                     <TableHead className="font-semibold">Email</TableHead>
-                                    <TableHead className="font-semibold">Created</TableHead>
+                                    <TableHead className="font-semibold">Date Created</TableHead>
+                                    <TableHead className="font-semibold">Roles</TableHead>
                                     <TableHead className="font-semibold">Action</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {data.users.map((user, index) => (
-                                    <TableRow key={user.id}>
-                                        <TableCell>{index + 1 + (data.pagination.page - 1) * 10}</TableCell>
-                                        <TableCell className="flex items-center gap-2">
-                                            <Avatar className="w-7 h-7">
-                                                <AvatarImage src={user.image || ""} />
-                                                <AvatarFallback>{user.name ? user.name[0].toUpperCase() : "U"}</AvatarFallback>
-                                            </Avatar>
-                                            <div>{user.name ?? "-"}</div>
-                                        </TableCell>
-                                        <TableCell>{user.email}</TableCell>
-                                        <TableCell>{new Date(user.createdAt).toLocaleDateString()}</TableCell>
-                                        <TableCell>
-                                            <Button size={"sm"} variant="outline">
-                                                Detail <PiCaretRight />
-                                            </Button>
-                                        </TableCell>
-                                    </TableRow>
+                                    <UserItem key={user.id} user={user} number={index + 1 + (data.pagination.page - 1) * 10} />
                                 ))}
                             </TableBody>
                         </Table>
                     </div>
                 )}
 
-                {data.pagination.pageCount > 1 && (
-                    <PaginationParams pageCount={data.pagination.pageCount} />
-                )}
+                {data.pagination.pageCount > 1 && <PaginationParams pageCount={data.pagination.pageCount} />}
             </div>
         )
     } catch (error) {

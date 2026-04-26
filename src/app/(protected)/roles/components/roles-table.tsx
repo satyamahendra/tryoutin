@@ -1,8 +1,7 @@
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table"
 import {getRoles} from "../services/get-roles"
 import PaginationParams from "@/components/custom/pagination-params"
-import {Button} from "@/components/ui/button"
-import {PiCaretRight, PiCardholder} from "react-icons/pi"
+import {PiCardholder} from "react-icons/pi"
 import {Empty, EmptyHeader, EmptyTitle, EmptyDescription, EmptyMedia} from "@/components/ui/empty"
 import RoleItem from "./role-item"
 
@@ -35,6 +34,7 @@ export async function RolesTable({page}: Props) {
                                 <TableRow>
                                     <TableHead className="font-semibold w-[80px]">#</TableHead>
                                     <TableHead className="font-semibold">Name</TableHead>
+                                    <TableHead className="font-semibold">Permissions</TableHead>
                                     <TableHead className="font-semibold text-right">Action</TableHead>
                                 </TableRow>
                             </TableHeader>

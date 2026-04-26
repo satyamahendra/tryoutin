@@ -1,13 +1,22 @@
 "use server"
 
+import {Prisma} from "@/generated/index"
+import {authServer} from "@/lib/auth-server"
 import prisma from "@/lib/prisma/client"
 
 const PAGE_SIZE = 10
 
+const permissionSelect = Prisma.validator<Prisma.PermissionSelect>()({
+    name: true,
+    roles: {
+        select: {role_name: true},
+    },
+})
+
+export type PermissionWithRoles = Prisma.PermissionGetPayload<{select: typeof permissionSelect}>
+
 export type PermissionsPage = {
-    permissions: {
-        name: string
-    }[]
+    permissions: PermissionWithRoles[]
     pagination: {
         total: number
         page: number
@@ -18,14 +27,16 @@ export type PermissionsPage = {
 export async function getPermissions(page: number = 1): Promise<PermissionsPage> {
     const skip = (page - 1) * PAGE_SIZE
 
+    const session = await authServer()
+
+    if (!session) throw new Error("Unauthorized")
+
     const [permissions, total] = await Promise.all([
         prisma.permission.findMany({
             skip,
             take: PAGE_SIZE,
             orderBy: {name: "asc"},
-            select: {
-                name: true,
-            },
+            select: permissionSelect,
         }),
         prisma.permission.count(),
     ])

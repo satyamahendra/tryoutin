@@ -8,6 +8,7 @@ export const permissionSchema = z.object({
         .transform((val) => val.toLowerCase())
         .refine((val) => VALID_PREFIXES.some((prefix) => val.startsWith(prefix)), {message: `Name must start with: ${VALID_PREFIXES.join(", ")}`}),
     name_before: z.string().optional(),
+    roles: z.array(z.string()),
 })
 
 export type PermissionFormSchema = z.infer<typeof permissionSchema>

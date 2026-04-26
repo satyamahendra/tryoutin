@@ -21,29 +21,46 @@ export async function createUpdateRole(data: RoleFormSchema): Promise<MutationRe
     }
 
     try {
-        let role: Role
-
         const session = await authServer()
 
         if (!session) {
             return {success: false, data: null as any, message: "Unauthorized"}
         }
 
-        if (parsed.data.name_before) {
-            role = (await prisma.role.update({
-                where: {name: parsed.data.name_before},
-                data: {name: parsed.data.name},
-                select: {name: true},
-            })) as Role
+        const {name, name_before, permissions = []} = parsed.data
+
+        let role: Role
+
+        if (name_before) {
+            role = await prisma.$transaction(async (tx) => {
+                const updated = await tx.role.update({
+                    where: {name: name_before},
+                    data: {
+                        name,
+                        permissions: {
+                            deleteMany: {},
+                            create: permissions.map((permission_name) => ({permission_name})),
+                        },
+                    },
+                    select: {name: true},
+                })
+
+                return updated as Role
+            })
         } else {
             role = (await prisma.role.create({
-                data: {name: parsed.data.name},
+                data: {
+                    name,
+                    permissions: {
+                        create: permissions.map((permission_name) => ({permission_name})),
+                    },
+                },
                 select: {name: true},
             })) as Role
         }
 
         revalidatePath("/roles")
-        const action = parsed.data.name_before ? "updated" : "created"
+        const action = name_before ? "updated" : "created"
         return {success: true, data: role, message: `Role ${action} successfully`}
     } catch (error) {
         return handleMutationError(error)

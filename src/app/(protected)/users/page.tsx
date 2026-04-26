@@ -3,6 +3,7 @@ import {Suspense} from "react"
 import {PiUser} from "react-icons/pi"
 import {UsersTable} from "./components/users-table"
 import {Loader2} from "lucide-react"
+import UserFormModal from "./components/user-form-modal"
 
 type PageProps = {
     searchParams: Promise<{
@@ -16,7 +17,7 @@ const Page = async ({searchParams}: PageProps) => {
 
     return (
         <div className="flex flex-col gap-4">
-            <PageHeader title="Users" description="Manage users" icon={<PiUser />} />
+            <PageHeader title="Users" description="Manage users" icon={<PiUser />} subComponent={<UserFormModal />} />
             <Suspense
                 fallback={
                     <div className="flex items-center justify-center h-20">

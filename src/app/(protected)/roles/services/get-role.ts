@@ -1,14 +1,27 @@
 "use server"
 
-import {Role} from "@/generated/index"
+import {Permission, Role} from "@/generated/index"
+import {authServer} from "@/lib/auth-server"
 import prisma from "@/lib/prisma/client"
 import {ActionResult} from "@/utils/types/server-action"
 
-export async function getRole(name: string): Promise<ActionResult<Role>> {
+type Response = Role & {permissions: {permission_name: string}[]}
+
+export async function getRole(name: string): Promise<ActionResult<Response>> {
     try {
+        const session = await authServer()
+
+        if (!session) {
+            return {success: false, error: "Unauthorized"}
+        }
+
         const role = await prisma.role.findUnique({
             where: {name},
-            select: {name: true},
+            include: {
+                permissions: {
+                    select: {permission_name: true},
+                },
+            },
         })
 
         if (!role) {

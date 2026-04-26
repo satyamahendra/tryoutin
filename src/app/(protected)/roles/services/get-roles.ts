@@ -1,12 +1,22 @@
 "use server"
 
 import prisma from "@/lib/prisma/client"
-import {unstable_cache} from "next/cache"
+import {Prisma} from "@/generated/index"
+import {authServer} from "@/lib/auth-server"
 
 const PAGE_SIZE = 10
 
+const roleSelect = Prisma.validator<Prisma.RoleSelect>()({
+    name: true,
+    permissions: {
+        select: {permission_name: true},
+    },
+})
+
+export type RoleWithPermissions = Prisma.RoleGetPayload<{select: typeof roleSelect}>
+
 export type RolesPage = {
-    roles: {name: string}[]
+    roles: RoleWithPermissions[]
     pagination: {
         total: number
         page: number
@@ -14,15 +24,19 @@ export type RolesPage = {
     }
 }
 
-export const getRoles = unstable_cache(async (page: number = 1): Promise<RolesPage> => {
+export const getRoles = async (page: number = 1): Promise<RolesPage> => {
     const skip = (page - 1) * PAGE_SIZE
+
+    const session = await authServer()
+
+    if (!session) throw new Error("Unauthorized")
 
     const [roles, total] = await Promise.all([
         prisma.role.findMany({
             skip,
             take: PAGE_SIZE,
             orderBy: {name: "asc"},
-            select: {name: true},
+            select: roleSelect,
         }),
         prisma.role.count(),
     ])
@@ -35,4 +49,4 @@ export const getRoles = unstable_cache(async (page: number = 1): Promise<RolesPa
             pageCount: Math.ceil(total / PAGE_SIZE),
         },
     }
-})
+}

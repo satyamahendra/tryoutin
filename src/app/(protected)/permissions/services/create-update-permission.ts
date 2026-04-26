@@ -29,15 +29,32 @@ export async function createUpdatePermission(data: PermissionFormSchema): Promis
             return {success: false, data: null as any, message: "Unauthorized"}
         }
 
-        if (parsed.data.name_before) {
-            permission = (await prisma.permission.update({
-                where: {name: parsed.data.name_before},
-                data: {name: parsed.data.name},
-                select: {name: true},
-            })) as Permission
+        const {name, name_before, roles = []} = parsed.data
+
+        if (name_before) {
+            permission = await prisma.$transaction(async (tx) => {
+                const updated = await tx.permission.update({
+                    where: {name: name_before},
+                    data: {
+                        name,
+                        roles: {
+                            deleteMany: {},
+                            create: roles.map((role_name) => ({role_name})),
+                        },
+                    },
+                    select: {name: true},
+                })
+
+                return updated as Permission
+            })
         } else {
             permission = (await prisma.permission.create({
-                data: {name: parsed.data.name},
+                data: {
+                    name,
+                    roles: {
+                        create: roles.map((role_name) => ({role_name})),
+                    },
+                },
                 select: {name: true},
             })) as Permission
         }

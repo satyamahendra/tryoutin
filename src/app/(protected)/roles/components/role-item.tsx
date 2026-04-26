@@ -1,14 +1,15 @@
 "use client"
 
-import {Role} from "@/generated/index"
 import {TableCell, TableRow} from "@/components/ui/table"
 import {Button} from "@/components/ui/button"
-import {PiArrowSquareOut, PiCaretRight, PiTrash} from "react-icons/pi"
+import {PiArrowSquareOut} from "react-icons/pi"
 import {useQueryParams} from "@/utils/hooks/useQueryParams"
 import DeleteButton from "./delete-button"
+import {RoleWithPermissions} from "../services/get-roles"
+import {Badge} from "@/components/ui/badge"
 
 type RoleItemProps = {
-    role: Role
+    role: RoleWithPermissions
     number: number
 }
 
@@ -19,6 +20,15 @@ const RoleItem = ({role, number}: RoleItemProps) => {
         <TableRow key={role.name}>
             <TableCell>{number}</TableCell>
             <TableCell className="font-medium">{role.name}</TableCell>
+            <TableCell className="font-medium">
+                <div className="flex flex-wrap gap-2">
+                    {role.permissions.map((p) => (
+                        <Badge variant={"outline"} className="text-muted-foreground" key={p.permission_name}>
+                            {p.permission_name}
+                        </Badge>
+                    ))}
+                </div>
+            </TableCell>
             <TableCell className="text-right space-x-2">
                 <Button className="rounded-lg" onClick={() => setParams({view: role.name})} size={"icon-sm"} variant="outline">
                     <PiArrowSquareOut />

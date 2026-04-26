@@ -35,6 +35,7 @@ export async function PermissionsTable({page}: Props) {
                                 <TableRow>
                                     <TableHead className="font-semibold w-[80px]">#</TableHead>
                                     <TableHead className="font-semibold">Name</TableHead>
+                                    <TableHead className="font-semibold">Roles</TableHead>
                                     <TableHead className="font-semibold text-right">Action</TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -47,9 +48,7 @@ export async function PermissionsTable({page}: Props) {
                     </div>
                 )}
 
-                {data.pagination.pageCount > 1 && (
-                    <PaginationParams pageCount={data.pagination.pageCount} />
-                )}
+                {data.pagination.pageCount > 1 && <PaginationParams pageCount={data.pagination.pageCount} />}
             </div>
         )
     } catch (error) {
