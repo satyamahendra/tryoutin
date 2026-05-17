@@ -4,7 +4,6 @@ import {Geist, Geist_Mono, Figtree} from "next/font/google"
 import "@/public/globals.css"
 import {Providers} from "@/components/custom/providers/providers"
 import Script from "next/script"
-import {MIDTRANS_BASE_URL} from "@/utils/constants/config"
 
 const figtree = Figtree({subsets: ["latin"], variable: "--font-sans"})
 
@@ -32,7 +31,11 @@ export default function RootLayout({
         <html lang="en" suppressHydrationWarning className={cn("h-full", "antialiased", geistSans.variable, geistMono.variable, "font-sans", figtree.variable)}>
             <body suppressHydrationWarning className="min-h-full flex flex-col">
                 <Providers>{children}</Providers>
-                <Script src={`${MIDTRANS_BASE_URL}/snap/snap.js`} data-client-key={process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY} strategy="lazyOnload" />
+                <Script
+                    src={`${process.env.NEXT_PUBLIC_MIDTRANS_URL}/snap/snap.js`}
+                    data-client-key={process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY}
+                    strategy="lazyOnload"
+                />
             </body>
         </html>
     )

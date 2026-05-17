@@ -58,8 +58,20 @@ declare module "midtrans-client" {
         redirect_url: string
     }
 
+    interface SnapTransaction {
+        notification(payload: unknown): Promise<Record<string, unknown>>
+        status(transactionId: string): Promise<Record<string, unknown>>
+        statusB2b(transactionId: string): Promise<Record<string, unknown>>
+        approve(transactionId: string): Promise<Record<string, unknown>>
+        deny(transactionId: string): Promise<Record<string, unknown>>
+        cancel(transactionId: string): Promise<Record<string, unknown>>
+        expire(transactionId: string): Promise<Record<string, unknown>>
+        refund(transactionId: string, parameter?: Record<string, unknown>): Promise<Record<string, unknown>>
+    }
+
     class Snap {
         constructor(config: SnapConfig)
+        transaction: SnapTransaction
         createTransaction(parameter: TransactionParameter): Promise<TransactionResponse>
         createTransactionToken(parameter: TransactionParameter): Promise<string>
         createTransactionRedirectUrl(parameter: TransactionParameter): Promise<string>
