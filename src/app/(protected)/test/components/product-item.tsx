@@ -22,7 +22,7 @@ const ProductItem = () => {
 
     const {data: order, refetch: refetchOrder} = useQuery({
         queryKey: ["order"],
-        queryFn: async (data: any) => await axios.get("/api/midtrans/status?order_id=ee1c8a10-0342-4db8-939b-a254b5155be7"),
+        queryFn: async (data: any) => await axios.get("/api/midtrans/status?order_id=ba3c6f25-64b1-4530-9c6c-41aba9ccde65"),
         enabled: false,
     })
 

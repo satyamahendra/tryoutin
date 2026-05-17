@@ -65,7 +65,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
                 data: {
                     status: status as OrderStatus,
                     midtrans_response: status === "success" ? (transaction as Prisma.InputJsonValue) : Prisma.JsonNull,
-                    paidAt: transaction?.settlement_time ? new Date(transaction.settlement_time as string) : null,
+                    paid_at: transaction?.settlement_time ? new Date(transaction.settlement_time as string) : null,
                 },
             })
 

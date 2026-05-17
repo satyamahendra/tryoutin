@@ -145,8 +145,8 @@ model Product {
   price       Int
   type        ProductType @default(single)
   is_active   Boolean     @default(true)
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  created_at   DateTime    @default(now())
+  updated_at   DateTime    @updatedAt
 
   bundleItems BundleItem[] @relation("BundleItems")
   includedIn  BundleItem[] @relation("ProductsInBundle")
@@ -172,12 +172,14 @@ model Order {
   user_id             String
   midtrans_order_id   String      @unique
   status              OrderStatus @default(pending)
-  grossAmount         Int
-  paidAt              DateTime?
-  createdAt           DateTime    @default(now())
-  updatedAt           DateTime    @updatedAt
+  gross_amount         Int
+  paid_at              DateTime?
+  created_at           DateTime    @default(now())
+  updated_at           DateTime    @updatedAt
   midtrans_request    Json?        
   midtrans_response   Json?     
+  midtrans_token      String?
+  midtrans_redirect   String?
 
   user                User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
   entitlements        Entitlement[]
@@ -192,7 +194,7 @@ model Entitlement {
   product_id String
   order_id   String
   expires_at DateTime?
-  createdAt  DateTime  @default(now())
+  created_at  DateTime  @default(now())
 
   user    User    @relation(fields: [user_id], references: [id], onDelete: Cascade)
   product Product @relation(fields: [product_id], references: [id])

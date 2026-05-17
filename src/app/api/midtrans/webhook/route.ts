@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
                 data: {
                     status: status as OrderStatus,
                     midtrans_response: status === "success" ? transaction : null,
-                    paidAt: transaction?.settlement_time ? new Date(transaction?.settlement_time) : null,
+                    paid_at: transaction?.settlement_time ? new Date(transaction?.settlement_time) : null,
                 },
             })
 

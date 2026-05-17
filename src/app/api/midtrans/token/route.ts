@@ -72,8 +72,10 @@ export async function POST(req: NextRequest) {
             data: {
                 midtrans_order_id: orderId,
                 user_id: session.user.id,
-                grossAmount: product.price,
+                gross_amount: product.price,
                 midtrans_request: parameter,
+                midtrans_token: data.token,
+                midtrans_redirect: data.redirect_url,
             },
         })
 
