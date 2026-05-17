@@ -8,6 +8,7 @@ import {Pagination} from "@/utils/types/pagination"
 
 const permissionSelect = Prisma.validator<Prisma.PermissionSelect>()({
     name: true,
+    is_active: true,
     roles: {
         select: {role_name: true},
     },

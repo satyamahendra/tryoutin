@@ -27,7 +27,7 @@ export async function createUpdatePermission(data: PermissionFormSchema): Promis
 
         if (!session) throw new Error("Unauthorized")
 
-        const {name, name_before, roles = []} = parsed.data
+        const {name, name_before, roles = [], is_active} = parsed.data
 
         if (name_before) {
             permission = await prisma.$transaction(async (tx) => {
@@ -35,6 +35,7 @@ export async function createUpdatePermission(data: PermissionFormSchema): Promis
                     where: {name: name_before},
                     data: {
                         name,
+                        is_active,
                         roles: {
                             deleteMany: {},
                             create: roles.map((role_name) => ({role_name})),

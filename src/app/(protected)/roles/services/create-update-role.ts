@@ -16,7 +16,7 @@ export async function createUpdateRole(data: RoleFormSchema): Promise<ServerResu
 
         if (!session) throw new Error("Unauthorized")
 
-        const {name, name_before, permissions = []} = parsed.data as RoleFormSchema
+        const {name, name_before, permissions = [], is_active} = parsed.data as RoleFormSchema
 
         let role: Role
 
@@ -26,6 +26,7 @@ export async function createUpdateRole(data: RoleFormSchema): Promise<ServerResu
                     where: {name: name_before},
                     data: {
                         name,
+                        is_active,
                         permissions: {
                             deleteMany: {},
                             create: permissions.map((permission_name) => ({permission_name})),

@@ -4,6 +4,8 @@ import {PiCardholder} from "react-icons/pi"
 import {RolesTable} from "./components/roles-table"
 import {Loader2} from "lucide-react"
 import RoleFormModal from "./components/role-form-modal"
+import {hasPermissions} from "@/utils/helpers/has-ability-server"
+import {redirect} from "next/navigation"
 
 type PageProps = {
     searchParams: Promise<{
@@ -12,6 +14,9 @@ type PageProps = {
 }
 
 const Page = async ({searchParams}: PageProps) => {
+    const hasPerm = await hasPermissions(["read roles"])
+    if (!hasPerm) return redirect("/home")
+
     const {page} = await searchParams
     const pageNum = page ? parseInt(page) : 1
 

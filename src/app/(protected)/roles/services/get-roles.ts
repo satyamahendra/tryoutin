@@ -8,6 +8,7 @@ import {PAGE_SIZE} from "@/utils/constants/pagination"
 
 const roleSelect = Prisma.validator<Prisma.RoleSelect>()({
     name: true,
+    is_active: true,
     permissions: {
         select: {permission_name: true},
     },

@@ -93,6 +93,7 @@ model Verification {
 
 model Role {
   name        String           @id
+  is_active   Boolean          @default(true)
 
   users       UserRole[]
   permissions RolePermission[]
@@ -102,6 +103,7 @@ model Role {
 
 model Permission {
   name  String           @id
+  is_active   Boolean          @default(true)
 
   users UserPermission[]
   roles RolePermission[]

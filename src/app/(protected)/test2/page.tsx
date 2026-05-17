@@ -5,7 +5,6 @@ import {PiHouse} from "react-icons/pi"
 
 const Page = async () => {
     const hasPerm = await hasPermissions(["read test 2"])
-
     if (!hasPerm) return redirect("/home")
 
     return (

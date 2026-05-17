@@ -6,8 +6,8 @@ import {TableCell, TableRow} from "@/components/ui/table"
 import {PiPencil} from "react-icons/pi"
 import {User} from "../services/get-users"
 import {Badge} from "@/components/ui/badge"
-import {useQueryParams} from "@/utils/hooks/useQueryParams"
 import {format} from "date-fns"
+import {usePathname, useRouter, useSearchParams} from "next/navigation"
 
 type Props = {
     user: User
@@ -15,7 +15,7 @@ type Props = {
 }
 
 const UserItem = ({user, number}: Props) => {
-    const {setParams} = useQueryParams()
+    const router = useRouter()
 
     return (
         <TableRow key={user.id}>
@@ -39,7 +39,7 @@ const UserItem = ({user, number}: Props) => {
                 </div>
             </TableCell>
             <TableCell>
-                <Button onClick={() => setParams({id: user.id})} className="rounded-lg" size={"icon-sm"} variant="outline">
+                <Button onClick={() => router.push(`?id=${user.id}`)} className="rounded-lg" size={"icon-sm"} variant="outline">
                     <PiPencil />
                 </Button>
             </TableCell>

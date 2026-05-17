@@ -4,7 +4,7 @@ import {useEffect} from "react"
 import {Controller, useForm} from "react-hook-form"
 import {PiKey} from "react-icons/pi"
 import {Button} from "@/components/ui/button"
-import {Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog"
+import {Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger} from "@/components/ui/sheet"
 import {Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldLegend, FieldSet} from "@/components/ui/field"
 import {Loader2} from "lucide-react"
 import {Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle} from "@/components/ui/empty"
@@ -72,14 +72,10 @@ const UserFormModal = () => {
     }, [userData, form, id])
 
     return (
-        <Dialog open={!!id} onOpenChange={(open) => !open && setParams({id: ""})}>
-            <DialogContent
-                aria-describedby="user-form"
-                onOpenAutoFocus={(e) => e.preventDefault()}
-                onPointerDownOutside={(e) => e.preventDefault()}
-                onInteractOutside={(e) => e.preventDefault()}>
-                <DialogHeader>
-                    <DialogTitle className="flex items-center gap-4">
+        <Sheet open={!!id} onOpenChange={(open) => !open && setParams({id: ""})}>
+            <SheetContent aria-describedby="user-form">
+                <SheetHeader>
+                    <SheetTitle className="flex items-center gap-4">
                         <Avatar className="w-10 h-10">
                             <AvatarImage src={userData?.success && userData?.data?.image ? userData.data.image : undefined} />
                             <AvatarFallback>{userData?.success && userData?.data?.name ? userData.data.name[0].toUpperCase() : "U"}</AvatarFallback>
@@ -88,111 +84,114 @@ const UserFormModal = () => {
                             <p className="text-lg font-medium">{userData?.success && userData?.data?.name}</p>
                             <p className="text-sm text-muted-foreground">{userData?.success && userData?.data?.email}</p>
                         </div>
-                    </DialogTitle>
-                    <DialogDescription className="sr-only">User form modal</DialogDescription>
-                </DialogHeader>
+                    </SheetTitle>
+                    <SheetDescription className="sr-only">User form modal</SheetDescription>
+                </SheetHeader>
 
-                {isLoading ? (
-                    <div className="flex items-center justify-center h-20">
-                        <Loader2 className="animate-spin text-primary" />
-                    </div>
-                ) : !permissionsAndRoles?.success && !!id ? (
-                    <Empty>
-                        <EmptyHeader>
-                            <EmptyMedia variant="icon">
-                                <PiKey />
-                            </EmptyMedia>
-                            <EmptyTitle>Failed to fetch permission</EmptyTitle>
-                            <EmptyDescription>Failed to fetch permission. Please try again.</EmptyDescription>
-                        </EmptyHeader>
-                    </Empty>
-                ) : (
-                    <>
-                        <form id="user-form" onSubmit={form.handleSubmit(onSubmit)} className={isPending ? "pointer-events-none opacity-50" : ""}>
-                            <FieldGroup>
-                                <Controller
-                                    name="roles"
-                                    control={form.control}
-                                    render={({field, fieldState}) => (
-                                        <FieldSet>
-                                            <FieldLegend variant="label">Roles</FieldLegend>
-                                            <FieldDescription>Define the roles for this permission.</FieldDescription>
-                                            <FieldGroup data-slot="checkbox-group">
-                                                {permissionsAndRoles?.success &&
-                                                    permissionsAndRoles.data.roles.map((role) => (
-                                                        <Field key={role.name} orientation="horizontal" data-invalid={fieldState.invalid}>
-                                                            <Checkbox
-                                                                id={`form-rhf-checkbox-${role.name}`}
-                                                                name={field.name}
-                                                                aria-invalid={fieldState.invalid}
-                                                                value={role.name}
-                                                                checked={field.value?.includes(role.name)}
-                                                                onCheckedChange={(checked) => {
-                                                                    const newValue = checked
-                                                                        ? [...(field.value ?? []), role.name]
-                                                                        : (field.value ?? []).filter((value: string) => value !== role.name)
-                                                                    field.onChange(newValue)
-                                                                }}
-                                                            />
-                                                            <FieldLabel htmlFor={`form-rhf-checkbox-${role.name}`} className="font-normal">
-                                                                {role.name}
-                                                            </FieldLabel>
-                                                        </Field>
-                                                    ))}
-                                            </FieldGroup>
-                                            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                                        </FieldSet>
-                                    )}
-                                />
+                <div className="px-6">
+                    {isLoading ? (
+                        <div className="flex items-center justify-center h-20">
+                            <Loader2 className="animate-spin text-primary" />
+                        </div>
+                    ) : !permissionsAndRoles?.success && !!id ? (
+                        <Empty>
+                            <EmptyHeader>
+                                <EmptyMedia variant="icon">
+                                    <PiKey />
+                                </EmptyMedia>
+                                <EmptyTitle>Failed to fetch permission</EmptyTitle>
+                                <EmptyDescription>Failed to fetch permission. Please try again.</EmptyDescription>
+                            </EmptyHeader>
+                        </Empty>
+                    ) : (
+                        <>
+                            <form id="user-form" onSubmit={form.handleSubmit(onSubmit)} className={isPending ? "pointer-events-none opacity-50" : ""}>
+                                <FieldGroup>
+                                    <Controller
+                                        name="roles"
+                                        control={form.control}
+                                        render={({field, fieldState}) => (
+                                            <FieldSet>
+                                                <FieldLegend variant="label">Roles</FieldLegend>
+                                                <FieldDescription>Define the roles for this permission.</FieldDescription>
+                                                <FieldGroup data-slot="checkbox-group">
+                                                    {permissionsAndRoles?.success &&
+                                                        permissionsAndRoles.data.roles.map((role) => (
+                                                            <Field key={role.name} orientation="horizontal" data-invalid={fieldState.invalid}>
+                                                                <Checkbox
+                                                                    id={`form-rhf-checkbox-${role.name}`}
+                                                                    name={field.name}
+                                                                    aria-invalid={fieldState.invalid}
+                                                                    value={role.name}
+                                                                    checked={field.value?.includes(role.name)}
+                                                                    onCheckedChange={(checked) => {
+                                                                        const newValue = checked
+                                                                            ? [...(field.value ?? []), role.name]
+                                                                            : (field.value ?? []).filter((value: string) => value !== role.name)
+                                                                        field.onChange(newValue)
+                                                                    }}
+                                                                />
+                                                                <FieldLabel htmlFor={`form-rhf-checkbox-${role.name}`} className="font-normal">
+                                                                    {role.name}
+                                                                </FieldLabel>
+                                                            </Field>
+                                                        ))}
+                                                </FieldGroup>
+                                                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                            </FieldSet>
+                                        )}
+                                    />
 
-                                <Controller
-                                    name="permissions"
-                                    control={form.control}
-                                    render={({field, fieldState}) => (
-                                        <FieldSet>
-                                            <FieldLegend variant="label">Permissions</FieldLegend>
-                                            <FieldDescription>Define the permissions for this user.</FieldDescription>
-                                            <FieldGroup data-slot="checkbox-group">
-                                                {permissionsAndRoles?.success &&
-                                                    permissionsAndRoles.data.permissions.map((permission) => (
-                                                        <Field key={permission.name} orientation="horizontal" data-invalid={fieldState.invalid}>
-                                                            <Checkbox
-                                                                id={`form-rhf-checkbox-${permission.name}`}
-                                                                name={field.name}
-                                                                aria-invalid={fieldState.invalid}
-                                                                value={permission.name}
-                                                                checked={field.value?.includes(permission.name)}
-                                                                onCheckedChange={(checked) => {
-                                                                    const newValue = checked
-                                                                        ? [...(field.value ?? []), permission.name]
-                                                                        : (field.value ?? []).filter((value: string) => value !== permission.name)
-                                                                    field.onChange(newValue)
-                                                                }}
-                                                            />
-                                                            <FieldLabel htmlFor={`form-rhf-checkbox-${permission.name}`} className="font-normal">
-                                                                {permission.name}
-                                                            </FieldLabel>
-                                                        </Field>
-                                                    ))}
-                                            </FieldGroup>
-                                            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                                        </FieldSet>
-                                    )}
-                                />
-                            </FieldGroup>
-                        </form>
-                        <DialogFooter>
-                            <DialogClose asChild>
-                                <Button variant="outline">Cancel</Button>
-                            </DialogClose>
-                            <Button disabled={isPending} type="submit" form="user-form">
-                                {isPending ? <Loader2 className="animate-spin" /> : "Submit"}
-                            </Button>
-                        </DialogFooter>
-                    </>
-                )}
-            </DialogContent>
-        </Dialog>
+                                    <Controller
+                                        name="permissions"
+                                        control={form.control}
+                                        render={({field, fieldState}) => (
+                                            <FieldSet>
+                                                <FieldLegend variant="label">Permissions</FieldLegend>
+                                                <FieldDescription>Define the permissions for this user.</FieldDescription>
+                                                <FieldGroup data-slot="checkbox-group">
+                                                    {permissionsAndRoles?.success &&
+                                                        permissionsAndRoles.data.permissions.map((permission) => (
+                                                            <Field key={permission.name} orientation="horizontal" data-invalid={fieldState.invalid}>
+                                                                <Checkbox
+                                                                    id={`form-rhf-checkbox-${permission.name}`}
+                                                                    name={field.name}
+                                                                    aria-invalid={fieldState.invalid}
+                                                                    value={permission.name}
+                                                                    checked={field.value?.includes(permission.name)}
+                                                                    onCheckedChange={(checked) => {
+                                                                        const newValue = checked
+                                                                            ? [...(field.value ?? []), permission.name]
+                                                                            : (field.value ?? []).filter((value: string) => value !== permission.name)
+                                                                        field.onChange(newValue)
+                                                                    }}
+                                                                />
+                                                                <FieldLabel htmlFor={`form-rhf-checkbox-${permission.name}`} className="font-normal">
+                                                                    {permission.name}
+                                                                </FieldLabel>
+                                                            </Field>
+                                                        ))}
+                                                </FieldGroup>
+                                                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                            </FieldSet>
+                                        )}
+                                    />
+                                </FieldGroup>
+                            </form>
+                        </>
+                    )}
+                </div>
+
+                <SheetFooter>
+                    <SheetClose asChild>
+                        <Button variant="outline">Cancel</Button>
+                    </SheetClose>
+                    <Button disabled={isPending} type="submit" form="user-form">
+                        {isPending ? <Loader2 className="animate-spin" /> : "Submit"}
+                    </Button>
+                </SheetFooter>
+            </SheetContent>
+        </Sheet>
     )
 }
 

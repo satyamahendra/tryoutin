@@ -5,11 +5,17 @@ export async function getSessionExtended(userId: string) {
         where: {id: userId},
         select: {
             roles: {
+                where: {
+                    role: {is: {is_active: true}},
+                },
                 select: {
                     role_name: true,
                     role: {
                         select: {
                             permissions: {
+                                where: {
+                                    permission: {is: {is_active: true}},
+                                },
                                 select: {permission_name: true},
                             },
                         },
@@ -17,6 +23,9 @@ export async function getSessionExtended(userId: string) {
                 },
             },
             permissions: {
+                where: {
+                    permission: {is: {is_active: true}},
+                },
                 select: {permission_name: true},
             },
         },
@@ -26,13 +35,10 @@ export async function getSessionExtended(userId: string) {
 
     const roles = user.roles.map((r) => r.role_name)
 
-    // Permissions directly assigned to the user
     const directPermissions = user.permissions.map((p) => p.permission_name)
 
-    // Permissions inherited via roles
     const rolePermissions = user.roles.flatMap((r) => r.role.permissions.map((p) => p.permission_name))
 
-    // Deduplicated combined permissions
     const permissions = [...new Set([...directPermissions, ...rolePermissions])]
 
     return {roles, permissions}

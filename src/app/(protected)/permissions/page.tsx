@@ -4,6 +4,8 @@ import {PiKey} from "react-icons/pi"
 import {PermissionsTable} from "./components/permissions-table"
 import {Loader2} from "lucide-react"
 import PermissionFormModal from "./components/permission-form-modal"
+import {hasPermissions} from "@/utils/helpers/has-ability-server"
+import {redirect} from "next/navigation"
 
 type PageProps = {
     searchParams: Promise<{
@@ -12,6 +14,9 @@ type PageProps = {
 }
 
 const Page = async ({searchParams}: PageProps) => {
+    const hasPerm = await hasPermissions(["read permissions"])
+    if (!hasPerm) return redirect("/home")
+
     const {page} = await searchParams
     const pageNum = page ? parseInt(page) : 1
 

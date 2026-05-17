@@ -34,6 +34,7 @@ export async function PermissionsTable({page}: Props) {
                                 <TableHead className="font-semibold w-[80px]">#</TableHead>
                                 <TableHead className="font-semibold">Name</TableHead>
                                 <TableHead className="font-semibold">Roles</TableHead>
+                                <TableHead className="font-semibold">Status</TableHead>
                                 <TableHead className="font-semibold text-right">Action</TableHead>
                             </TableRow>
                         </TableHeader>

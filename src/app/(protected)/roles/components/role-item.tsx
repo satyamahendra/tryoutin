@@ -2,7 +2,7 @@
 
 import {TableCell, TableRow} from "@/components/ui/table"
 import {Button} from "@/components/ui/button"
-import {PiArrowSquareOut} from "react-icons/pi"
+import {PiCheckCircleFill, PiCircle, PiPencil} from "react-icons/pi"
 import {useQueryParams} from "@/utils/hooks/useQueryParams"
 import DeleteButton from "./delete-button"
 import {RoleWithPermissions} from "../services/get-roles"
@@ -29,9 +29,22 @@ const RoleItem = ({role, number}: RoleItemProps) => {
                     ))}
                 </div>
             </TableCell>
+            <TableCell>
+                {role.is_active ? (
+                    <div className="text-green-500 flex items-center gap-1">
+                        <PiCheckCircleFill className="text-lg" />
+                        Active
+                    </div>
+                ) : (
+                    <div className="text-muted-foreground flex items-center gap-1">
+                        <PiCircle className="text-lg" />
+                        Inactive
+                    </div>
+                )}
+            </TableCell>
             <TableCell className="text-right space-x-2">
                 <Button className="rounded-lg" onClick={() => setParams({view: role.name})} size={"icon-sm"} variant="outline">
-                    <PiArrowSquareOut />
+                    <PiPencil />
                 </Button>
                 <DeleteButton role={role} />
             </TableCell>
