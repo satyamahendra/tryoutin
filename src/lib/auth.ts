@@ -16,6 +16,25 @@ export const auth = betterAuth({
             clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
         },
     },
+    databaseHooks: {
+        user: {
+            create: {
+                after: async (user) => {
+                    console.log(process.env.WHITELISTED_EMAILS)
+
+                    let role_name = "member"
+
+                    if (process.env.WHITELISTED_EMAILS?.split(",").includes(user.email)) {
+                        role_name = "admin"
+                    }
+
+                    await prisma.userRole.createMany({
+                        data: [{user_id: user.id, role_name: role_name}],
+                    })
+                },
+            },
+        },
+    },
     plugins: [
         customSession(async ({user, session}) => {
             const sessionExtended = await getSessionExtended(user.id)

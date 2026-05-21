@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+how to start:
 
-## Getting Started
+1. clone repo
 
-First, run the development server:
+2. set env
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+3. seed data
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+-- Permissions
+INSERT INTO permission (name) VALUES
+('read home'),
+('manage home'),
+('read permissions'),
+('manage permissions'),
+('read roles'),
+('manage roles'),
+('read users'),
+('manage users')
+ON CONFLICT (name) DO NOTHING;
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+-- Roles
+INSERT INTO role (name) VALUES
+('admin'),
+('member')
+ON CONFLICT (name) DO NOTHING;
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+-- RolePermissions
+INSERT INTO role_permission (role_name, permission_name) VALUES
+('admin', 'read home'),
+('admin', 'manage home'),
+('admin', 'read permissions'),
+('admin', 'manage permissions'),
+('admin', 'read roles'),
+('admin', 'manage roles'),
+('admin', 'read users'),
+('admin', 'manage users'),
+('member', 'read home'),
+('member', 'manage home')
+ON CONFLICT (role_name, permission_name) DO NOTHING;
