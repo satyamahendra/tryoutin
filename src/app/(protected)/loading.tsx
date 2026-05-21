@@ -1,9 +1,10 @@
+import AnimDiv from "@/components/custom/anim-div"
 import {Loader2} from "lucide-react"
 
 export default function Loading() {
     return (
-        <div className="flex items-center justify-center h-full">
+        <AnimDiv className="flex items-center justify-center">
             <Loader2 className="animate-spin text-primary" size={24} />
-        </div>
+        </AnimDiv>
     )
 }

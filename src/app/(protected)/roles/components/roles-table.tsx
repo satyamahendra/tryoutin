@@ -4,6 +4,7 @@ import PaginationParams from "@/components/custom/pagination-params"
 import {PiCardholder} from "react-icons/pi"
 import {Empty, EmptyHeader, EmptyTitle, EmptyDescription, EmptyMedia} from "@/components/ui/empty"
 import RoleItem from "./role-item"
+import AnimDiv from "@/components/custom/anim-div"
 
 type Props = {
     page: number
@@ -13,7 +14,7 @@ export async function RolesTable({page}: Props) {
     const data = await getRoles(page)
 
     return (
-        <div className="flex flex-col gap-4">
+        <AnimDiv className="flex flex-col gap-4">
             {data.roles.length === 0 ? (
                 <div className="rounded-xl border border-dashed border-border py-12">
                     <Empty>
@@ -48,6 +49,6 @@ export async function RolesTable({page}: Props) {
             )}
 
             {data.pagination.pageCount > 1 && <PaginationParams pageCount={data.pagination.pageCount} />}
-        </div>
+        </AnimDiv>
     )
 }

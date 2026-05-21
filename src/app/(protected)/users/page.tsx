@@ -6,6 +6,7 @@ import {Loader2} from "lucide-react"
 import UserFormModal from "./components/user-form-modal"
 import {hasPermissions} from "@/utils/helpers/has-ability-server"
 import {redirect} from "next/navigation"
+import AnimDiv from "@/components/custom/anim-div"
 
 type PageProps = {
     searchParams: Promise<{
@@ -21,20 +22,20 @@ const Page = async ({searchParams}: PageProps) => {
     const pageNum = page ? parseInt(page) : 1
 
     return (
-        <div className="flex flex-col gap-4">
+        <AnimDiv className="flex flex-col gap-4">
             <PageHeader title="Users" description="Manage users" icon={<PiUser />} />
             <UserFormModal />
             <Suspense
                 fallback={
-                    <div className="flex items-center justify-center h-20">
+                    <AnimDiv className="flex items-center justify-center h-20">
                         <span className="text-muted-foreground">
                             <Loader2 className="animate-spin text-primary" />
                         </span>
-                    </div>
+                    </AnimDiv>
                 }>
                 <UsersTable page={pageNum} />
             </Suspense>
-        </div>
+        </AnimDiv>
     )
 }
 

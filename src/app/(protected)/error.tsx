@@ -1,5 +1,7 @@
 "use client"
 
+import AnimDiv from "@/components/custom/anim-div"
+
 type Props = {
     error: Error
     reset: () => void
@@ -7,8 +9,8 @@ type Props = {
 
 export default function Error({error}: Props) {
     return (
-        <div className="flex items-center justify-center h-20">
+        <AnimDiv className="flex items-center justify-center h-20">
             <span className="text-muted-foreground">{error.message}</span>
-        </div>
+        </AnimDiv>
     )
 }
