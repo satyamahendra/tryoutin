@@ -8,7 +8,7 @@ import {handleServerError} from "../helpers/handle-server-errors"
 export async function getPermissions(): Promise<ServerResult<Permission[]>> {
     try {
         const permissions = await prisma.permission.findMany({
-            select: {name: true},
+            select: {name: true, is_active: true},
         })
 
         if (!permissions) throw new Error("Permissions not found")

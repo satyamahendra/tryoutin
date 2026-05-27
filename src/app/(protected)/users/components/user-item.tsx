@@ -7,7 +7,7 @@ import {PiPencil} from "react-icons/pi"
 import {User} from "../services/get-users"
 import {Badge} from "@/components/ui/badge"
 import {format} from "date-fns"
-import {usePathname, useRouter, useSearchParams} from "next/navigation"
+import {useRouter} from "next/navigation"
 
 type Props = {
     user: User

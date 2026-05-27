@@ -20,8 +20,6 @@ export const auth = betterAuth({
         user: {
             create: {
                 after: async (user) => {
-                    console.log(process.env.WHITELISTED_EMAILS)
-
                     let role_name = "member"
 
                     if (process.env.WHITELISTED_EMAILS?.split(",").includes(user.email)) {

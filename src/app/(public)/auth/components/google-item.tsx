@@ -3,21 +3,18 @@
 import {Item, ItemContent, ItemMedia, ItemTitle} from "@/components/ui/item"
 import {authClient} from "@/lib/auth-client" // your Better Auth client instance
 import {FcGoogle} from "react-icons/fc"
-import {useSearchParams} from "next/navigation"
 import {useState} from "react"
 import {PiCircleDashed} from "react-icons/pi"
 import {toast} from "sonner"
 
 const GoogleItem = () => {
     const [isLoading, setIsLoading] = useState(false)
-    const searchParams = useSearchParams()
-    const callback = searchParams.get("callback") || "/home"
 
     const handleSignIn = async () => {
         setIsLoading(true)
         const {error} = await authClient.signIn.social({
             provider: "google",
-            callbackURL: callback,
+            callbackURL: "/home",
         })
         if (error) {
             toast.error(error.message ?? "Failed to sign in.")

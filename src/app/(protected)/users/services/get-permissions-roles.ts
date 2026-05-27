@@ -8,11 +8,11 @@ import {ServerResult} from "@/utils/types/server-action"
 export async function getPermissionsAndRoles(): Promise<ServerResult<{permissions: Permission[]; roles: Role[]}>> {
     try {
         const permissions = await prisma.permission.findMany({
-            select: {name: true},
+            select: {name: true, is_active: true},
         })
 
         const roles = await prisma.role.findMany({
-            select: {name: true},
+            select: {name: true, is_active: true},
         })
 
         return {success: true, data: {permissions, roles}, message: "Permissions and roles fetched successfully"}
