@@ -18,12 +18,12 @@ export async function POST(req: NextRequest) {
                 id: body.id_product,
             },
             include: {
-                bundleItems: {
+                bundle_items: {
                     select: {
                         product: {
                             select: {
                                 id: true,
-                                price: true,
+                                price_actual: true,
                                 name: true,
                                 type: true,
                             },
@@ -37,15 +37,15 @@ export async function POST(req: NextRequest) {
         let itemDetails = [
             {
                 id: `${product.type === "bundle" ? "bundle_" : ""}${product.id}`,
-                price: product.price,
+                price: product.price_actual,
                 quantity: 1,
                 name: product.name,
             },
         ]
         if (product.type === "bundle") {
-            const bundleItems = product.bundleItems.map((item) => ({
+            const bundleItems = product.bundle_items.map((item) => ({
                 id: `${item.product.id}`,
-                price: item.product.price,
+                price: item.product.price_actual,
                 quantity: 1,
                 name: item.product.name,
             }))
@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
         const parameter: TokenParameter = {
             transaction_details: {
                 order_id: orderId,
-                gross_amount: product.price,
+                gross_amount: product.price_actual,
             },
             credit_card: {secure: true},
             item_details: itemDetails,
@@ -72,7 +72,7 @@ export async function POST(req: NextRequest) {
             data: {
                 midtrans_order_id: orderId,
                 user_id: session.user.id,
-                gross_amount: product.price,
+                gross_amount: product.price_actual,
                 midtrans_request: parameter,
                 midtrans_token: data.token,
                 midtrans_redirect: data.redirect_url,

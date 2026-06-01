@@ -144,14 +144,15 @@ model RolePermission {
 model Product {
   id          String      @id @default(uuid())
   name        String
-  price       Int
+  price_alternate   Int @default(0)
+  price_actual   Int @default(0)
   type        ProductType @default(single)
   is_active   Boolean     @default(true)
   created_at   DateTime    @default(now())
   updated_at   DateTime    @updatedAt
 
-  bundleItems BundleItem[] @relation("BundleItems")
-  includedIn  BundleItem[] @relation("ProductsInBundle")
+  bundle_items BundleItem[] @relation("bundle_items")
+  included_in  BundleItem[] @relation("products_in_bundle")
   entitlements Entitlement[]
 
   @@map("product")
@@ -162,8 +163,8 @@ model BundleItem {
   bundle_id  String
   product_id String
 
-  bundle  Product @relation("BundleItems", fields: [bundle_id], references: [id], onDelete: Cascade)
-  product Product @relation("ProductsInBundle", fields: [product_id], references: [id], onDelete: Cascade)
+  bundle  Product @relation("bundle_items", fields: [bundle_id], references: [id], onDelete: Cascade)
+  product Product @relation("products_in_bundle", fields: [product_id], references: [id], onDelete: Cascade)
 
   @@unique([bundle_id, product_id])
   @@map("bundle_item")

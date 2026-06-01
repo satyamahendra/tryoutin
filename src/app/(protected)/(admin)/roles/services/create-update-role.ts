@@ -13,7 +13,6 @@ export async function createUpdateRole(data: RoleFormSchema): Promise<ServerResu
         const parsed = roleSchema.safeParse(data)
 
         const session = await authServer()
-
         if (!session) throw new Error("Unauthorized")
 
         const {name, name_before, permissions = [], is_active} = parsed.data as RoleFormSchema

@@ -1,4 +1,4 @@
-import {PiCardholder, PiCreditCard, PiHouse, PiKey, PiRobot, PiUser} from "react-icons/pi"
+import {PiCardholder, PiCreditCard, PiHouse, PiKey, PiPackage, PiRobot, PiTicket, PiUser} from "react-icons/pi"
 
 export interface MenuItem {
     label: string
@@ -56,6 +56,22 @@ export const menuItems = [
                 href: "/users",
                 icon: <PiUser />,
                 permissions: ["read users", "manage users"],
+                roles: [],
+                children: [],
+            },
+            {
+                label: "Orders",
+                href: "/orders",
+                icon: <PiTicket />,
+                permissions: ["read orders", "manage orders"],
+                roles: [],
+                children: [],
+            },
+            {
+                label: "Products",
+                href: "/products",
+                icon: <PiPackage />,
+                permissions: ["read products", "manage products"],
                 roles: [],
                 children: [],
             },

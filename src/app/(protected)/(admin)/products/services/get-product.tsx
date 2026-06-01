@@ -1,0 +1,53 @@
+"use server"
+
+import {Prisma} from "@/generated/index"
+import {authServer} from "@/lib/auth-server"
+import prisma from "@/lib/prisma/client"
+import {handleServerError} from "@/utils/helpers/handle-server-errors"
+import {ServerResult} from "@/utils/types/server-action"
+
+const productSelect = Prisma.validator<Prisma.ProductSelect>()({
+    id: true,
+    name: true,
+    price_alternate: true,
+    price_actual: true,
+    type: true,
+    is_active: true,
+    bundle_items: {
+        select: {
+            id: true,
+            product: {
+                select: {
+                    id: true,
+                    name: true,
+                },
+            },
+        },
+    },
+})
+
+export type Product = Prisma.ProductGetPayload<{select: typeof productSelect}>
+
+export type ProductItem = {
+    product: Product
+}
+
+export async function getProduct(id: string): Promise<ServerResult<ProductItem>> {
+    try {
+        const session = await authServer()
+        if (!session) throw new Error("Unauthorized")
+
+        const product = await prisma.product.findUnique({
+            select: productSelect,
+            where: {
+                id: id,
+            },
+        })
+
+        if (!product) throw new Error("Product not found")
+
+        return {success: true, data: {product}, message: "Product fetched successfully"}
+    } catch (error) {
+        return handleServerError(error)
+    }
+}
