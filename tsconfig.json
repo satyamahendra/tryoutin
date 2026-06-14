@@ -23,6 +23,6 @@
             "@/generated/*": ["./prisma/generated/prisma/*"]
         }
     },
-    "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", ".next/dev/types/**/*.ts", "**/*.mts"],
+    "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", ".next/dev/types/**/*.ts", "**/*.mts", "src/components/custom/page-header"],
     "exclude": ["node_modules"]
 }

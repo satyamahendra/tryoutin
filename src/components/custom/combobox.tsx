@@ -92,10 +92,12 @@ export function InfiniteCombobox<TPage>({value, onChange, placeholder = "Select.
                 className={cn(
                     "w-full",
                     props.invalid &&
-                        "rounded-4xl border border-destructive bg-input/30 text-base transition-colors outline-none ring-[3px] ring-destructive/20 dark:border-destructive/50 dark:ring-destructive/40",
+                        "border border-destructive bg-input/30 text-base transition-colors outline-none ring-[3px] ring-destructive/20 dark:border-destructive/50 dark:ring-destructive/40",
                 )}
             />
-            <ComboboxContent className="p-0">
+            <ComboboxContent 
+                onWheel={(e) => e.stopPropagation()}
+                className="p-0 pointer-events-auto">
                 <ComboboxEmpty>{isFetchingNextPage ? "Loading..." : "No results found."}</ComboboxEmpty>
                 <ComboboxList>
                     {(option) => (

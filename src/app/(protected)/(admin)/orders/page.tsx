@@ -1,4 +1,4 @@
-import PageHeader from "@/components/custom/page-header.tsx/page-header"
+import PageHeader from "@/components/custom/page-header/page-header"
 import {PiTicket} from "react-icons/pi"
 import {hasPermissions} from "@/utils/helpers/has-ability-server"
 import {redirect} from "next/navigation"

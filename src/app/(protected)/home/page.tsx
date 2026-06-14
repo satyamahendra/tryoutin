@@ -1,5 +1,5 @@
 import AnimDiv from "@/components/custom/anim-div"
-import PageHeader from "@/components/custom/page-header.tsx/page-header"
+import PageHeader from "@/components/custom/page-header/page-header"
 import {PiHouse} from "react-icons/pi"
 
 const Page = () => {

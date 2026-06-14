@@ -1,4 +1,4 @@
-import PageHeader from "@/components/custom/page-header.tsx/page-header"
+import PageHeader from "@/components/custom/page-header/page-header"
 import {Suspense} from "react"
 import {PiUser} from "react-icons/pi"
 import {UsersTable} from "./components/users-table"
