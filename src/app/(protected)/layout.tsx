@@ -19,7 +19,7 @@ const Layout = async ({children}: LayoutProps) => {
             <Sidebar />
             <div className="flex flex-col items-center gap-4 p-4 w-full h-full">
                 <Topbar />
-                <div className="w-[1000px] flex-1 min-h-0">{children}</div>
+                <div className="w-[800px] flex-1 min-h-0">{children}</div>
             </div>
         </div>
     )
