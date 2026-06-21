@@ -1,7 +1,7 @@
 import AnimDiv from "@/components/custom/anim-div"
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar"
 import {Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle} from "@/components/ui/empty"
-import {PiCalendarDots, PiChatCentered, PiCheckCircleFill, PiCircle, PiSelection, PiTicket} from "react-icons/pi"
+import {PiCalendarDots, PiChatCentered, PiTicket} from "react-icons/pi"
 import {getReport} from "../services/get-report"
 import {Badge} from "@/components/ui/badge"
 import {normalizeString} from "@/utils/helpers/normalize-string"

@@ -1,14 +1,13 @@
 "use client"
 
-import {Item, ItemContent, ItemDescription, ItemMedia, ItemTitle} from "@/components/ui/item"
+import {Item, ItemContent, ItemMedia, ItemTitle} from "@/components/ui/item"
 import {OrderWithUser} from "../services/get-orders"
 import {useQueryParams} from "@/utils/hooks/useQueryParams"
 import {format} from "date-fns"
-import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar"
 import {Badge} from "@/components/ui/badge"
 import {normalizeString} from "@/utils/helpers/normalize-string"
 import {Separator} from "@/components/ui/separator"
-import {PiCalendarDot, PiCalendarDots, PiCube} from "react-icons/pi"
+import {PiCalendarDots, PiCircle, PiCircleFill} from "react-icons/pi"
 
 type OrderItemProps = {
     order: OrderWithUser
@@ -18,11 +17,15 @@ const OrderItem = ({order}: OrderItemProps) => {
     const {setParams, getParam} = useQueryParams()
     const selected = getParam("detail")
 
+    const isSuccess = order.status === "success" || order.status === "settlement"
+
     return (
         <Item
             onClick={() => setParams({detail: order.id})}
             className={`cursor-pointer ${selected !== order.id ? "" : "bg-muted"} hover:bg-muted duration-200`}
             size={"xs"}>
+            <ItemMedia variant="icon">{isSuccess ? <PiCircleFill className="text-green-500" /> : <PiCircle className="text-muted-foreground" />}</ItemMedia>
+
             <ItemContent>
                 <ItemTitle className="flex justify-between w-full">
                     <span>{order.user.email}</span>
@@ -36,9 +39,7 @@ const OrderItem = ({order}: OrderItemProps) => {
                     </span>
                     <Separator orientation="vertical" />
                     <span>
-                        <Badge
-                            variant={"default"}
-                            className={`${order.status === "success" || order.status === "settlement" ? "bg-green-100 text-green-600" : "bg-muted text-muted-foreground"}`}>
+                        <Badge variant={"default"} className={`${isSuccess ? "bg-green-100 text-green-600" : "bg-muted text-muted-foreground"}`}>
                             {normalizeString(order.status)}
                         </Badge>
                     </span>

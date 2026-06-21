@@ -1,5 +1,5 @@
 import PageHeader from "@/components/custom/page-header/page-header"
-import {PiPackage, PiTicket} from "react-icons/pi"
+import {PiPackage} from "react-icons/pi"
 import {hasPermissions} from "@/utils/helpers/has-ability-server"
 import {redirect} from "next/navigation"
 import AnimDiv from "@/components/custom/anim-div"

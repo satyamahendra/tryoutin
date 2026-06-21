@@ -17,6 +17,7 @@ import {normalizeString} from "@/utils/helpers/normalize-string"
 import {PiFlag} from "react-icons/pi"
 import {zodResolver} from "@hookform/resolvers/zod"
 import {useState} from "react"
+import {ReportType} from "@/generated/index"
 
 type ReportModalProps = {
     order_id?: string
@@ -31,7 +32,7 @@ const ReportModal = ({order_id}: ReportModalProps) => {
         defaultValues: {
             title: "",
             description: "",
-            type: "" as any,
+            type: "" as ReportType,
             order_id: null,
         },
     })

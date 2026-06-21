@@ -36,7 +36,7 @@ export async function UsersTable({page, search}: Props) {
                                 <TableHead className="font-semibold">#</TableHead>
                                 <TableHead className="font-semibold">Name</TableHead>
                                 <TableHead className="font-semibold">Email</TableHead>
-                                <TableHead className="font-semibold">Date Created</TableHead>
+                                <TableHead className="font-semibold">Registered at</TableHead>
                                 <TableHead className="font-semibold">Roles</TableHead>
                                 <TableHead className="font-semibold">Action</TableHead>
                             </TableRow>

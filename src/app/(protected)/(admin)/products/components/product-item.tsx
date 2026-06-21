@@ -1,9 +1,9 @@
 "use client"
 
-import {Item, ItemContent, ItemDescription, ItemMedia, ItemTitle} from "@/components/ui/item"
+import {Item, ItemContent, ItemMedia, ItemTitle} from "@/components/ui/item"
 import {useQueryParams} from "@/utils/hooks/useQueryParams"
 import {Product} from "../services/get-products"
-import {PiCircle, PiCircleFill, PiCube, PiMoney, PiPackage} from "react-icons/pi"
+import {PiCircle, PiCircleFill, PiCube, PiPackage} from "react-icons/pi"
 import {Separator} from "@/components/ui/separator"
 import {normalizeString} from "@/utils/helpers/normalize-string"
 

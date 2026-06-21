@@ -1,7 +1,7 @@
 "use client"
 
 import {useQueryParams} from "@/utils/hooks/useQueryParams"
-import {Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious} from "../ui/pagination"
+import {Pagination, PaginationContent, PaginationItem, PaginationLink} from "../ui/pagination"
 import {PiCaretLeft, PiCaretRight} from "react-icons/pi"
 import {Button} from "../ui/button"
 

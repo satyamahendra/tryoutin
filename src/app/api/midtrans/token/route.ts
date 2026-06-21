@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
         })
         if (!product) throw new Error("Product not found")
 
-        let itemDetails = [
+        const itemDetails = [
             {
                 id: `${product.type === "bundle" ? "bundle_" : ""}${product.id}`,
                 price: product.price_actual,

@@ -1,7 +1,7 @@
 "use client"
 
 import {Button} from "@/components/ui/button"
-import {Field, FieldError, FieldGroup, FieldLabel} from "@/components/ui/field"
+import {Field, FieldError, FieldGroup} from "@/components/ui/field"
 import {Input} from "@/components/ui/input"
 import {useMutation, useQueryClient} from "@tanstack/react-query"
 import {Loader2} from "lucide-react"
@@ -30,7 +30,7 @@ const MessageForm = ({report}: MessageFormProps) => {
 
     const {mutate, isPending} = useMutation({
         mutationFn: sendMessage,
-        onSuccess: (res) => {
+        onSuccess: () => {
             queryClient.invalidateQueries({queryKey: ["reports"]})
             form.reset()
         },

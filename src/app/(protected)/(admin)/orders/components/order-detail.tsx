@@ -2,7 +2,7 @@ import AnimDiv from "@/components/custom/anim-div"
 import {getOrder} from "../services/get-order"
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar"
 import {Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle} from "@/components/ui/empty"
-import {PiArrowSquareOut, PiCalendarDots, PiCheckCircle, PiCheckCircleLight, PiCoin, PiHandshake, PiLink, PiMoney, PiTicket} from "react-icons/pi"
+import {PiCalendarDots, PiCheckCircle, PiCoin, PiHandshake, PiLink, PiMoney, PiTicket} from "react-icons/pi"
 import {format} from "date-fns"
 
 type OrderDetail = {

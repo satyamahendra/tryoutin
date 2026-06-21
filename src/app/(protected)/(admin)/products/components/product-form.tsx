@@ -1,14 +1,14 @@
 "use client"
 
 import {Controller, useFieldArray, useForm} from "react-hook-form"
-import {Product, ProductItem} from "../services/get-product"
+import {Product} from "../services/get-product"
 import {ProductFormSchema, productSchema} from "../utils/schema"
 import {Field, FieldError, FieldGroup, FieldLabel} from "@/components/ui/field"
 import {Input} from "@/components/ui/input"
 import {Button} from "@/components/ui/button"
 import {PiPlus, PiTrash} from "react-icons/pi"
 import {Label} from "@/components/ui/label"
-import {getProducts, ProductList} from "../services/get-products"
+import {getProducts} from "../services/get-products"
 import {InfiniteCombobox} from "@/components/custom/combobox"
 import {useMutation, useQueryClient} from "@tanstack/react-query"
 import {createUpdateProduct} from "../services/create-update-product"
@@ -57,8 +57,8 @@ const ProductForm = ({product}: ProductFormProps) => {
             if (!res.success) return toast.error(res.message)
             toast.success(res.message)
             startTransition(() => {
-                !product && setParams({detail: ""})
-                !product && form.reset()
+                if (!product) setParams({detail: ""})
+                if (!product) form.reset()
                 queryClient.invalidateQueries({queryKey: ["products"]})
             })
         },
@@ -138,7 +138,14 @@ const ProductForm = ({product}: ProductFormProps) => {
                             render={({field, fieldState}) => (
                                 <Field data-invalid={fieldState.invalid}>
                                     <FieldLabel htmlFor="price_actual">Price Actual</FieldLabel>
-                                    <Input {...field} id="price_actual" aria-invalid={fieldState.invalid} placeholder="Price Actual" />
+                                    <Input
+                                        {...field}
+                                        type="number"
+                                        id="price_actual"
+                                        aria-invalid={fieldState.invalid}
+                                        placeholder="Price Actual"
+                                        onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : 0)}
+                                    />
                                     {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                 </Field>
                             )}
@@ -149,7 +156,14 @@ const ProductForm = ({product}: ProductFormProps) => {
                             render={({field, fieldState}) => (
                                 <Field data-invalid={fieldState.invalid}>
                                     <FieldLabel htmlFor="price_alternate">Price Alternate</FieldLabel>
-                                    <Input {...field} id="price_alternate" aria-invalid={fieldState.invalid} placeholder="Price Alternate" />
+                                    <Input
+                                        {...field}
+                                        type="number"
+                                        id="price_alternate"
+                                        aria-invalid={fieldState.invalid}
+                                        placeholder="Price Alternate"
+                                        onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : 0)}
+                                    />
                                     {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                 </Field>
                             )}

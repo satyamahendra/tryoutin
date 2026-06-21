@@ -8,6 +8,7 @@ import {User} from "../services/get-users"
 import {Badge} from "@/components/ui/badge"
 import {format} from "date-fns"
 import {useRouter} from "next/navigation"
+import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/ui/tooltip"
 
 type Props = {
     user: User
@@ -16,6 +17,10 @@ type Props = {
 
 const UserItem = ({user, number}: Props) => {
     const router = useRouter()
+
+    const firstThreeRoles = user.roles.slice(0, 3)
+    const hasMore = user.roles.length > 3
+    const restRoles = user.roles.slice(3)
 
     return (
         <TableRow key={user.id}>
@@ -31,11 +36,27 @@ const UserItem = ({user, number}: Props) => {
             <TableCell>{format(new Date(user.createdAt), "dd MMM yyyy")}</TableCell>
             <TableCell>
                 <div className="flex flex-wrap gap-2">
-                    {user.roles.map((role) => (
+                    {firstThreeRoles.map((role) => (
                         <Badge variant={"outline"} className="text-muted-foreground" key={role.role_name}>
                             {role.role_name}
                         </Badge>
                     ))}
+                    {hasMore && (
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Badge variant={"outline"} className="text-muted-foreground">
+                                    +{restRoles.length} more
+                                </Badge>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <div className="flex flex-col gap-1">
+                                    {restRoles.map((r) => (
+                                        <span key={r.role_name}>{r.role_name}</span>
+                                    ))}
+                                </div>
+                            </TooltipContent>
+                        </Tooltip>
+                    )}
                 </div>
             </TableCell>
             <TableCell>

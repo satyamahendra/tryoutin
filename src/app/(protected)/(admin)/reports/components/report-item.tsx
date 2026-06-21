@@ -6,7 +6,7 @@ import {format} from "date-fns"
 import {Badge} from "@/components/ui/badge"
 import {normalizeString} from "@/utils/helpers/normalize-string"
 import {Separator} from "@/components/ui/separator"
-import {PiCalendarDots, PiChatCentered, PiWarning} from "react-icons/pi"
+import {PiCalendarDots, PiChatCentered} from "react-icons/pi"
 import {Report} from "../services/get-reports"
 import {reportStatusOptions, reportTypeOptions} from "@/utils/constants/report"
 

@@ -8,7 +8,7 @@ import {toast} from "sonner"
 
 const ProductItem = () => {
     const {mutate, isPending} = useMutation({
-        mutationFn: async (data: any) => await axios.post("/api/midtrans/token", data),
+        mutationFn: async (data: {id_product: string}) => await axios.post("/api/midtrans/token", data),
         onSuccess: (data) => {
             window.snap.pay(data.data.data.token, {
                 onSuccess: () => toast.success("Payment successful!"),
@@ -20,9 +20,9 @@ const ProductItem = () => {
         },
     })
 
-    const {data: order, refetch: refetchOrder} = useQuery({
+    const {refetch: refetchOrder} = useQuery({
         queryKey: ["order"],
-        queryFn: async (data: any) => await axios.get("/api/midtrans/status?order_id=ba3c6f25-64b1-4530-9c6c-41aba9ccde65"),
+        queryFn: async () => await axios.get("/api/midtrans/status?order_id=ba3c6f25-64b1-4530-9c6c-41aba9ccde65"),
         enabled: false,
     })
 

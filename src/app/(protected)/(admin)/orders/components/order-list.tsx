@@ -3,7 +3,6 @@ import {PiTicket} from "react-icons/pi"
 import OrderItem from "./order-item"
 import AnimDiv from "@/components/custom/anim-div"
 import {Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle} from "@/components/ui/empty"
-import {ScrollArea} from "@/components/ui/scroll-area"
 
 type OrderListProps = {
     page?: number

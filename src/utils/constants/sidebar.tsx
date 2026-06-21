@@ -1,4 +1,4 @@
-import {PiCardholder, PiCreditCard, PiFlag, PiHouse, PiKey, PiPackage, PiRobot, PiTicket, PiUser} from "react-icons/pi"
+import {PiCardholder, PiCreditCard, PiFlag, PiHouse, PiKey, PiPackage, PiTicket, PiUser} from "react-icons/pi"
 
 export interface MenuItem {
     label: string
