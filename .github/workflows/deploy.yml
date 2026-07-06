@@ -12,7 +12,6 @@ permissions:
 jobs:
     build:
         runs-on: ubuntu-latest
-
         steps:
             - name: Checkout repository
               uses: actions/checkout@v4
@@ -42,36 +41,53 @@ jobs:
         runs-on: ubuntu-latest
         needs: build
         steps:
-            - name: Write .env to VPS
+            - name: Deploy Containers to VPS via SSH
               uses: appleboy/ssh-action@v1.2.2
               with:
                   host: ${{ secrets.SSH_HOST }}
                   username: ${{ secrets.SSH_USERNAME }}
                   key: ${{ secrets.SSH_KEY }}
-                  envs: ENV_FILE
+                  envs: GITHUB_TOKEN,GITHUB_ACTOR
                   script: |
-                      mkdir -p /home/satya/apps/svtyv
-                      cat > /home/satya/apps/svtyv/.env << 'EOF'
-                      $ENV_FILE
-                      EOF
-              env:
-                  ENV_FILE: ${{ secrets.ENV }}
+                      # 1. Temporarily log into GHCR (Uses the workflow's GITHUB_TOKEN sent over the SSH channel memory)
+                      echo "$GITHUB_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
 
-            - name: Deploy to VPS
-              uses: appleboy/ssh-action@v1.2.2
-              with:
-                  host: ${{ secrets.SSH_HOST }}
-                  username: ${{ secrets.SSH_USERNAME }}
-                  key: ${{ secrets.SSH_KEY }}
-                  envs: GHCR_PAT,GHCR_USER,IMAGE_TAG
-                  script: |
-                      echo "$GHCR_PAT" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
-                      cd /home/satya/apps/svtyv
-                      export IMAGE_TAG="$IMAGE_TAG"
-                      docker compose pull
-                      docker compose up -d
+                      # 2. Setup isolated Docker network if it doesn't exist
+                      docker network create svtyv-net || true
+
+                      # 3. Pull the updated app image
+                      docker pull ghcr.io/satyamahendra/svtyv:latest
+
+                      # 4. Stop and remove old instances if they are running
+                      docker stop svtyv-app svtyv-db || true
+                      docker rm svtyv-app svtyv-db || true
+
+                      # 5. Spin up the Postgres DB container directly (Variables injected inline via GitHub Secrets)
+                      # We parse your multiline ENV block into individual -e flags dynamically
+                      docker run -d \
+                        --name svtyv-db \
+                        --network svtyv-net \
+                        --restart unless-stopped \
+                        -p 5433:5432 \
+                        -v postgres_data:/var/lib/postgresql/data \
+                        $(echo "${{ secrets.ENV }}" | awk '{print "-e " $0}') \
+                        postgres:17-alpine
+
+                      # Give Postgres a few seconds to initialize before the app tries to migrate
+                      sleep 5
+
+                      # 6. Spin up the App container directly
+                      docker run -d \
+                        --name svtyv-app \
+                        --network svtyv-net \
+                        --restart unless-stopped \
+                        -p 3001:3000 \
+                        $(echo "${{ secrets.ENV }}" | awk '{print "-e " $0}') \
+                        ghcr.io/satyamahendra/svtyv:latest \
+                        sh -c "npx prisma migrate deploy && node server.js"
+
+                      # 7. Clean up unused images immediately to free VPS disk space
                       docker image prune -af
               env:
-                  GHCR_PAT: ${{ secrets.GHCR_PAT }}
-                  GHCR_USER: ${{ github.actor }}
-                  IMAGE_TAG: ${{ github.sha }}
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  GITHUB_ACTOR: ${{ github.actor }}
