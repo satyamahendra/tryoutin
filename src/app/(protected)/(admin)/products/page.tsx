@@ -21,20 +21,15 @@ type PageProps = {
 }
 
 const Page = async ({searchParams}: PageProps) => {
-    const hasPerm = await hasPermissions(["read products"])
+    const hasPerm = await hasPermissions(["read products", "manage products"])
     if (!hasPerm) return redirect("/home")
 
     const {page, search, detail} = await searchParams
     const pageNum = page ? parseInt(page) : 1
 
     return (
-        <AnimDiv className="flex flex-col gap-4">
-            <PageHeader
-                title="Products"
-                description="Manage products"
-                icon={<PiPackage />}
-                subComponent={<CreateProductButton />}
-            />
+        <AnimDiv className="flex flex-col gap-4 pb-4">
+            <PageHeader title="Products" description="Manage products" icon={<PiPackage />} subComponent={<CreateProductButton />} />
             <ProductDetailDrawer hasDetail={!!detail}>
                 {detail === "create" ? (
                     <AnimDiv>

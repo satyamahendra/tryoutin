@@ -98,14 +98,14 @@ const RoleFormModal = () => {
                 </Button>
             </DrawerTrigger>
             <DrawerContent aria-describedby="role-form" className={cn(isMobile ? "h-[80vh]" : "")}>
-                <DrawerHeader>
+                <DrawerHeader className="flex flex-col items-center justify-center">
                     <DrawerTitle className="flex items-center gap-4">{view !== "create" ? "Edit" : "Create"} Role</DrawerTitle>
                     <DrawerDescription className="flex items-center gap-4">
                         {view !== "create" ? "Edit" : "Create"} a custom role for your organization.
                     </DrawerDescription>
                 </DrawerHeader>
 
-                <div className="px-6">
+                <div className="p-6 flex-1 overflow-y-auto">
                     {isLoading ? (
                         <div className="flex items-center justify-center h-20">
                             <Loader2 className="animate-spin text-primary" />

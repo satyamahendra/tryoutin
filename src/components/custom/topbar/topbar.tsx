@@ -33,11 +33,13 @@ const Topbar = () => {
 
     return (
         <header className="flex items-center justify-between w-full">
-            <div className="flex gap-2 items-center text-sm font-light text-muted-foreground">
-                <PiCalendarDots size={18} />
-                {mounted && !isMobile && format(new Date(), "EEEE, MMMM d, yyyy")}
-            </div>
-            <ul className="flex gap-2">
+            {mounted && !isMobile && (
+                <div className="flex gap-2 items-center text-sm font-light text-muted-foreground">
+                    <PiCalendarDots size={18} />
+                    {format(new Date(), "EEEE, MMMM d, yyyy")}
+                </div>
+            )}
+            <ul className="flex gap-2 ml-auto">
                 <li>
                     <Button
                         onClick={() => {

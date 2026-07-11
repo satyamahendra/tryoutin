@@ -16,12 +16,9 @@ const ReportDetailDrawer = ({children, hasDetail}: ReportDetailDrawerProps) => {
     const {isMobile} = useScreenSize()
 
     return (
-        <Drawer
-            direction={isMobile ? "bottom" : "right"}
-            open={!!hasDetail}
-            onOpenChange={(open) => !open && setParams({detail: ""})}>
+        <Drawer direction={isMobile ? "bottom" : "right"} open={!!hasDetail} onOpenChange={(open) => !open && setParams({detail: ""})}>
             <DrawerContent aria-describedby="report-detail" className={cn(isMobile ? "h-[80vh]" : "h-full")}>
-                <DrawerHeader>
+                <DrawerHeader className="flex flex-col items-center justify-center">
                     <DrawerTitle className="flex items-center gap-2">
                         <PiFlag />
                         Report Details
@@ -29,9 +26,7 @@ const ReportDetailDrawer = ({children, hasDetail}: ReportDetailDrawerProps) => {
                     <DrawerDescription>View and respond to the report.</DrawerDescription>
                 </DrawerHeader>
 
-                <div className="px-6 flex-1 flex flex-col min-h-0 overflow-hidden">
-                    {children}
-                </div>
+                <div className="p-6 flex-1 flex flex-col min-h-0 overflow-auto-y">{children}</div>
             </DrawerContent>
         </Drawer>
     )

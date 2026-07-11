@@ -17,14 +17,14 @@ type PageProps = {
 }
 
 const Page = async ({searchParams}: PageProps) => {
-    const hasPerm = await hasPermissions(["read permissions"])
+    const hasPerm = await hasPermissions(["read permissions", "manage permissions"])
     if (!hasPerm) return redirect("/home")
 
     const {page, search} = await searchParams
     const pageNum = page ? parseInt(page) : 1
 
     return (
-        <AnimDiv className="flex flex-col gap-4">
+        <AnimDiv className="flex flex-col gap-4 pb-4">
             <PageHeader title="Permissions" description="Manage permissions" icon={<PiKey />} subComponent={<PermissionFormModal />} />
             <SearchParams className="w-48 self-end" />
             <Suspense
