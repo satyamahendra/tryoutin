@@ -1,4 +1,3 @@
-import {Table, TableBody, TableHead, TableHeader, TableRow} from "@/components/ui/table"
 import {getRoles} from "../services/get-roles"
 import PaginationParams from "@/components/custom/pagination-params"
 import {PiCardholder} from "react-icons/pi"
@@ -29,23 +28,10 @@ export async function RolesTable({page, search}: Props) {
                     </Empty>
                 </div>
             ) : (
-                <div className="rounded-xl border border-border overflow-hidden">
-                    <Table>
-                        <TableHeader className="bg-muted">
-                            <TableRow>
-                                <TableHead className="font-semibold w-[80px]">#</TableHead>
-                                <TableHead className="font-semibold">Name</TableHead>
-                                <TableHead className="font-semibold">Permissions</TableHead>
-                                <TableHead className="font-semibold">Status</TableHead>
-                                <TableHead className="font-semibold text-right">Action</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {data.roles.map((role, index) => (
-                                <RoleItem key={role.name} role={role} number={index + 1 + (data.pagination.page - 1) * 10} />
-                            ))}
-                        </TableBody>
-                    </Table>
+                <div className="overflow-hidden space-y-2">
+                    {data.roles.map((role) => (
+                        <RoleItem key={role.name} role={role} />
+                    ))}
                 </div>
             )}
 

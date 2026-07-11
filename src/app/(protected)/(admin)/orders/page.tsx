@@ -7,11 +7,8 @@ import SearchParams from "@/components/custom/search-params"
 import {Suspense} from "react"
 import {Loader2} from "lucide-react"
 import OrderList from "./components/order-list"
-import {Separator} from "@/components/ui/separator"
+import OrderDetailDrawer from "./components/order-detail-drawer"
 import OrderDetail from "./components/order-detail"
-import {Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle} from "@/components/ui/empty"
-import PaginationParams from "@/components/custom/pagination-params"
-import {ScrollArea} from "@/components/ui/scroll-area"
 
 type PageProps = {
     searchParams: Promise<{
@@ -29,56 +26,33 @@ const Page = async ({searchParams}: PageProps) => {
     const pageNum = page ? parseInt(page) : 1
 
     return (
-        <AnimDiv className="flex flex-col gap-4 h-full">
+        <AnimDiv className="flex flex-col gap-4">
             <PageHeader title="Orders" description="Manage orders" icon={<PiTicket />} />
-            <SearchParams className="w-48" />
-
-            <div className="w-full flex gap-2 h-full min-h-0">
-                <div className="w-1/3 flex flex-col h-full min-h-0">
-                    <ScrollArea className="flex-1 h-full min-h-0">
-                        <Suspense
-                            key={`${page}-${search}`}
-                            fallback={
-                                <AnimDiv className="flex items-center justify-center h-20">
-                                    <span className="text-muted-foreground">
-                                        <Loader2 className="animate-spin text-primary" />
-                                    </span>
-                                </AnimDiv>
-                            }>
-                            <OrderList page={pageNum} search={search} />
-                        </Suspense>
-                    </ScrollArea>
-                    <PaginationParams pageCount={pageNum} className="w-fit mt-4" />
-                </div>
-                <Separator orientation="vertical" className="mx-4" />
-                <div className="w-2/3">
-                    {detail ? (
-                        <Suspense
-                            key={`${detail}`}
-                            fallback={
-                                <AnimDiv className="flex items-center justify-center h-20">
-                                    <span className="text-muted-foreground">
-                                        <Loader2 className="animate-spin text-primary" />
-                                    </span>
-                                </AnimDiv>
-                            }>
-                            <OrderDetail detail={detail} />
-                        </Suspense>
-                    ) : (
-                        <AnimDiv>
-                            <Empty>
-                                <EmptyHeader>
-                                    <EmptyMedia variant="icon">
-                                        <PiTicket />
-                                    </EmptyMedia>
-                                    <EmptyTitle>Select an Order</EmptyTitle>
-                                    <EmptyDescription>Select an order to view its details.</EmptyDescription>
-                                </EmptyHeader>
-                            </Empty>
-                        </AnimDiv>
-                    )}
-                </div>
-            </div>
+            <OrderDetailDrawer hasDetail={!!detail}>
+                {detail && (
+                    <Suspense
+                        key={detail}
+                        fallback={
+                            <AnimDiv className="flex items-center justify-center h-20">
+                                <Loader2 className="animate-spin text-primary" />
+                            </AnimDiv>
+                        }>
+                        <OrderDetail detail={detail} />
+                    </Suspense>
+                )}
+            </OrderDetailDrawer>
+            <SearchParams className="w-48 self-end" />
+            <Suspense
+                key={`${page}-${search}`}
+                fallback={
+                    <AnimDiv className="flex items-center justify-center h-20">
+                        <span className="text-muted-foreground">
+                            <Loader2 className="animate-spin text-primary" />
+                        </span>
+                    </AnimDiv>
+                }>
+                <OrderList page={pageNum} search={search} />
+            </Suspense>
         </AnimDiv>
     )
 }

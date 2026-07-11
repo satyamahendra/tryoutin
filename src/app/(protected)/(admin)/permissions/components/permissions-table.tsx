@@ -1,4 +1,3 @@
-import {Table, TableBody, TableHead, TableHeader, TableRow} from "@/components/ui/table"
 import {getPermissions} from "../services/get-permissions"
 import PaginationParams from "@/components/custom/pagination-params"
 import {PiKey} from "react-icons/pi"
@@ -30,8 +29,8 @@ export async function PermissionsTable({page, search}: Props) {
                 </div>
             ) : (
                 <div className="overflow-hidden space-y-2">
-                    {data.permissions.map((permission, index) => (
-                        <PermissionItem key={permission.name} permission={permission} number={index + 1 + (data.pagination.page - 1) * 10} />
+                    {data.permissions.map((permission) => (
+                        <PermissionItem key={permission.name} permission={permission} />
                     ))}
                 </div>
             )}

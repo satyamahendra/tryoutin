@@ -1,8 +1,9 @@
-import {PiTicket} from "react-icons/pi"
+import {PiFlag} from "react-icons/pi"
 import AnimDiv from "@/components/custom/anim-div"
 import {Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle} from "@/components/ui/empty"
 import ReportItem from "./report-item"
 import {getReports} from "../services/get-reports"
+import PaginationParams from "@/components/custom/pagination-params"
 
 type ReportListProps = {
     page?: number
@@ -17,7 +18,7 @@ const ReportList = async ({page, search}: ReportListProps) => {
             <Empty>
                 <EmptyHeader>
                     <EmptyMedia variant="icon">
-                        <PiTicket />
+                        <PiFlag />
                     </EmptyMedia>
                     <EmptyTitle>Something Went Wrong</EmptyTitle>
                     <EmptyDescription>{data?.message}, Please try again later.</EmptyDescription>
@@ -27,26 +28,29 @@ const ReportList = async ({page, search}: ReportListProps) => {
     }
 
     return (
-        <AnimDiv>
+        <AnimDiv className="flex flex-col gap-4">
             {data.data && data.data?.reports.length > 0 ? (
-                <ul className="space-y-2 w-full">
+                <div className="overflow-hidden space-y-2">
                     {data.data.reports.map((report) => (
-                        <li key={report.id}>
-                            <ReportItem report={report} />
-                        </li>
+                        <ReportItem key={report.id} report={report} />
                     ))}
-                </ul>
+                </div>
             ) : (
-                <Empty>
-                    <EmptyHeader>
-                        <EmptyMedia variant="icon">
-                            <PiTicket />
-                        </EmptyMedia>
-                        <EmptyTitle>No Reports Found</EmptyTitle>
-                        <EmptyDescription>There are no reports found</EmptyDescription>
-                    </EmptyHeader>
-                </Empty>
+                <div className="rounded-xl border border-dashed border-border py-12">
+                    <Empty>
+                        <EmptyHeader>
+                            <EmptyMedia variant="icon">
+                                <PiFlag />
+                            </EmptyMedia>
+                            <EmptyTitle>No Reports Found</EmptyTitle>
+                            <EmptyDescription>There are no reports found</EmptyDescription>
+                        </EmptyHeader>
+                    </Empty>
+                </div>
             )}
+            <div className="ml-auto">
+                <PaginationParams className="w-fit" pageCount={data.data?.pagination.pageCount ?? 1} />
+            </div>
         </AnimDiv>
     )
 }

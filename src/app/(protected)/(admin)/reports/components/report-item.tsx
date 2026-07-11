@@ -1,31 +1,28 @@
 "use client"
 
-import {Item, ItemContent, ItemTitle} from "@/components/ui/item"
+import {Item, ItemContent, ItemTitle, ItemActions} from "@/components/ui/item"
 import {useQueryParams} from "@/utils/hooks/useQueryParams"
 import {format} from "date-fns"
 import {Badge} from "@/components/ui/badge"
 import {normalizeString} from "@/utils/helpers/normalize-string"
 import {Separator} from "@/components/ui/separator"
-import {PiCalendarDots, PiChatCentered} from "react-icons/pi"
+import {PiCalendarDots, PiChatCentered, PiEye} from "react-icons/pi"
 import {Report} from "../services/get-reports"
 import {reportStatusOptions, reportTypeOptions} from "@/utils/constants/report"
+import {Button} from "@/components/ui/button"
 
 type ReportItemProps = {
     report: Report
 }
 
 const ReportItem = ({report}: ReportItemProps) => {
-    const {setParams, getParam} = useQueryParams()
-    const selected = getParam("detail")
+    const {setParams} = useQueryParams()
 
     const thisStatus = reportStatusOptions.find((option) => option.value === report.status)
     const thisType = reportTypeOptions.find((option) => option.value === report.type)
 
     return (
-        <Item
-            onClick={() => setParams({detail: report.id})}
-            className={`cursor-pointer ${selected !== report.id ? "" : "bg-muted"} hover:bg-muted duration-200`}
-            size={"xs"}>
+        <Item className="bg-muted hover:bg-background duration-200">
             <ItemContent>
                 <ItemTitle className="flex justify-between w-full">
                     <span>{report.title}</span>
@@ -55,6 +52,11 @@ const ReportItem = ({report}: ReportItemProps) => {
                     </span>
                 </div>
             </ItemContent>
+            <ItemActions>
+                <Button className="rounded-lg" onClick={() => setParams({detail: report.id})} size={"icon-sm"} variant="outline">
+                    <PiEye />
+                </Button>
+            </ItemActions>
         </Item>
     )
 }

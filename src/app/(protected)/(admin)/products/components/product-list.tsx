@@ -1,8 +1,9 @@
-import {PiTicket} from "react-icons/pi"
+import {PiPackage} from "react-icons/pi"
 import AnimDiv from "@/components/custom/anim-div"
 import {Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle} from "@/components/ui/empty"
 import {getProducts} from "../services/get-products"
 import ProductItem from "./product-item"
+import PaginationParams from "@/components/custom/pagination-params"
 
 type ProductListProps = {
     page?: number
@@ -17,7 +18,7 @@ const ProductList = async ({page, search}: ProductListProps) => {
             <Empty>
                 <EmptyHeader>
                     <EmptyMedia variant="icon">
-                        <PiTicket />
+                        <PiPackage />
                     </EmptyMedia>
                     <EmptyTitle>Something Went Wrong</EmptyTitle>
                     <EmptyDescription>{data?.message}, Please try again later.</EmptyDescription>
@@ -27,26 +28,29 @@ const ProductList = async ({page, search}: ProductListProps) => {
     }
 
     return (
-        <AnimDiv>
+        <AnimDiv className="flex flex-col gap-4">
             {data.data && data.data?.products.length > 0 ? (
-                <ul className="space-y-2 w-full">
+                <div className="overflow-hidden space-y-2">
                     {data.data.products.map((product) => (
-                        <li key={product.id}>
-                            <ProductItem product={product} />
-                        </li>
+                        <ProductItem key={product.id} product={product} />
                     ))}
-                </ul>
+                </div>
             ) : (
-                <Empty>
-                    <EmptyHeader>
-                        <EmptyMedia variant="icon">
-                            <PiTicket />
-                        </EmptyMedia>
-                        <EmptyTitle>No Products Found</EmptyTitle>
-                        <EmptyDescription>There are no products found</EmptyDescription>
-                    </EmptyHeader>
-                </Empty>
+                <div className="rounded-xl border border-dashed border-border py-12">
+                    <Empty>
+                        <EmptyHeader>
+                            <EmptyMedia variant="icon">
+                                <PiPackage />
+                            </EmptyMedia>
+                            <EmptyTitle>No Products Found</EmptyTitle>
+                            <EmptyDescription>There are no products found</EmptyDescription>
+                        </EmptyHeader>
+                    </Empty>
+                </div>
             )}
+            <div className="ml-auto">
+                <PaginationParams className="w-fit" pageCount={data.data?.pagination.pageCount ?? 1} />
+            </div>
         </AnimDiv>
     )
 }

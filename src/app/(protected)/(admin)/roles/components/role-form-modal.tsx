@@ -2,10 +2,9 @@
 
 import {zodResolver} from "@hookform/resolvers/zod"
 import {Controller, useForm} from "react-hook-form"
-import {PiKey, PiPlus} from "react-icons/pi"
+import {PiCardholder, PiPlus} from "react-icons/pi"
 
 import {Button} from "@/components/ui/button"
-import {Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger} from "@/components/ui/sheet"
 import {Input} from "@/components/ui/input"
 import {Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldLegend, FieldSet} from "@/components/ui/field"
 import {RoleFormSchema, roleSchema} from "../utils/schemas"
@@ -20,10 +19,14 @@ import {Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle} from "@/co
 import {Checkbox} from "@/components/ui/checkbox"
 import {getPermissions} from "@/utils/services/get-permissions"
 import {Switch} from "@/components/ui/switch"
+import {Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger} from "@/components/ui/drawer"
+import {useScreenSize} from "@/utils/hooks/useScreenSize"
+import {cn} from "@/lib/utils"
 
 const RoleFormModal = () => {
     const queryClient = useQueryClient()
     const {getParam, setParams} = useQueryParams()
+    const {isMobile} = useScreenSize()
 
     const view = getParam("view")
 
@@ -88,17 +91,19 @@ const RoleFormModal = () => {
     }, [view, roleData, form, refetchRole])
 
     return (
-        <Sheet open={!!view} onOpenChange={(e) => (e ? setParams({view: "create"}) : setParams({view: ""}))}>
-            <SheetTrigger asChild>
+        <Drawer direction={isMobile ? "bottom" : "right"} open={!!view} onOpenChange={(e) => (e ? setParams({view: "create"}) : setParams({view: ""}))}>
+            <DrawerTrigger asChild>
                 <Button>
                     <PiPlus /> Create Role
                 </Button>
-            </SheetTrigger>
-            <SheetContent aria-describedby="role-form">
-                <SheetHeader>
-                    <SheetTitle className="flex items-center gap-4">{view !== "create" ? "Edit" : "Create"} Role</SheetTitle>
-                    <SheetDescription className="flex items-center gap-4">{view !== "create" ? "Edit" : "Create"} a custom role for your organization.</SheetDescription>
-                </SheetHeader>
+            </DrawerTrigger>
+            <DrawerContent aria-describedby="role-form" className={cn(isMobile ? "h-[80vh]" : "")}>
+                <DrawerHeader>
+                    <DrawerTitle className="flex items-center gap-4">{view !== "create" ? "Edit" : "Create"} Role</DrawerTitle>
+                    <DrawerDescription className="flex items-center gap-4">
+                        {view !== "create" ? "Edit" : "Create"} a custom role for your organization.
+                    </DrawerDescription>
+                </DrawerHeader>
 
                 <div className="px-6">
                     {isLoading ? (
@@ -109,7 +114,7 @@ const RoleFormModal = () => {
                         <Empty>
                             <EmptyHeader>
                                 <EmptyMedia variant="icon">
-                                    <PiKey />
+                                    <PiCardholder />
                                 </EmptyMedia>
                                 <EmptyTitle>Failed to fetch role</EmptyTitle>
                                 <EmptyDescription>Failed to fetch role. Please try again.</EmptyDescription>
@@ -182,16 +187,18 @@ const RoleFormModal = () => {
                     )}
                 </div>
 
-                <SheetFooter>
-                    <SheetClose asChild>
-                        <Button variant="outline">Cancel</Button>
-                    </SheetClose>
+                <DrawerFooter>
+                    <DrawerClose asChild>
+                        <Button variant="outline" className="w-full">
+                            Cancel
+                        </Button>
+                    </DrawerClose>
                     <Button disabled={isPending} type="submit" form="role-form">
                         {isPending ? <Loader2 className="animate-spin" /> : "Submit"}
                     </Button>
-                </SheetFooter>
-            </SheetContent>
-        </Sheet>
+                </DrawerFooter>
+            </DrawerContent>
+        </Drawer>
     )
 }
 

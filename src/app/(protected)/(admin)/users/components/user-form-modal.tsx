@@ -2,9 +2,9 @@
 
 import {useEffect} from "react"
 import {Controller, useForm} from "react-hook-form"
-import {PiKey} from "react-icons/pi"
+import {PiUser} from "react-icons/pi"
 import {Button} from "@/components/ui/button"
-import {Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle} from "@/components/ui/sheet"
+import {Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle} from "@/components/ui/drawer"
 import {Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldLegend, FieldSet} from "@/components/ui/field"
 import {Loader2} from "lucide-react"
 import {Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle} from "@/components/ui/empty"
@@ -17,10 +17,13 @@ import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar"
 import {updateUser} from "../services/update-user"
 import {toast} from "sonner"
 import {UserFormSchema} from "../utils/schemas"
+import {useScreenSize} from "@/utils/hooks/useScreenSize"
+import {cn} from "@/lib/utils"
 
 const UserFormModal = () => {
     const queryClient = useQueryClient()
     const {getParam, setParams} = useQueryParams()
+    const {isMobile} = useScreenSize()
 
     const id = getParam("id")
 
@@ -48,7 +51,7 @@ const UserFormModal = () => {
         onSuccess: (res) => {
             if (!res.success) return toast.error(res.message)
             toast.success(res.message)
-            queryClient.invalidateQueries({queryKey: ["permissions"]})
+            queryClient.invalidateQueries({queryKey: ["users"]})
             form.reset()
             setParams({id: ""})
         },
@@ -72,10 +75,10 @@ const UserFormModal = () => {
     }, [userData, form, id])
 
     return (
-        <Sheet open={!!id} onOpenChange={(open) => !open && setParams({id: ""})}>
-            <SheetContent aria-describedby="user-form">
-                <SheetHeader>
-                    <SheetTitle className="flex items-center gap-4">
+        <Drawer direction={isMobile ? "bottom" : "right"} open={!!id} onOpenChange={(open) => !open && setParams({id: ""})}>
+            <DrawerContent aria-describedby="user-form" className={cn(isMobile ? "h-[80vh]" : "")}>
+                <DrawerHeader>
+                    <DrawerTitle className="flex items-center gap-4">
                         <Avatar className="w-10 h-10">
                             <AvatarImage src={userData?.success && userData?.data?.image ? userData.data.image : undefined} />
                             <AvatarFallback>{userData?.success && userData?.data?.name ? userData.data.name[0].toUpperCase() : "U"}</AvatarFallback>
@@ -84,9 +87,9 @@ const UserFormModal = () => {
                             <p className="text-lg font-medium">{userData?.success && userData?.data?.name}</p>
                             <p className="text-sm text-muted-foreground">{userData?.success && userData?.data?.email}</p>
                         </div>
-                    </SheetTitle>
-                    <SheetDescription className="sr-only">User form modal</SheetDescription>
-                </SheetHeader>
+                    </DrawerTitle>
+                    <DrawerDescription className="sr-only">User form modal</DrawerDescription>
+                </DrawerHeader>
 
                 <div className="px-6">
                     {isLoading ? (
@@ -97,10 +100,10 @@ const UserFormModal = () => {
                         <Empty>
                             <EmptyHeader>
                                 <EmptyMedia variant="icon">
-                                    <PiKey />
+                                    <PiUser />
                                 </EmptyMedia>
-                                <EmptyTitle>Failed to fetch permission</EmptyTitle>
-                                <EmptyDescription>Failed to fetch permission. Please try again.</EmptyDescription>
+                                <EmptyTitle>Failed to fetch user data</EmptyTitle>
+                                <EmptyDescription>Failed to fetch user data. Please try again.</EmptyDescription>
                             </EmptyHeader>
                         </Empty>
                     ) : (
@@ -113,7 +116,7 @@ const UserFormModal = () => {
                                         render={({field, fieldState}) => (
                                             <FieldSet>
                                                 <FieldLegend variant="label">Roles</FieldLegend>
-                                                <FieldDescription>Define the roles for this permission.</FieldDescription>
+                                                <FieldDescription>Define the roles for this user.</FieldDescription>
                                                 <FieldGroup data-slot="checkbox-group">
                                                     {permissionsAndRoles?.success &&
                                                         permissionsAndRoles.data.roles.map((role) => (
@@ -182,16 +185,18 @@ const UserFormModal = () => {
                     )}
                 </div>
 
-                <SheetFooter>
-                    <SheetClose asChild>
-                        <Button variant="outline">Cancel</Button>
-                    </SheetClose>
+                <DrawerFooter>
+                    <DrawerClose asChild>
+                        <Button variant="outline" className="w-full">
+                            Cancel
+                        </Button>
+                    </DrawerClose>
                     <Button disabled={isPending} type="submit" form="user-form">
                         {isPending ? <Loader2 className="animate-spin" /> : "Submit"}
                     </Button>
-                </SheetFooter>
-            </SheetContent>
-        </Sheet>
+                </DrawerFooter>
+            </DrawerContent>
+        </Drawer>
     )
 }
 

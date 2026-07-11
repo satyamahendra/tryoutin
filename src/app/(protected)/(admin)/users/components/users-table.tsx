@@ -1,4 +1,3 @@
-import {Table, TableBody, TableHead, TableHeader, TableRow} from "@/components/ui/table"
 import {getUsers} from "../services/get-users"
 import PaginationParams from "@/components/custom/pagination-params"
 import {PiUser} from "react-icons/pi"
@@ -29,24 +28,10 @@ export async function UsersTable({page, search}: Props) {
                     </Empty>
                 </div>
             ) : (
-                <div className="rounded-xl border border-border overflow-hidden">
-                    <Table>
-                        <TableHeader className="bg-muted">
-                            <TableRow>
-                                <TableHead className="font-semibold">#</TableHead>
-                                <TableHead className="font-semibold">Name</TableHead>
-                                <TableHead className="font-semibold">Email</TableHead>
-                                <TableHead className="font-semibold">Registered at</TableHead>
-                                <TableHead className="font-semibold">Roles</TableHead>
-                                <TableHead className="font-semibold">Action</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {data.users.map((user, index) => (
-                                <UserItem key={user.id} user={user} number={index + 1 + (data.pagination.page - 1) * 10} />
-                            ))}
-                        </TableBody>
-                    </Table>
+                <div className="overflow-hidden space-y-2">
+                    {data.users.map((user) => (
+                        <UserItem key={user.id} user={user} />
+                    ))}
                 </div>
             )}
 

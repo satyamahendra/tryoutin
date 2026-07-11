@@ -10,7 +10,6 @@ import {PiCaretLeft, PiHouse} from "react-icons/pi"
 import {useScreenSize} from "@/utils/hooks/useScreenSize"
 import {Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, DrawerTrigger} from "@/components/ui/drawer"
 import {usePathname} from "next/navigation"
-import {format} from "date-fns"
 
 const Sidebar = () => {
     const {data: session} = authClient.useSession()

@@ -1,6 +1,5 @@
 "use client"
 
-import {TableCell, TableRow} from "@/components/ui/table"
 import {Button} from "@/components/ui/button"
 import {PiCircle, PiCircleFill, PiPencil} from "react-icons/pi"
 import {useQueryParams} from "@/utils/hooks/useQueryParams"
@@ -12,10 +11,9 @@ import {Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle} f
 
 type PermissionItemProps = {
     permission: PermissionWithRoles
-    number: number
 }
 
-const PermissionItem = ({permission, number}: PermissionItemProps) => {
+const PermissionItem = ({permission}: PermissionItemProps) => {
     const {setParams} = useQueryParams()
 
     const firstThreeRoles = permission.roles.slice(0, 3)

@@ -6,7 +6,7 @@ import {ProductFormSchema, productSchema} from "../utils/schema"
 import {Field, FieldError, FieldGroup, FieldLabel} from "@/components/ui/field"
 import {Input} from "@/components/ui/input"
 import {Button} from "@/components/ui/button"
-import {PiPlus, PiTrash} from "react-icons/pi"
+import {PiPlus, PiTrash, PiX} from "react-icons/pi"
 import {Label} from "@/components/ui/label"
 import {getProducts} from "../services/get-products"
 import {InfiniteCombobox} from "@/components/custom/combobox"
@@ -16,10 +16,10 @@ import {toast} from "sonner"
 import {useQueryParams} from "@/utils/hooks/useQueryParams"
 import {Loader2} from "lucide-react"
 import {useTransition} from "react"
-import {Separator} from "@/components/ui/separator"
 import {deleteProduct} from "../services/delete-product"
 import {Switch} from "@/components/ui/switch"
 import {zodResolver} from "@hookform/resolvers/zod"
+import {DrawerClose} from "@/components/ui/drawer"
 
 type ProductFormProps = {
     product?: Product
@@ -87,159 +87,162 @@ const ProductForm = ({product}: ProductFormProps) => {
     }
 
     return (
-        <>
-            <div className="font-semibold text-xl flex justify-between items-center">
-                <div>{product ? "Edit Product" : "Create Product"}</div>
-                {product && (
-                    <Button disabled={isPending} onClick={() => mutateDelete(product.id)} variant={"destructive"}>
-                        <PiTrash /> {isPending ? <Loader2 /> : "Delete"}
-                    </Button>
-                )}
-            </div>
-            <Separator className="my-4" />
-            <form id="product-form" onSubmit={form.handleSubmit(onSubmit)}>
-                <FieldGroup>
-                    <div className="flex gap-4">
-                        <Controller
-                            name="name"
-                            control={form.control}
-                            render={({field, fieldState}) => (
-                                <Field data-invalid={fieldState.invalid}>
-                                    <FieldLabel htmlFor="name">Name</FieldLabel>
-                                    <Input {...field} id="name" aria-invalid={fieldState.invalid} placeholder="Product Name" />
-                                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                                </Field>
-                            )}
-                        />
-                        <Controller
-                            name="type"
-                            control={form.control}
-                            render={({field, fieldState}) => (
-                                <Field data-invalid={fieldState.invalid}>
-                                    <FieldLabel htmlFor="type">Type</FieldLabel>
-                                    <InfiniteCombobox
-                                        value={field.value ? {value: field.value, label: field.value === "single" ? "Single" : "Bundle"} : null}
-                                        onChange={(opt) => field.onChange(opt?.value ?? null)}
-                                        placeholder="Select product type"
-                                        options={[
-                                            {value: "single", label: "Single"},
-                                            {value: "bundle", label: "Bundle"},
-                                        ]}
-                                    />
-                                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                                </Field>
-                            )}
-                        />
-                    </div>
-                    <div className="flex gap-4">
-                        <Controller
-                            name="price_actual"
-                            control={form.control}
-                            render={({field, fieldState}) => (
-                                <Field data-invalid={fieldState.invalid}>
-                                    <FieldLabel htmlFor="price_actual">Price Actual</FieldLabel>
-                                    <Input
-                                        {...field}
-                                        type="number"
-                                        id="price_actual"
-                                        aria-invalid={fieldState.invalid}
-                                        placeholder="Price Actual"
-                                        onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : 0)}
-                                    />
-                                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                                </Field>
-                            )}
-                        />
-                        <Controller
-                            name="price_alternate"
-                            control={form.control}
-                            render={({field, fieldState}) => (
-                                <Field data-invalid={fieldState.invalid}>
-                                    <FieldLabel htmlFor="price_alternate">Price Alternate</FieldLabel>
-                                    <Input
-                                        {...field}
-                                        type="number"
-                                        id="price_alternate"
-                                        aria-invalid={fieldState.invalid}
-                                        placeholder="Price Alternate"
-                                        onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : 0)}
-                                    />
-                                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                                </Field>
-                            )}
-                        />
-                    </div>
-
-                    <div>
-                        <Controller
-                            name="is_active"
-                            control={form.control}
-                            render={({field, fieldState}) => (
-                                <Field data-invalid={fieldState.invalid}>
-                                    <FieldLabel htmlFor="is_active">Is active?</FieldLabel>
-                                    <Switch checked={field.value} onCheckedChange={field.onChange} id="is_active" aria-invalid={fieldState.invalid} />
-                                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                                </Field>
-                            )}
-                        />
-                    </div>
-
-                    <div className="flex flex-col gap-4">
-                        <div className="flex items-center gap-2">
-                            <Label>Bundle Items</Label>
-                            <Button size="icon-xs" type="button" onClick={() => append({product_id: {label: "", value: ""}})} variant="outline">
-                                <PiPlus />
-                            </Button>
-                        </div>
-                        {fields.map((_, index) => (
-                            <div key={index} className="flex items-center gap-4">
-                                <Controller
-                                    name={`bundle_items.${index}.product_id`}
-                                    control={form.control}
-                                    render={({field, fieldState}) => {
-                                        const error = form.formState.errors.bundle_items?.[index]?.product_id?.value
-                                        return (
-                                            <Field data-invalid={fieldState.invalid} className="w-full">
-                                                <div className="flex gap-4 items-center">
-                                                    <InfiniteCombobox
-                                                        value={field.value}
-                                                        onChange={field.onChange}
-                                                        placeholder="Select a product"
-                                                        queryKey={["products"]}
-                                                        invalid={fieldState.invalid}
-                                                        queryFn={(page, search) => getProducts(page, search)}
-                                                        getItems={(page) =>
-                                                            page.data?.products.map((p) => ({
-                                                                value: p.id,
-                                                                label: `${p.name}`,
-                                                            })) ?? []
-                                                        }
-                                                        getNextPage={(page) => {
-                                                            if (!page.data) return undefined
-                                                            const {page: current, pageCount} = page.data.pagination
-                                                            return current < pageCount ? current + 1 : undefined
-                                                        }}
-                                                    />
-                                                    <Button variant="destructive" type="button" size="icon" onClick={() => remove(index)}>
-                                                        <PiTrash />
-                                                    </Button>
-                                                </div>
-                                                {fieldState.invalid && <FieldError errors={[error]} />}
-                                            </Field>
-                                        )
-                                    }}
+        <form id="product-form" onSubmit={form.handleSubmit(onSubmit)}>
+            <FieldGroup>
+                <div className="flex gap-4">
+                    <Controller
+                        name="name"
+                        control={form.control}
+                        render={({field, fieldState}) => (
+                            <Field data-invalid={fieldState.invalid}>
+                                <FieldLabel htmlFor="name">Name</FieldLabel>
+                                <Input {...field} id="name" aria-invalid={fieldState.invalid} placeholder="Product Name" />
+                                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                            </Field>
+                        )}
+                    />
+                    <Controller
+                        name="type"
+                        control={form.control}
+                        render={({field, fieldState}) => (
+                            <Field data-invalid={fieldState.invalid}>
+                                <FieldLabel htmlFor="type">Type</FieldLabel>
+                                <InfiniteCombobox
+                                    value={field.value ? {value: field.value, label: field.value === "single" ? "Single" : "Bundle"} : null}
+                                    onChange={(opt) => field.onChange(opt?.value ?? null)}
+                                    placeholder="Select product type"
+                                    options={[
+                                        {value: "single", label: "Single"},
+                                        {value: "bundle", label: "Bundle"},
+                                    ]}
                                 />
-                            </div>
-                        ))}
-                    </div>
-                </FieldGroup>
-                <div className="mt-4 flex justify-end">
-                    <Button disabled={isPending} type="submit" form="product-form">
-                        {isPending ? <Loader2 className="animate-spin" /> : "Submit"}
-                    </Button>
+                                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                            </Field>
+                        )}
+                    />
                 </div>
-            </form>
-        </>
+                <div className="flex gap-4">
+                    <Controller
+                        name="price_actual"
+                        control={form.control}
+                        render={({field, fieldState}) => (
+                            <Field data-invalid={fieldState.invalid}>
+                                <FieldLabel htmlFor="price_actual">Price Actual</FieldLabel>
+                                <Input
+                                    {...field}
+                                    type="number"
+                                    id="price_actual"
+                                    aria-invalid={fieldState.invalid}
+                                    placeholder="Price Actual"
+                                    onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : 0)}
+                                />
+                                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                            </Field>
+                        )}
+                    />
+                    <Controller
+                        name="price_alternate"
+                        control={form.control}
+                        render={({field, fieldState}) => (
+                            <Field data-invalid={fieldState.invalid}>
+                                <FieldLabel htmlFor="price_alternate">Price Alternate</FieldLabel>
+                                <Input
+                                    {...field}
+                                    type="number"
+                                    id="price_alternate"
+                                    aria-invalid={fieldState.invalid}
+                                    placeholder="Price Alternate"
+                                    onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : 0)}
+                                />
+                                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                            </Field>
+                        )}
+                    />
+                </div>
+
+                <div>
+                    <Controller
+                        name="is_active"
+                        control={form.control}
+                        render={({field, fieldState}) => (
+                            <Field data-invalid={fieldState.invalid}>
+                                <FieldLabel htmlFor="is_active">Is active?</FieldLabel>
+                                <Switch checked={field.value} onCheckedChange={field.onChange} id="is_active" aria-invalid={fieldState.invalid} />
+                                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                            </Field>
+                        )}
+                    />
+                </div>
+
+                <div className="flex flex-col gap-4">
+                    <div className="flex items-center gap-2">
+                        <Label>Bundle Items</Label>
+                        <Button size="icon-xs" type="button" onClick={() => append({product_id: {label: "", value: ""}})} variant="outline">
+                            <PiPlus />
+                        </Button>
+                    </div>
+                    {fields.map((_, index) => (
+                        <div key={index} className="flex items-center gap-4">
+                            <Controller
+                                name={`bundle_items.${index}.product_id`}
+                                control={form.control}
+                                render={({field, fieldState}) => {
+                                    const error = form.formState.errors.bundle_items?.[index]?.product_id?.value
+                                    return (
+                                        <Field data-invalid={fieldState.invalid} className="w-full">
+                                            <div className="flex gap-4 items-center">
+                                                <InfiniteCombobox
+                                                    value={field.value}
+                                                    onChange={field.onChange}
+                                                    placeholder="Select a product"
+                                                    queryKey={["products"]}
+                                                    invalid={fieldState.invalid}
+                                                    queryFn={(page, search) => getProducts(page, search)}
+                                                    getItems={(page) =>
+                                                        page.data?.products.map((p) => ({
+                                                            value: p.id,
+                                                            label: `${p.name}`,
+                                                        })) ?? []
+                                                    }
+                                                    getNextPage={(page) => {
+                                                        if (!page.data) return undefined
+                                                        const {page: current, pageCount} = page.data.pagination
+                                                        return current < pageCount ? current + 1 : undefined
+                                                    }}
+                                                />
+                                                <Button variant="destructive" type="button" size="icon" onClick={() => remove(index)}>
+                                                    <PiTrash />
+                                                </Button>
+                                            </div>
+                                            {fieldState.invalid && <FieldError errors={[error]} />}
+                                        </Field>
+                                    )
+                                }}
+                            />
+                        </div>
+                    ))}
+                </div>
+
+                <div className="flex flex-col gap-2 pt-2">
+                    <div className="flex gap-2">
+                        <DrawerClose asChild>
+                            <Button variant="outline" className="flex-1">
+                                <PiX /> Cancel
+                            </Button>
+                        </DrawerClose>
+                        <Button disabled={isPending} type="submit" form="product-form" className="flex-1">
+                            {isPending ? <Loader2 className="animate-spin" /> : "Submit"}
+                        </Button>
+                    </div>
+
+                    {product && (
+                        <Button disabled={isPending} onClick={() => mutateDelete(product.id)} variant={"destructive"} type="button" className="w-full">
+                            <PiTrash /> {isPending ? <Loader2 className="animate-spin" /> : "Delete Product"}
+                        </Button>
+                    )}
+                </div>
+            </FieldGroup>
+        </form>
     )
 }
 
