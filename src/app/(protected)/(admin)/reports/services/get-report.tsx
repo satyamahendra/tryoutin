@@ -42,13 +42,9 @@ const reportSelect = Prisma.validator<Prisma.ReportSelect>()({
     },
 })
 
-export type Report = Prisma.ReportGetPayload<{select: typeof reportSelect}>
+export type GetReport = Prisma.ReportGetPayload<{select: typeof reportSelect}>
 
-export type ReportResponse = {
-    report: Report
-}
-
-export async function getReport(id: string): Promise<ServerResult<ReportResponse>> {
+export async function getReport(id: string): Promise<ServerResult<GetReport>> {
     try {
         const session = await authServer()
         if (!session) throw new Error("Unauthorized")
@@ -62,7 +58,7 @@ export async function getReport(id: string): Promise<ServerResult<ReportResponse
 
         if (!report) throw new Error("Report not found")
 
-        return {success: true, data: {report}, message: "Report fetched successfully"}
+        return {success: true, data: report, message: "Report fetched successfully"}
     } catch (error) {
         return handleServerError(error)
     }

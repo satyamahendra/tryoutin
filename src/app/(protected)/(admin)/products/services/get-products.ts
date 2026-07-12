@@ -26,14 +26,14 @@ const productSelect = Prisma.validator<Prisma.ProductSelect>()({
     },
 })
 
-export type Product = Prisma.ProductGetPayload<{select: typeof productSelect}>
+export type GetProduct = Prisma.ProductGetPayload<{select: typeof productSelect}>
 
-export type ProductList = {
-    products: Product[]
+export type GetProducts = {
+    products: GetProduct[]
     pagination: Pagination
 }
 
-export async function getProducts(page: number = 1, search = "", limit = PAGE_SIZE): Promise<ServerResult<ProductList>> {
+export async function getProducts(page: number = 1, search = "", limit = PAGE_SIZE): Promise<ServerResult<GetProducts>> {
     const skip = (page - 1) * limit
 
     try {

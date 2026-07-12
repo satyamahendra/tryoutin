@@ -26,13 +26,9 @@ const productSelect = Prisma.validator<Prisma.ProductSelect>()({
     },
 })
 
-export type Product = Prisma.ProductGetPayload<{select: typeof productSelect}>
+export type GetProduct = Prisma.ProductGetPayload<{select: typeof productSelect}>
 
-export type ProductItem = {
-    product: Product
-}
-
-export async function getProduct(id: string): Promise<ServerResult<ProductItem>> {
+export async function getProduct(id: string): Promise<ServerResult<GetProduct>> {
     try {
         const session = await authServer()
         if (!session) throw new Error("Unauthorized")
@@ -46,7 +42,7 @@ export async function getProduct(id: string): Promise<ServerResult<ProductItem>>
 
         if (!product) throw new Error("Product not found")
 
-        return {success: true, data: {product}, message: "Product fetched successfully"}
+        return {success: true, data: product, message: "Product fetched successfully"}
     } catch (error) {
         return handleServerError(error)
     }

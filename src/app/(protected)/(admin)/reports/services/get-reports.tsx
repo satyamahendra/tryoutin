@@ -29,14 +29,14 @@ const reportSelect = Prisma.validator<Prisma.ReportSelect>()({
     },
 })
 
-export type Report = Prisma.ReportGetPayload<{select: typeof reportSelect}>
+export type GetReport = Prisma.ReportGetPayload<{select: typeof reportSelect}>
 
-export type ReportResponse = {
-    reports: Report[]
+export type GetReports = {
+    reports: GetReport[]
     pagination: Pagination
 }
 
-export async function getReports(page: number = 1, search = ""): Promise<ServerResult<ReportResponse>> {
+export async function getReports(page: number = 1, search = ""): Promise<ServerResult<GetReports>> {
     const skip = (page - 1) * PAGE_SIZE
 
     try {

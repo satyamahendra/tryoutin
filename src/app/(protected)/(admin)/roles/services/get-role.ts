@@ -1,14 +1,24 @@
 "use server"
 
-import {Role} from "@/generated/index"
+import {Prisma} from "@/generated/index"
 import {authServer} from "@/lib/auth-server"
 import prisma from "@/lib/prisma/client"
 import {handleServerError} from "@/utils/helpers/handle-server-errors"
 import {ServerResult} from "@/utils/types/server-action"
 
-type Response = Role & {permissions: {permission_name: string}[]}
+const roleSelect = Prisma.validator<Prisma.RoleSelect>()({
+    name: true,
+    is_active: true,
+    permissions: {
+        select: {
+            permission_name: true,
+        },
+    },
+})
 
-export async function getRole(name: string): Promise<ServerResult<Response>> {
+export type GetRole = Prisma.RoleGetPayload<{select: typeof roleSelect}>
+
+export async function getRole(name: string): Promise<ServerResult<GetRole>> {
     try {
         const session = await authServer()
 
@@ -16,11 +26,7 @@ export async function getRole(name: string): Promise<ServerResult<Response>> {
 
         const role = await prisma.role.findUnique({
             where: {name},
-            include: {
-                permissions: {
-                    select: {permission_name: true},
-                },
-            },
+            select: roleSelect,
         })
 
         if (!role) throw new Error("Role not found")

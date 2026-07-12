@@ -3,11 +3,11 @@ import {Suspense} from "react"
 import {PiKey} from "react-icons/pi"
 import {PermissionsTable} from "./components/permissions-table"
 import {Loader2} from "lucide-react"
-import PermissionFormModal from "./components/permission-form-modal"
 import {hasPermissions} from "@/utils/helpers/has-ability-server"
 import {redirect} from "next/navigation"
 import AnimDiv from "@/components/custom/anim-div"
 import SearchParams from "@/components/custom/search-params"
+import PermissionDetailModal from "./components/permission-detail-modal"
 
 type PageProps = {
     searchParams: Promise<{
@@ -25,7 +25,7 @@ const Page = async ({searchParams}: PageProps) => {
 
     return (
         <AnimDiv className="flex flex-col gap-4 pb-4">
-            <PageHeader title="Permissions" description="Manage permissions" icon={<PiKey />} subComponent={<PermissionFormModal />} />
+            <PageHeader title="Permissions" description="Manage permissions" icon={<PiKey />} subComponent={<PermissionDetailModal />} />
             <SearchParams className="w-48 self-end" />
             <Suspense
                 key={`${page}-${search}`}

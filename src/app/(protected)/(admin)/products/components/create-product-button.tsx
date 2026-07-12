@@ -8,7 +8,7 @@ const CreateProductButton = () => {
     const {setParams} = useQueryParams()
 
     return (
-        <Button onClick={() => setParams({detail: "create"})}>
+        <Button onClick={() => setParams({view: "create"})}>
             <PiPlus />
             Create Product
         </Button>

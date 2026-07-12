@@ -28,14 +28,14 @@ const orderSelect = Prisma.validator<Prisma.OrderSelect>()({
     },
 })
 
-export type OrderWithUser = Prisma.OrderGetPayload<{select: typeof orderSelect}>
+export type GetOrder = Prisma.OrderGetPayload<{select: typeof orderSelect}>
 
-export type OrderList = {
-    orders: OrderWithUser[]
+export type GetOrders = {
+    orders: GetOrder[]
     pagination: Pagination
 }
 
-export async function getOrders(page: number = 1, search = ""): Promise<ServerResult<OrderList>> {
+export async function getOrders(page: number = 1, search = ""): Promise<ServerResult<GetOrders>> {
     const skip = (page - 1) * PAGE_SIZE
 
     try {

@@ -53,7 +53,7 @@ const ReportItem = ({report}: ReportItemProps) => {
                 </div>
             </ItemContent>
             <ItemActions>
-                <Button className="rounded-lg" onClick={() => setParams({detail: report.id})} size={"icon-sm"} variant="outline">
+                <Button className="rounded-lg" onClick={() => setParams({view: report.id})} size={"icon-sm"} variant="outline">
                     <PiEye />
                 </Button>
             </ItemActions>

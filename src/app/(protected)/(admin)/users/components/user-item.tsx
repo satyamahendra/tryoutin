@@ -59,7 +59,7 @@ const UserItem = ({user}: Props) => {
                 </ItemDescription>
             </ItemContent>
             <ItemActions>
-                <Button className="rounded-lg" onClick={() => setParams({id: user.id})} size={"icon-sm"} variant="outline">
+                <Button className="rounded-lg" onClick={() => setParams({view: user.id})} size={"icon-sm"} variant="outline">
                     <PiPencil />
                 </Button>
             </ItemActions>

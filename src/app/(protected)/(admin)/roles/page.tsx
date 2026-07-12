@@ -3,11 +3,11 @@ import {Suspense} from "react"
 import {PiCardholder} from "react-icons/pi"
 import {RolesTable} from "./components/roles-table"
 import {Loader2} from "lucide-react"
-import RoleFormModal from "./components/role-form-modal"
 import {hasPermissions} from "@/utils/helpers/has-ability-server"
 import {redirect} from "next/navigation"
 import AnimDiv from "@/components/custom/anim-div"
 import SearchParams from "@/components/custom/search-params"
+import RoleDetailModal from "./components/role-detail-modal"
 
 type PageProps = {
     searchParams: Promise<{
@@ -25,7 +25,7 @@ const Page = async ({searchParams}: PageProps) => {
 
     return (
         <AnimDiv className="flex flex-col gap-4 pb-4">
-            <PageHeader title="Roles" description="Manage roles" icon={<PiCardholder />} subComponent={<RoleFormModal />} />
+            <PageHeader title="Roles" description="Manage roles" icon={<PiCardholder />} subComponent={<RoleDetailModal />} />
             <SearchParams className="w-48 self-end" />
             <Suspense
                 key={`${pageNum}-${search}`}

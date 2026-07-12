@@ -14,14 +14,14 @@ const permissionSelect = Prisma.validator<Prisma.PermissionSelect>()({
     },
 })
 
-export type PermissionWithRoles = Prisma.PermissionGetPayload<{select: typeof permissionSelect}>
+export type GetPermission = Prisma.PermissionGetPayload<{select: typeof permissionSelect}>
 
-export type PermissionsPage = {
-    permissions: PermissionWithRoles[]
+export type GetPermissions = {
+    permissions: GetPermission[]
     pagination: Pagination
 }
 
-export async function getPermissions(page: number = 1, search = ""): Promise<PermissionsPage> {
+export async function getPermissions(page: number = 1, search = ""): Promise<GetPermissions> {
     const skip = (page - 1) * PAGE_SIZE
 
     const session = await authServer()

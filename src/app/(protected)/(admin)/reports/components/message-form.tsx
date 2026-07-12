@@ -31,7 +31,7 @@ const MessageForm = ({report}: MessageFormProps) => {
     const {mutate, isPending} = useMutation({
         mutationFn: sendMessage,
         onSuccess: () => {
-            queryClient.invalidateQueries({queryKey: ["reports"]})
+            queryClient.invalidateQueries({queryKey: ["report"]})
             form.reset()
         },
         onError: (error) => {

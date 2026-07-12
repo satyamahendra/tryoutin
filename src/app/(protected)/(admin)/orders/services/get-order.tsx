@@ -26,13 +26,9 @@ const orderSelect = Prisma.validator<Prisma.OrderSelect>()({
     },
 })
 
-export type OrderWithUser = Prisma.OrderGetPayload<{select: typeof orderSelect}>
+export type GetOrder = Prisma.OrderGetPayload<{select: typeof orderSelect}>
 
-export type OrderItem = {
-    order: OrderWithUser
-}
-
-export async function getOrder(id: string): Promise<ServerResult<OrderItem>> {
+export async function getOrder(id: string): Promise<ServerResult<GetOrder>> {
     try {
         const session = await authServer()
         if (!session) throw new Error("Unauthorized")
@@ -46,7 +42,7 @@ export async function getOrder(id: string): Promise<ServerResult<OrderItem>> {
 
         if (!order) throw new Error("Order not found")
 
-        return {success: true, data: {order}, message: "Order fetched successfully"}
+        return {success: true, data: order, message: "Order fetched successfully"}
     } catch (error) {
         return handleServerError(error)
     }

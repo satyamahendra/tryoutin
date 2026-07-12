@@ -14,14 +14,14 @@ const roleSelect = Prisma.validator<Prisma.RoleSelect>()({
     },
 })
 
-export type RoleWithPermissions = Prisma.RoleGetPayload<{select: typeof roleSelect}>
+export type GetRole = Prisma.RoleGetPayload<{select: typeof roleSelect}>
 
-export type RolesPage = {
-    roles: RoleWithPermissions[]
+export type GetRoles = {
+    roles: GetRole[]
     pagination: Pagination
 }
 
-export const getRoles = async (page: number = 1, search = ""): Promise<RolesPage> => {
+export const getRoles = async (page: number = 1, search = ""): Promise<GetRoles> => {
     const skip = (page - 1) * PAGE_SIZE
 
     const session = await authServer()

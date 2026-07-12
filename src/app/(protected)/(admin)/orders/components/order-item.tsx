@@ -1,7 +1,7 @@
 "use client"
 
 import {Item, ItemContent, ItemMedia, ItemTitle, ItemActions} from "@/components/ui/item"
-import {OrderWithUser} from "../services/get-orders"
+import {GetOrder} from "../services/get-orders"
 import {useQueryParams} from "@/utils/hooks/useQueryParams"
 import {format} from "date-fns"
 import {Badge} from "@/components/ui/badge"
@@ -11,7 +11,7 @@ import {PiCalendarDots, PiCircle, PiCircleFill, PiEye} from "react-icons/pi"
 import {Button} from "@/components/ui/button"
 
 type OrderItemProps = {
-    order: OrderWithUser
+    order: GetOrder
 }
 
 const OrderItem = ({order}: OrderItemProps) => {
@@ -21,9 +21,7 @@ const OrderItem = ({order}: OrderItemProps) => {
 
     return (
         <Item className="bg-muted hover:bg-background duration-200">
-            <ItemMedia variant="icon">
-                {isSuccess ? <PiCircleFill className="text-green-500" /> : <PiCircle className="text-muted-foreground" />}
-            </ItemMedia>
+            <ItemMedia variant="icon">{isSuccess ? <PiCircleFill className="text-green-500" /> : <PiCircle className="text-muted-foreground" />}</ItemMedia>
             <ItemContent>
                 <ItemTitle>{order.user.email}</ItemTitle>
                 <div className="flex gap-2 text-muted-foreground text-sm">
@@ -42,7 +40,7 @@ const OrderItem = ({order}: OrderItemProps) => {
                 </div>
             </ItemContent>
             <ItemActions>
-                <Button className="rounded-lg" onClick={() => setParams({detail: order.id})} size={"icon-sm"} variant="outline">
+                <Button className="rounded-lg" onClick={() => setParams({view: order.id})} size={"icon-sm"} variant="outline">
                     <PiEye />
                 </Button>
             </ItemActions>

@@ -2,64 +2,64 @@
 
 import {zodResolver} from "@hookform/resolvers/zod"
 import {Controller, useForm} from "react-hook-form"
-import {PiCardholder, PiPlus} from "react-icons/pi"
-
+import {PiKey, PiPlus} from "react-icons/pi"
 import {Button} from "@/components/ui/button"
 import {Input} from "@/components/ui/input"
 import {Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldLegend, FieldSet} from "@/components/ui/field"
-import {RoleFormSchema, roleSchema} from "../utils/schemas"
-import {createUpdateRole} from "../services/create-update-role"
+import {PermissionFormSchema, permissionSchema} from "../utils/schemas"
+import {createUpdatePermission} from "../services/create-update-permission"
 import {toast} from "sonner"
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query"
 import {Loader2} from "lucide-react"
 import {useQueryParams} from "@/utils/hooks/useQueryParams"
-import {getRole} from "../services/get-role"
-import {useEffect} from "react"
+import {getPermission} from "../services/get-permission"
 import {Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle} from "@/components/ui/empty"
 import {Checkbox} from "@/components/ui/checkbox"
-import {getPermissions} from "@/utils/services/get-permissions"
+import {getRoles} from "@/utils/services/get-roles"
 import {Switch} from "@/components/ui/switch"
 import {Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger} from "@/components/ui/drawer"
 import {useScreenSize} from "@/utils/hooks/useScreenSize"
 import {cn} from "@/lib/utils"
 
-const RoleFormModal = () => {
+const PermissionDetailModal = () => {
     const queryClient = useQueryClient()
     const {getParam, setParams} = useQueryParams()
     const {isMobile} = useScreenSize()
 
     const view = getParam("view")
 
-    const {
-        data: roleData,
-        refetch: refetchRole,
-        isLoading,
-    } = useQuery({
-        queryKey: ["role", view],
-        queryFn: () => getRole(view!),
+    const {data: permissionData, isLoading} = useQuery({
+        queryKey: ["permission", view],
+        queryFn: () => getPermission(view!),
         enabled: !!view && view !== "create",
     })
 
-    const {data: permissionsData} = useQuery({
-        queryKey: ["permissions", view],
-        queryFn: () => getPermissions(),
+    const permission = permissionData?.data
+
+    const {data: rolesData} = useQuery({
+        queryKey: ["roles", view],
+        queryFn: () => getRoles(),
     })
 
-    const form = useForm<RoleFormSchema>({
-        resolver: zodResolver(roleSchema),
-        defaultValues: {
-            name: "",
-            name_before: "",
-            is_active: true,
-        },
+    const form = useForm<PermissionFormSchema>({
+        resolver: zodResolver(permissionSchema),
+        values:
+            view === "create"
+                ? {name: "", name_before: "", roles: [], is_active: true}
+                : {
+                      name: permission?.name ?? "",
+                      name_before: permission?.name ?? "",
+                      roles: permission?.roles.map((role) => role.role_name) ?? [],
+                      is_active: permission?.is_active ?? true,
+                  },
     })
 
     const {mutate, isPending} = useMutation({
-        mutationFn: createUpdateRole,
+        mutationFn: createUpdatePermission,
         onSuccess: (res) => {
             if (!res.success) return toast.error(res.message)
             toast.success(res.message)
-            queryClient.invalidateQueries({queryKey: ["roles"]})
+            queryClient.invalidateQueries({queryKey: ["permissions"]})
             form.reset()
             setParams({view: ""})
         },
@@ -68,40 +68,26 @@ const RoleFormModal = () => {
         },
     })
 
-    const onSubmit = (data: RoleFormSchema) => {
+    const onSubmit = (data: PermissionFormSchema) => {
         mutate(data)
     }
 
-    useEffect(() => {
-        if (view === "create") {
-            form.reset({name: "", name_before: "", permissions: [], is_active: true})
-            return
-        }
-
-        refetchRole()
-
-        if (roleData?.success && roleData.data) {
-            form.reset({
-                name: roleData.data.name,
-                name_before: roleData.data.name,
-                permissions: roleData.data.permissions.map((permission) => permission.permission_name),
-                is_active: roleData.data.is_active,
-            })
-        }
-    }, [view, roleData, form, refetchRole])
-
     return (
-        <Drawer direction={isMobile ? "bottom" : "right"} open={!!view} onOpenChange={(e) => (e ? setParams({view: "create"}) : setParams({view: ""}))}>
+        <Drawer
+            repositionInputs={false}
+            direction={isMobile ? "bottom" : "right"}
+            open={!!view}
+            onOpenChange={(e) => (e ? setParams({view: "create"}) : setParams({view: ""}))}>
             <DrawerTrigger asChild>
                 <Button>
-                    <PiPlus /> Create Role
+                    <PiPlus /> Create Permission
                 </Button>
             </DrawerTrigger>
-            <DrawerContent aria-describedby="role-form" className={cn(isMobile ? "h-[80vh]" : "")}>
+            <DrawerContent aria-describedby="permission-form" className={cn(isMobile ? "h-[80vh]" : "")}>
                 <DrawerHeader className="flex flex-col items-center justify-center">
-                    <DrawerTitle className="flex items-center gap-4">{view !== "create" ? "Edit" : "Create"} Role</DrawerTitle>
+                    <DrawerTitle className="flex items-center gap-4">{view !== "create" ? "Edit" : "Create"} Permission</DrawerTitle>
                     <DrawerDescription className="flex items-center gap-4">
-                        {view !== "create" ? "Edit" : "Create"} a custom role for your organization.
+                        {view !== "create" ? "Edit" : "Create"} a custom permission for your organization.
                     </DrawerDescription>
                 </DrawerHeader>
 
@@ -110,58 +96,58 @@ const RoleFormModal = () => {
                         <div className="flex items-center justify-center h-20">
                             <Loader2 className="animate-spin text-primary" />
                         </div>
-                    ) : !roleData?.success && view !== "create" && !!view ? (
+                    ) : !permissionData?.success && view !== "create" && !!view ? (
                         <Empty>
                             <EmptyHeader>
                                 <EmptyMedia variant="icon">
-                                    <PiCardholder />
+                                    <PiKey />
                                 </EmptyMedia>
-                                <EmptyTitle>Failed to fetch role</EmptyTitle>
-                                <EmptyDescription>Failed to fetch role. Please try again.</EmptyDescription>
+                                <EmptyTitle>Failed to fetch permission</EmptyTitle>
+                                <EmptyDescription>Failed to fetch permission. Please try again.</EmptyDescription>
                             </EmptyHeader>
                         </Empty>
                     ) : (
                         <>
-                            <form id="role-form" onSubmit={form.handleSubmit(onSubmit)} className={isPending ? "pointer-events-none opacity-50" : ""}>
+                            <form id="permission-form" onSubmit={form.handleSubmit(onSubmit)} className={isPending ? "pointer-events-none opacity-50" : ""}>
                                 <FieldGroup>
                                     <Controller
                                         name="name"
                                         control={form.control}
                                         render={({field, fieldState}) => (
                                             <Field data-invalid={fieldState.invalid}>
-                                                <FieldLabel htmlFor={field.name}>Role Name</FieldLabel>
-                                                <Input {...field} id={field.name} aria-invalid={fieldState.invalid} placeholder="Admin" autoComplete="off" />
+                                                <FieldLabel htmlFor={field.name}>Permission Name</FieldLabel>
+                                                <Input {...field} id={field.name} aria-invalid={fieldState.invalid} placeholder="read users" autoComplete="off" />
                                                 {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                             </Field>
                                         )}
                                     />
 
                                     <Controller
-                                        name="permissions"
+                                        name="roles"
                                         control={form.control}
                                         render={({field, fieldState}) => (
                                             <FieldSet>
-                                                <FieldLegend variant="label">Permissions</FieldLegend>
-                                                <FieldDescription>Define the permissions for this role.</FieldDescription>
+                                                <FieldLegend variant="label">Roles</FieldLegend>
+                                                <FieldDescription>Define the roles for this permission.</FieldDescription>
                                                 <FieldGroup data-slot="checkbox-group">
-                                                    {permissionsData?.success &&
-                                                        permissionsData.data.map((permission) => (
-                                                            <Field key={permission.name} orientation="horizontal" data-invalid={fieldState.invalid}>
+                                                    {rolesData?.success &&
+                                                        rolesData.data.map((role) => (
+                                                            <Field key={role.name} orientation="horizontal" data-invalid={fieldState.invalid}>
                                                                 <Checkbox
-                                                                    id={`form-rhf-checkbox-${permission.name}`}
+                                                                    id={`form-rhf-checkbox-${role.name}`}
                                                                     name={field.name}
                                                                     aria-invalid={fieldState.invalid}
-                                                                    value={permission.name}
-                                                                    checked={field.value?.includes(permission.name)}
+                                                                    value={role.name}
+                                                                    checked={field.value?.includes(role.name)}
                                                                     onCheckedChange={(checked) => {
                                                                         const newValue = checked
-                                                                            ? [...(field.value ?? []), permission.name]
-                                                                            : (field.value ?? []).filter((value) => value !== permission.name)
+                                                                            ? [...(field.value ?? []), role.name]
+                                                                            : (field.value ?? []).filter((value) => value !== role.name)
                                                                         field.onChange(newValue)
                                                                     }}
                                                                 />
-                                                                <FieldLabel htmlFor={`form-rhf-checkbox-${permission.name}`} className="font-normal">
-                                                                    {permission.name}
+                                                                <FieldLabel htmlFor={`form-rhf-checkbox-${role.name}`} className="font-normal">
+                                                                    {role.name}
                                                                 </FieldLabel>
                                                             </Field>
                                                         ))}
@@ -193,7 +179,7 @@ const RoleFormModal = () => {
                             Cancel
                         </Button>
                     </DrawerClose>
-                    <Button disabled={isPending} type="submit" form="role-form">
+                    <Button disabled={isPending} type="submit" form="permission-form">
                         {isPending ? <Loader2 className="animate-spin" /> : "Submit"}
                     </Button>
                 </DrawerFooter>
@@ -202,4 +188,4 @@ const RoleFormModal = () => {
     )
 }
 
-export default RoleFormModal
+export default PermissionDetailModal

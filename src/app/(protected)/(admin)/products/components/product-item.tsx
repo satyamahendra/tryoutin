@@ -2,14 +2,14 @@
 
 import {Item, ItemContent, ItemMedia, ItemTitle, ItemActions} from "@/components/ui/item"
 import {useQueryParams} from "@/utils/hooks/useQueryParams"
-import {Product} from "../services/get-products"
+import {GetProduct} from "../services/get-products"
 import {PiCircle, PiCircleFill, PiCube, PiPackage, PiPencil} from "react-icons/pi"
 import {Separator} from "@/components/ui/separator"
 import {normalizeString} from "@/utils/helpers/normalize-string"
 import {Button} from "@/components/ui/button"
 
 type ProductItemProps = {
-    product: Product
+    product: GetProduct
 }
 
 const ProductItem = ({product}: ProductItemProps) => {
@@ -17,9 +17,7 @@ const ProductItem = ({product}: ProductItemProps) => {
 
     return (
         <Item className="bg-muted hover:bg-background duration-200">
-            <ItemMedia variant="icon">
-                {product.is_active ? <PiCircleFill className="text-green-500" /> : <PiCircle className="text-muted-foreground" />}
-            </ItemMedia>
+            <ItemMedia variant="icon">{product.is_active ? <PiCircleFill className="text-green-500" /> : <PiCircle className="text-muted-foreground" />}</ItemMedia>
             <ItemContent>
                 <ItemTitle>{product.name}</ItemTitle>
                 <div className="flex gap-2 text-muted-foreground text-sm">
@@ -37,7 +35,7 @@ const ProductItem = ({product}: ProductItemProps) => {
                 </div>
             </ItemContent>
             <ItemActions>
-                <Button className="rounded-lg" onClick={() => setParams({detail: product.id})} size={"icon-sm"} variant="outline">
+                <Button className="rounded-lg" onClick={() => setParams({view: product.id})} size={"icon-sm"} variant="outline">
                     <PiPencil />
                 </Button>
             </ItemActions>

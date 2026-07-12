@@ -1,6 +1,5 @@
 "use client"
 
-import {useEffect} from "react"
 import {Controller, useForm} from "react-hook-form"
 import {PiUser} from "react-icons/pi"
 import {Button} from "@/components/ui/button"
@@ -20,25 +19,32 @@ import {UserFormSchema} from "../utils/schemas"
 import {useScreenSize} from "@/utils/hooks/useScreenSize"
 import {cn} from "@/lib/utils"
 
-const UserFormModal = () => {
+const UserDetailModal = () => {
     const queryClient = useQueryClient()
     const {getParam, setParams} = useQueryParams()
     const {isMobile} = useScreenSize()
 
-    const id = getParam("id")
-
-    const form = useForm<UserFormSchema>({
-        defaultValues: {
-            id: id ?? "",
-            roles: [],
-            permissions: [],
-        },
-    })
+    const view = getParam("view")
 
     const {data: userData, isLoading} = useQuery({
-        queryKey: ["user", id],
-        queryFn: () => getUser(id!),
-        enabled: !!id,
+        queryKey: ["user", view],
+        queryFn: () => getUser(view!),
+        enabled: !!view,
+    })
+
+    const form = useForm<UserFormSchema>({
+        values:
+            view === "create"
+                ? {
+                      id: "",
+                      roles: [],
+                      permissions: [],
+                  }
+                : {
+                      id: userData?.data?.id ?? "",
+                      roles: userData?.data?.roles?.map((r: {role_name: string}) => r.role_name) ?? [],
+                      permissions: userData?.data?.permissions?.map((p: {permission_name: string}) => p.permission_name) ?? [],
+                  },
     })
 
     const {data: permissionsAndRoles} = useQuery({
@@ -64,18 +70,8 @@ const UserFormModal = () => {
         mutate(data)
     }
 
-    useEffect(() => {
-        if (userData?.success && userData.data) {
-            form.reset({
-                id: id ?? "",
-                roles: userData.data.roles.map((r: {role_name: string}) => r.role_name),
-                permissions: userData.data.permissions.map((p: {permission_name: string}) => p.permission_name),
-            })
-        }
-    }, [userData, form, id])
-
     return (
-        <Drawer direction={isMobile ? "bottom" : "right"} open={!!id} onOpenChange={(open) => !open && setParams({id: ""})}>
+        <Drawer repositionInputs={false} direction={isMobile ? "bottom" : "right"} open={!!view} onOpenChange={(open) => !open && setParams({view: ""})}>
             <DrawerContent aria-describedby="user-form" className={cn(isMobile ? "h-[80vh]" : "")}>
                 <DrawerHeader className="flex flex-col items-center justify-center">
                     <DrawerTitle className="flex items-center gap-4">
@@ -96,7 +92,7 @@ const UserFormModal = () => {
                         <div className="flex items-center justify-center h-20">
                             <Loader2 className="animate-spin text-primary" />
                         </div>
-                    ) : !permissionsAndRoles?.success && !!id ? (
+                    ) : !permissionsAndRoles?.success && !!view ? (
                         <Empty>
                             <EmptyHeader>
                                 <EmptyMedia variant="icon">
@@ -200,4 +196,4 @@ const UserFormModal = () => {
     )
 }
 
-export default UserFormModal
+export default UserDetailModal

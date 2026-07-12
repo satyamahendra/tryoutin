@@ -8,8 +8,6 @@ import {Loader2} from "lucide-react"
 import SearchParams from "@/components/custom/search-params"
 import ProductList from "./components/product-list"
 import ProductDetailDrawer from "./components/product-detail-drawer"
-import ProductDetail from "./components/product-detail"
-import ProductForm from "./components/product-form"
 import CreateProductButton from "./components/create-product-button"
 
 type PageProps = {
@@ -24,29 +22,13 @@ const Page = async ({searchParams}: PageProps) => {
     const hasPerm = await hasPermissions(["read products", "manage products"])
     if (!hasPerm) return redirect("/home")
 
-    const {page, search, detail} = await searchParams
+    const {page, search} = await searchParams
     const pageNum = page ? parseInt(page) : 1
 
     return (
         <AnimDiv className="flex flex-col gap-4 pb-4">
             <PageHeader title="Products" description="Manage products" icon={<PiPackage />} subComponent={<CreateProductButton />} />
-            <ProductDetailDrawer hasDetail={!!detail}>
-                {detail === "create" ? (
-                    <AnimDiv>
-                        <ProductForm />
-                    </AnimDiv>
-                ) : detail ? (
-                    <Suspense
-                        key={detail}
-                        fallback={
-                            <AnimDiv className="flex items-center justify-center h-20">
-                                <Loader2 className="animate-spin text-primary" />
-                            </AnimDiv>
-                        }>
-                        <ProductDetail detail={detail} />
-                    </Suspense>
-                ) : null}
-            </ProductDetailDrawer>
+            <ProductDetailDrawer />
             <SearchParams className="w-48 self-end" />
             <Suspense
                 key={`${page}-${search}`}
