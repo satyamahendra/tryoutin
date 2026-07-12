@@ -56,7 +56,7 @@ export async function getOrders(page: number = 1, search = ""): Promise<ServerRe
             prisma.order.findMany({
                 skip,
                 take: PAGE_SIZE,
-                orderBy: {created_at: "asc"},
+                orderBy: {created_at: "desc"},
                 select: orderSelect,
                 where,
             }),

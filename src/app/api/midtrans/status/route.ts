@@ -6,12 +6,13 @@ import {apiError, apiSuccess} from "@/utils/types/api-routes"
 import {NextRequest, NextResponse} from "next/server"
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
-    const orderId = req.nextUrl.searchParams.get("order_id")
+    const midtransOrderIdReq = req.nextUrl.searchParams.get("order_id")
+
     try {
         const session = await authServer()
         if (!session) throw new Error("Unauthorized")
 
-        const transaction = await snap.transaction.status(orderId ?? "")
+        const transaction = await snap.transaction.status(midtransOrderIdReq ?? "")
 
         const transactionStatus = transaction.transaction_status
         const fraudStatus = transaction.fraud_status
@@ -46,13 +47,6 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
         if (!order) throw new Error("Order not found")
 
-        const existingEntitlements = await prisma.entitlement.findFirst({
-            where: {order_id: order.id},
-        })
-        if (existingEntitlements) {
-            return apiSuccess(transaction, "Transaction status fetched successfully", 200)
-        }
-
         const midtransRequest = order.midtrans_request as {
             item_details: {id: string; name: string; price: number; quantity: number}[]
         }
@@ -68,6 +62,12 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
                     paid_at: transaction?.settlement_time ? new Date(transaction.settlement_time as string) : null,
                 },
             })
+
+            const existingEntitlements = await prisma.entitlement.findFirst({
+                where: {order_id: order.id},
+            })
+
+            if (existingEntitlements) return
 
             if (status === "success") {
                 await tx.entitlement.createMany({

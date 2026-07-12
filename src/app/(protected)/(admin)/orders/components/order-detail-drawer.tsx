@@ -4,18 +4,24 @@ import {Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle} fro
 import {useQueryParams} from "@/utils/hooks/useQueryParams"
 import {useScreenSize} from "@/utils/hooks/useScreenSize"
 import {cn} from "@/lib/utils"
-import {PiCalendarDots, PiCheckCircle, PiCoin, PiHandshake, PiLink, PiMoney, PiTicket, PiX} from "react-icons/pi"
-import {useQuery} from "@tanstack/react-query"
+import {PiArrowsClockwise, PiCalendarDots, PiCheckCircle, PiCircleDashed, PiCoin, PiHandshake, PiLink, PiMoney, PiTicket, PiX} from "react-icons/pi"
+import {useQuery, useQueryClient} from "@tanstack/react-query"
 import {getOrder} from "../services/get-order"
 import {Loader2} from "lucide-react"
 import {Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle} from "@/components/ui/empty"
 import {format} from "date-fns"
 import AnimDiv from "@/components/custom/anim-div"
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar"
+import axios from "axios"
+import {Button} from "@/components/ui/button"
+import {toast} from "sonner"
+import {useRouter} from "next/navigation"
 
 const OrderDetailDrawer = () => {
     const {setParams, getParam} = useQueryParams()
+    const queryClient = useQueryClient()
     const {isMobile} = useScreenSize()
+    const router = useRouter()
     const view = getParam("view") || ""
 
     const {data: orderData, isLoading} = useQuery({
@@ -26,19 +32,42 @@ const OrderDetailDrawer = () => {
 
     const order = orderData?.data
 
+    const {refetch: refetchOrder, isLoading: isChecking} = useQuery({
+        queryKey: ["order"],
+        queryFn: async () => await axios.get(`/api/midtrans/status?order_id=${order?.midtrans_order_id}`),
+        staleTime: 0,
+        enabled: false,
+    })
+
+    const handleCheckOrderStatus = async () => {
+        const res = await refetchOrder()
+        if (!res?.isSuccess) return toast.error("Failed to fetch order status")
+        queryClient.invalidateQueries({queryKey: ["order"]})
+        router.refresh()
+        return toast.success("Order status updated successfully")
+    }
+
+    const handleCopy = (value: string) => {
+        navigator.clipboard.writeText(value)
+    }
+
+    const handleOpenUrl = (url: string) => {
+        window.open(url, "_blank")
+    }
+
     const displayData = [
-        {label: "Order ID", value: order?.midtrans_order_id, icon: <PiTicket />},
+        {label: "Order ID", value: order?.midtrans_order_id, icon: <PiTicket />, handleFn: () => handleCopy(order?.midtrans_order_id ?? "")},
         {label: "Status", value: order?.status, icon: <PiCheckCircle />},
         {label: "Order Created Date", value: order?.created_at ? format(order?.created_at, "dd MMM yyyy HH:mm") : "-", icon: <PiCalendarDots />},
         {label: "Order Paid Date", value: order?.paid_at ? format(order?.paid_at, "dd MMM yyyy HH:mm") : "-", icon: <PiHandshake />},
-        {label: "Redirect Url", value: order?.midtrans_redirect || "-", icon: <PiLink />},
-        {label: "Token", value: order?.midtrans_token || "-", icon: <PiCoin />},
+        {label: "Redirect Url", value: order?.midtrans_redirect || "-", icon: <PiLink />, handleFn: () => handleOpenUrl(order?.midtrans_redirect ?? "")},
+        {label: "Token", value: order?.midtrans_token || "-", icon: <PiCoin />, handleFn: () => handleCopy(order?.midtrans_token ?? "")},
         {label: "Gross Amount", value: order?.gross_amount, icon: <PiMoney />},
     ]
 
     return (
         <Drawer repositionInputs={false} direction={isMobile ? "bottom" : "right"} open={!!view} onOpenChange={(open) => !open && setParams({view: ""})}>
-            <DrawerContent aria-describedby="order-detail" className={cn(isMobile ? "h-[80vh]" : "")}>
+            <DrawerContent aria-describedby="order-detail" className={cn(isMobile ? "h-[80vh]" : "min-w-[30vw]")}>
                 <DrawerHeader className="flex flex-col items-center justify-center">
                     <DrawerTitle className="flex items-center gap-2">
                         <PiTicket />
@@ -71,13 +100,31 @@ const OrderDetailDrawer = () => {
                                 </Avatar>
                                 <div className="font-semibold text-lg">{order?.user.name}</div>
                                 <div className="text-muted-foreground">{order?.user.email}</div>
+                                <Button className="rounded-lg mt-2 space-x-2" disabled={isChecking} onClick={handleCheckOrderStatus} size={"sm"} variant="outline">
+                                    {isChecking ? (
+                                        <>
+                                            <Loader2 className="animate-spin" />
+                                            Checking...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <PiArrowsClockwise /> Check order
+                                        </>
+                                    )}
+                                </Button>
                             </div>
 
                             <ul className="space-y-4 mt-4">
                                 {displayData.map((d, index) => {
                                     return (
-                                        <li className="text-sm flex items-center gap-4" key={index}>
-                                            <div className="text-lg bg-muted w-7 h-7 rounded-sm flex items-center justify-center">{d.icon}</div>
+                                        <li
+                                            onClick={() => {
+                                                if (!d.handleFn) return
+                                                d.handleFn()
+                                            }}
+                                            className="text-sm flex items-center gap-4 cursor-pointer"
+                                            key={index}>
+                                            <div className="text-lg bg-muted min-w-7 min-h-7 rounded-sm flex items-center justify-center">{d.icon}</div>
                                             <div>
                                                 <div>{d.label}</div>
                                                 <div className="text-muted-foreground">{d.value}</div>

@@ -9,7 +9,7 @@ export const Providers = ({children}: {children: React.ReactNode}) => {
             <QueryClientProviders>
                 <TooltipProvider>
                     <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-                        <Toaster richColors position="bottom-center" />
+                        <Toaster richColors theme="system" position="bottom-center" />
                         {children}
                     </ThemeProvider>
                 </TooltipProvider>
