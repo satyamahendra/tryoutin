@@ -16,55 +16,58 @@ type PermissionItemProps = {
 const PermissionItem = ({permission}: PermissionItemProps) => {
     const {setParams} = useQueryParams()
 
-    const firstThreeRoles = permission.roles.slice(0, 3)
-    const hasMore = permission.roles.length > 3
-    const restRoles = permission.roles.slice(3)
+    const firstThreeRoles = permission.roles.slice(0, 2)
+    const hasMore = permission.roles.length > 2
+    const restRoles = permission.roles.slice(2)
 
     return (
-        <Item className="bg-muted hover:bg-background duration-200">
-            <ItemMedia variant="icon"></ItemMedia>
-            {permission.is_active ? (
-                <div className="text-green-500 flex items-center gap-1">
-                    <PiCircleFill className="text-lg" />
-                </div>
-            ) : (
-                <div className="text-muted-foreground flex items-center gap-1">
-                    <PiCircle className="text-lg" />
-                </div>
-            )}
-            <ItemContent>
-                <ItemTitle>{permission.name}</ItemTitle>
-                <ItemDescription className="space-x-2">
-                    {firstThreeRoles.map((r) => (
-                        <Badge variant={"outline"} className="text-muted-foreground" key={r.role_name}>
-                            {r.role_name}
-                        </Badge>
-                    ))}
-                    {hasMore && (
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <Badge variant={"outline"} className="text-muted-foreground">
-                                    +{restRoles.length} more
-                                </Badge>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                                <div className="flex flex-col gap-1">
-                                    {restRoles.map((r) => (
-                                        <span key={r.role_name}>{r.role_name}</span>
-                                    ))}
-                                </div>
-                            </TooltipContent>
-                        </Tooltip>
+        <div className="bg-muted hover:bg-muted/50 duration-200 p-2 rounded-xl border">
+            <div className="flex gap-2">
+                <div>
+                    {permission.is_active ? (
+                        <div className="text-green-500 flex items-center gap-1">
+                            <PiCircleFill className="text-lg" />
+                        </div>
+                    ) : (
+                        <div className="text-muted-foreground flex items-center gap-1">
+                            <PiCircle className="text-lg" />
+                        </div>
                     )}
-                </ItemDescription>
-            </ItemContent>
-            <ItemActions>
-                <Button className="rounded-lg" onClick={() => setParams({view: permission.name})} size={"icon-sm"} variant="outline">
-                    <PiPencil />
-                </Button>
-                <DeleteButton permission={permission} />
-            </ItemActions>
-        </Item>
+                </div>
+                <div>
+                    <div>{permission.name}</div>
+                    <div className="space-x-1">
+                        {firstThreeRoles.map((r) => (
+                            <Badge variant={"outline"} className="text-muted-foreground" key={r.role_name}>
+                                {r.role_name}
+                            </Badge>
+                        ))}
+                        {hasMore && (
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <Badge variant={"outline"} className="text-muted-foreground">
+                                        +{restRoles.length} more
+                                    </Badge>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <div className="flex flex-col gap-1">
+                                        {restRoles.map((r) => (
+                                            <span key={r.role_name}>{r.role_name}</span>
+                                        ))}
+                                    </div>
+                                </TooltipContent>
+                            </Tooltip>
+                        )}
+                    </div>
+                </div>
+                <div className="ml-auto flex gap-2">
+                    <Button className="rounded-lg" onClick={() => setParams({view: permission.name})} size={"icon-sm"} variant="outline">
+                        <PiPencil />
+                    </Button>
+                    <DeleteButton permission={permission} />
+                </div>
+            </div>
+        </div>
     )
 }
 

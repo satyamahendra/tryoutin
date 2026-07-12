@@ -1,6 +1,5 @@
 "use client"
 
-import {Item, ItemContent, ItemMedia, ItemTitle, ItemActions} from "@/components/ui/item"
 import {useQueryParams} from "@/utils/hooks/useQueryParams"
 import {GetProduct} from "../services/get-products"
 import {PiCircle, PiCircleFill, PiCube, PiPackage, PiPencil} from "react-icons/pi"
@@ -16,30 +15,42 @@ const ProductItem = ({product}: ProductItemProps) => {
     const {setParams} = useQueryParams()
 
     return (
-        <Item className="bg-muted hover:bg-background duration-200">
-            <ItemMedia variant="icon">{product.is_active ? <PiCircleFill className="text-green-500" /> : <PiCircle className="text-muted-foreground" />}</ItemMedia>
-            <ItemContent>
-                <ItemTitle>{product.name}</ItemTitle>
-                <div className="flex gap-2 text-muted-foreground text-sm">
-                    <span className="flex items-center font-bold gap-2">Rp. {product.price_actual}</span>
-                    <Separator orientation="vertical" />
-                    <span className="flex items-center gap-1">
-                        <PiCube className="text-sm" />
-                        {normalizeString(product.type)}
-                    </span>
-                    <Separator orientation="vertical" />
-                    <span className="flex items-center gap-1">
-                        <PiPackage className="text-sm" />
-                        {product?.bundle_items?.length}
-                    </span>
+        <div className="bg-muted hover:bg-muted/50 duration-200 p-2 rounded-xl border">
+            <div className="flex gap-2">
+                <div>
+                    {product.is_active ? (
+                        <div className="text-green-500 flex items-center gap-1">
+                            <PiCircleFill className="text-lg" />
+                        </div>
+                    ) : (
+                        <div className="text-muted-foreground flex items-center gap-1">
+                            <PiCircle className="text-lg" />
+                        </div>
+                    )}
                 </div>
-            </ItemContent>
-            <ItemActions>
-                <Button className="rounded-lg" onClick={() => setParams({view: product.id})} size={"icon-sm"} variant="outline">
-                    <PiPencil />
-                </Button>
-            </ItemActions>
-        </Item>
+                <div>
+                    <div>{product.name}</div>
+                    <div className="flex gap-2 text-muted-foreground text-sm">
+                        <span className="flex items-center font-bold gap-2">Rp. {product.price_actual}</span>
+                        <Separator orientation="vertical" />
+                        <span className="flex items-center gap-1">
+                            <PiCube className="text-sm" />
+                            {normalizeString(product.type)}
+                        </span>
+                        <Separator orientation="vertical" />
+                        <span className="flex items-center gap-1">
+                            <PiPackage className="text-sm" />
+                            {product?.bundle_items?.length}
+                        </span>
+                    </div>
+                </div>
+                <div className="ml-auto">
+                    <Button className="rounded-lg" onClick={() => setParams({view: product.id})} size={"icon-sm"} variant="outline">
+                        <PiPencil />
+                    </Button>
+                </div>
+            </div>
+        </div>
     )
 }
 

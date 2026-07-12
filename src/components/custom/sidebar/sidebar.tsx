@@ -59,7 +59,7 @@ const Sidebar = () => {
             ) : (
                 <Drawer repositionInputs={false} direction={"left"} open={isOpen} onOpenChange={() => setIsOpen((prev) => !prev)}>
                     <DrawerTrigger asChild className="fixed top-4 left-4">
-                        <Button variant={"outline"} className="rounded-lg cursor-pointer" size="icon-sm">
+                        <Button variant={"secondary"} className="rounded-lg cursor-pointer" size="icon-sm">
                             <PiHouse />
                         </Button>
                     </DrawerTrigger>
