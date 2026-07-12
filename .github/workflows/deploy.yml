@@ -36,6 +36,11 @@ jobs:
                       ghcr.io/satyamahendra/svtyv:${{ github.sha }}
                   cache-from: type=gha
                   cache-to: type=gha,mode=max
+                  # Only client-exposed (NEXT_PUBLIC_*) vars go here —
+                  # they get baked into the JS bundle at `next build` time.
+                  build-args: |
+                      NEXT_PUBLIC_MIDTRANS_CLIENT_KEY=${{ secrets.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY }}
+                      NEXT_PUBLIC_MIDTRANS_URL=${{ secrets.NEXT_PUBLIC_MIDTRANS_URL }}
 
     deploy:
         runs-on: ubuntu-latest
@@ -47,9 +52,16 @@ jobs:
                   host: ${{ secrets.SSH_HOST }}
                   username: ${{ secrets.SSH_USERNAME }}
                   key: ${{ secrets.SSH_KEY }}
-                  envs: GITHUB_TOKEN,GITHUB_ACTOR,RAW_ENV
+                  envs: >-
+                      GITHUB_TOKEN,GITHUB_ACTOR,
+                      POSTGRES_DB,POSTGRES_USER,POSTGRES_PASSWORD,
+                      DATABASE_URL,NODE_ENV,
+                      BETTER_AUTH_SECRET,BETTER_AUTH_URL,
+                      GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET,
+                      MIDTRANS_SERVER_KEY,
+                      WHITELISTED_EMAILS
                   script: |
-                      # 1. Temporarily log into GHCR via memory
+                      # 1. Log into GHCR
                       echo "$GITHUB_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
 
                       # 2. Ensure isolated Docker network exists
@@ -62,36 +74,38 @@ jobs:
                       docker stop svtyv-app svtyv-db || true
                       docker rm svtyv-app svtyv-db || true
 
-                      # Extract DATABASE_URL line from raw env block
-                      DB_URL_STR=$(echo "$RAW_ENV" | grep "^DATABASE_URL=")
-
-                      # Parse out user, password, and db name from the connection string natively
-                      EXTRACTED_USER=$(echo "$DB_URL_STR" | sed -E 's|DATABASE_URL=.*://([^:]+):.*|\1|')
-                      EXTRACTED_PASS=$(echo "$DB_URL_STR" | sed -E 's|DATABASE_URL=.*://[^:]+:([^@]+)@.*|\1|')
-                      EXTRACTED_NAME=$(echo "$DB_URL_STR" | sed -E 's|DATABASE_URL=.*://[^@]+@[^/]+/([^?]+).*|\1|')
-
-                      # 5. Spin up Postgres with the parsed credentials injected explicitly
+                      # 5. Spin up Postgres with credentials passed directly.
+                      #    Bound to 127.0.0.1 only — not reachable from
+                      #    outside the VPS. Drop the -p line entirely if you
+                      #    never need to connect to it from your own machine.
                       docker run -d \
                       --name svtyv-db \
                       --network svtyv-net \
                       --restart unless-stopped \
-                      -p 5433:5432 \
+                      -p 127.0.0.1:5433:5432 \
                       -v postgres_data:/var/lib/postgresql/data \
-                      -e POSTGRES_USER="$EXTRACTED_USER" \
-                      -e POSTGRES_PASSWORD="$EXTRACTED_PASS" \
-                      -e POSTGRES_DB="$EXTRACTED_NAME" \
+                      -e POSTGRES_USER="$POSTGRES_USER" \
+                      -e POSTGRES_PASSWORD="$POSTGRES_PASSWORD" \
+                      -e POSTGRES_DB="$POSTGRES_DB" \
                       postgres:17-alpine
 
-                      # Give Postgres a full 10 seconds to create storage tables and listen
+                      # Give Postgres time to initialize
                       sleep 10
 
-                      # 6. Spin up App using the clean memory stream format
+                      # 6. Spin up the app, passing only the runtime vars it needs
                       docker run -d \
                       --name svtyv-app \
                       --network svtyv-net \
                       --restart unless-stopped \
                       -p 3001:3000 \
-                      --env-file <(echo "$RAW_ENV") \
+                      -e DATABASE_URL="$DATABASE_URL" \
+                      -e NODE_ENV="$NODE_ENV" \
+                      -e BETTER_AUTH_SECRET="$BETTER_AUTH_SECRET" \
+                      -e BETTER_AUTH_URL="$BETTER_AUTH_URL" \
+                      -e GOOGLE_CLIENT_ID="$GOOGLE_CLIENT_ID" \
+                      -e GOOGLE_CLIENT_SECRET="$GOOGLE_CLIENT_SECRET" \
+                      -e MIDTRANS_SERVER_KEY="$MIDTRANS_SERVER_KEY" \
+                      -e WHITELISTED_EMAILS="$WHITELISTED_EMAILS" \
                       ghcr.io/satyamahendra/svtyv:latest \
                       sh -c "npx prisma migrate deploy && node server.js"
 
@@ -100,4 +114,14 @@ jobs:
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   GITHUB_ACTOR: ${{ github.actor }}
-                  RAW_ENV: ${{ secrets.ENV }}
+                  POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+                  POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+                  POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+                  DATABASE_URL: ${{ secrets.DATABASE_URL }}
+                  NODE_ENV: ${{ secrets.NODE_ENV }}
+                  BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
+                  BETTER_AUTH_URL: ${{ secrets.BETTER_AUTH_URL }}
+                  GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+                  GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+                  MIDTRANS_SERVER_KEY: ${{ secrets.MIDTRANS_SERVER_KEY }}
+                  WHITELISTED_EMAILS: ${{ secrets.WHITELISTED_EMAILS }}
