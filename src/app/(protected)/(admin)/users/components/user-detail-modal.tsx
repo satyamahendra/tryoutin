@@ -58,8 +58,7 @@ const UserDetailModal = () => {
             if (!res.success) return toast.error(res.message)
             toast.success(res.message)
             queryClient.invalidateQueries({queryKey: ["users"]})
-            form.reset()
-            setParams({id: ""})
+            setParams({view: ""})
         },
         onError: (error) => {
             toast.error(error.message)

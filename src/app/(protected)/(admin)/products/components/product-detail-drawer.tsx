@@ -82,9 +82,8 @@ const ProductForm = () => {
             if (!res.success) return toast.error(res.message)
             toast.success(res.message)
             startTransition(() => {
-                if (!productData?.data) setParams({detail: ""})
-                if (!productData?.data) form.reset()
                 queryClient.invalidateQueries({queryKey: ["products"]})
+                setParams({view: ""})
             })
         },
         onError: (error) => {
@@ -98,8 +97,8 @@ const ProductForm = () => {
             if (!res.success) return toast.error(res.message)
             toast.success(res.message)
             startTransition(() => {
-                setParams({detail: ""})
                 queryClient.invalidateQueries({queryKey: ["products"]})
+                setParams({view: ""})
             })
         },
         onError: (error) => {
