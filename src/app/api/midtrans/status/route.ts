@@ -51,7 +51,10 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
             item_details: {id: string; name: string; price: number; quantity: number}[]
         }
 
-        const products = midtransRequest.item_details
+        const products = midtransRequest.item_details.map((item) => ({
+            ...item,
+            id: item.id.includes("bundle_") ? item.id.replace("bundle_", "") : item.id,
+        }))
 
         await prisma.$transaction(async (tx) => {
             await tx.order.update({
@@ -67,9 +70,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
                 where: {order_id: order.id},
             })
 
-            if (existingEntitlements) return
-
-            if (status === "success") {
+            if (!existingEntitlements && status === "success") {
                 await tx.entitlement.createMany({
                     data: products.map((p) => ({
                         user_id: order.user.id,

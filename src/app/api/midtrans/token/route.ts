@@ -45,7 +45,8 @@ export async function POST(req: NextRequest) {
         if (product.type === "bundle") {
             const bundleItems = product.bundle_items.map((item) => ({
                 id: `${item.product.id}`,
-                price: item.product.price_actual,
+                // price: item.product.price_actual,
+                price: 0,
                 quantity: 1,
                 name: item.product.name,
             }))

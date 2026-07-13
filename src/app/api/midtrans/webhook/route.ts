@@ -43,18 +43,15 @@ export async function POST(req: NextRequest) {
         })
 
         if (!order) throw new Error("Order not found")
-        const existingEntitlements = await prisma.entitlement.findFirst({
-            where: {order_id: order.id},
-        })
-        if (existingEntitlements) {
-            return apiSuccess(transaction, "Transaction status fetched successfully", 200)
-        }
 
         const midtransRequest = order.midtrans_request as {
             item_details: {id: string; name: string; price: number; quantity: number}[]
         }
 
-        const products = midtransRequest.item_details
+        const products = midtransRequest.item_details.map((item) => ({
+            ...item,
+            id: item.id.includes("bundle_") ? item.id.replace("bundle_", "") : item.id,
+        }))
 
         await prisma.$transaction(async (tx) => {
             await tx.order.update({
@@ -66,7 +63,11 @@ export async function POST(req: NextRequest) {
                 },
             })
 
-            if (status === "success") {
+            const existingEntitlements = await prisma.entitlement.findFirst({
+                where: {order_id: order.id},
+            })
+
+            if (!existingEntitlements && status === "success") {
                 await tx.entitlement.createMany({
                     data: products.map((p) => ({
                         user_id: order.user.id,

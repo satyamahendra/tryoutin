@@ -6,7 +6,7 @@ import {ProductFormSchema, productSchema} from "../utils/schema"
 import {Field, FieldError, FieldGroup, FieldLabel} from "@/components/ui/field"
 import {Input} from "@/components/ui/input"
 import {Button} from "@/components/ui/button"
-import {PiBag, PiPackage, PiPlus, PiTrash, PiX} from "react-icons/pi"
+import {PiBasket, PiPackage, PiPlus, PiTrash, PiX} from "react-icons/pi"
 import {Label} from "@/components/ui/label"
 import {getProducts} from "../services/get-products"
 import {InfiniteCombobox} from "@/components/custom/combobox"
@@ -23,6 +23,8 @@ import {Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, Dra
 import {useScreenSize} from "@/utils/hooks/useScreenSize"
 import {cn} from "@/lib/utils"
 import {Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle} from "@/components/ui/empty"
+import axios from "axios"
+import {handleClientError} from "@/utils/helpers/handle-client-errors"
 
 const ProductForm = () => {
     const queryClient = useQueryClient()
@@ -106,6 +108,19 @@ const ProductForm = () => {
         },
     })
 
+    const {mutate: mutateBuy, isPending: isBuying} = useMutation({
+        mutationFn: async (data: {id_product: string}) => await axios.post("/api/midtrans/token", data),
+        onSuccess: (data) => {
+            window.snap.pay(data.data.data.token, {
+                onSuccess: () => toast.success("Payment successful!"),
+                onError: () => toast.error("Something went wrong."),
+            })
+        },
+        onError: (error) => {
+            toast.error(handleClientError(error))
+        },
+    })
+
     function onSubmit(data: ProductFormSchema) {
         mutate(data)
     }
@@ -119,6 +134,25 @@ const ProductForm = () => {
                         Product
                     </DrawerTitle>
                     <DrawerDescription>View and manage product details.</DrawerDescription>
+                    {product && product?.is_active && (
+                        <Button
+                            className="rounded-lg mt-2 space-x-2"
+                            size={"sm"}
+                            variant="outline"
+                            disabled={isBuying}
+                            onClick={() => mutateBuy({id_product: product.id})}>
+                            {isBuying ? (
+                                <>
+                                    <Loader2 className="animate-spin" />
+                                    Buying...
+                                </>
+                            ) : (
+                                <>
+                                    <PiBasket /> Test Buy
+                                </>
+                            )}
+                        </Button>
+                    )}
                 </DrawerHeader>
 
                 {isLoading ? (
