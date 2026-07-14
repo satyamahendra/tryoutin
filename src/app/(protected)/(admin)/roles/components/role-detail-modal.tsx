@@ -79,16 +79,13 @@ const RoleDetailModal = () => {
     }
 
     return (
-        <Drawer
-            repositionInputs={false}
-            direction={isMobile ? "bottom" : "right"}
-            open={!!view}
-            onOpenChange={(e) => (e ? setParams({view: "create"}) : setParams({view: ""}))}>
-            <DrawerTrigger asChild>
-                <Button>
-                    <PiPlus /> Create Role
-                </Button>
-            </DrawerTrigger>
+        <Drawer swipeDirection={isMobile ? "down" : "right"} open={!!view} onOpenChange={(e) => (e ? setParams({view: "create"}) : setParams({view: ""}))}>
+            <DrawerTrigger
+                render={
+                    <Button>
+                        <PiPlus /> Create Role
+                    </Button>
+                }></DrawerTrigger>
             <DrawerContent aria-describedby="role-form" className={cn(isMobile ? "h-[80vh]" : "")}>
                 <DrawerHeader className="flex flex-col items-center justify-center">
                     <DrawerTitle className="flex items-center gap-4">{view !== "create" ? "Edit" : "Create"} Role</DrawerTitle>
@@ -180,11 +177,12 @@ const RoleDetailModal = () => {
                 </div>
 
                 <DrawerFooter>
-                    <DrawerClose asChild>
-                        <Button variant="outline" className="w-full">
-                            Cancel
-                        </Button>
-                    </DrawerClose>
+                    <DrawerClose
+                        render={
+                            <Button variant="outline" className="w-full">
+                                Cancel
+                            </Button>
+                        }></DrawerClose>
                     <Button disabled={isPending} type="submit" form="role-form">
                         {isPending ? <Loader2 className="animate-spin" /> : "Submit"}
                     </Button>

@@ -53,7 +53,7 @@ const ReportDetailDrawer = () => {
     ]
 
     return (
-        <Drawer repositionInputs={false} direction={isMobile ? "bottom" : "right"} open={!!view} onOpenChange={(open) => !open && setParams({view: ""})}>
+        <Drawer swipeDirection={isMobile ? "down" : "right"} open={!!view} onOpenChange={(open) => !open && setParams({view: ""})}>
             <DrawerContent aria-describedby="report-detail" className={cn(isMobile ? "h-[80vh]" : "h-full")}>
                 <DrawerHeader className="flex flex-col items-center justify-center">
                     <DrawerTitle className="flex items-center gap-2">
@@ -95,7 +95,7 @@ const ReportDetailDrawer = () => {
                                     <div className="ml-auto space-x-2">{report && <MarkPopover report={report} />}</div>
                                 </div>
 
-                                <ul className="flex gap-2 mt-2">
+                                <ul className="flex gap-2 mt-2 flex-wrap">
                                     {displayData.map((d, index) => {
                                         const className = d.label === "Status" ? thisStatus?.className : d.label === "Type" ? thisType?.className : undefined
 

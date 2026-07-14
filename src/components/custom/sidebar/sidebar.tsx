@@ -57,24 +57,28 @@ const Sidebar = () => {
                     </div>
                 </aside>
             ) : (
-                <Drawer repositionInputs={false} direction={"left"} open={isOpen} onOpenChange={() => setIsOpen((prev) => !prev)}>
-                    <DrawerTrigger asChild className="fixed top-4 left-4">
-                        <Button variant={"default"} className="rounded-lg cursor-pointer" size="icon-lg">
-                            <PiList />
-                        </Button>
-                    </DrawerTrigger>
-                    <DrawerContent aria-describedby="permission-form" className="max-w-[50vw]">
+                <Drawer swipeDirection={"left"} open={isOpen} onOpenChange={() => setIsOpen((prev) => !prev)}>
+                    <DrawerTrigger
+                        className="fixed top-4 left-4"
+                        render={
+                            <Button variant={"default"} className="rounded-lg cursor-pointer" size="icon-lg">
+                                <PiList />
+                            </Button>
+                        }></DrawerTrigger>
+                    <DrawerContent aria-describedby="permission-form" className="h-fit max-w-[50vw]">
                         <DrawerHeader>
                             <DrawerTitle className="flex items-center gap-4">Svtyv</DrawerTitle>
                             <DrawerDescription className="flex items-center gap-4">Welcome to svtyv</DrawerDescription>
                         </DrawerHeader>
-                        <ul className="flex flex-col gap-1 p-4">
-                            {menuItems
-                                .filter((menu) => hasAccess(menu, userPermissions, userRoles))
-                                .map((menu) => (
-                                    <SidebarItem key={menu.label} menu={menu} userPermissions={userPermissions} userRoles={userRoles} isExpand={true} />
-                                ))}
-                        </ul>
+                        <div className="flex-1 overflow-y-auto">
+                            <ul className="flex flex-col gap-1 p-4">
+                                {menuItems
+                                    .filter((menu) => hasAccess(menu, userPermissions, userRoles))
+                                    .map((menu) => (
+                                        <SidebarItem key={menu.label} menu={menu} userPermissions={userPermissions} userRoles={userRoles} isExpand={true} />
+                                    ))}
+                            </ul>
+                        </div>
                     </DrawerContent>
                 </Drawer>
             )}

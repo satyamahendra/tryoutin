@@ -4,7 +4,7 @@ import {Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle} fro
 import {useQueryParams} from "@/utils/hooks/useQueryParams"
 import {useScreenSize} from "@/utils/hooks/useScreenSize"
 import {cn} from "@/lib/utils"
-import {PiArrowsClockwise, PiCalendarDots, PiCheckCircle, PiCircleDashed, PiCoin, PiHandshake, PiLink, PiMoney, PiTicket, PiX} from "react-icons/pi"
+import {PiArrowsClockwise, PiArrowSquareOut, PiCalendarDots, PiCheckCircle, PiCircleDashed, PiCoin, PiHandshake, PiLink, PiMoney, PiTicket, PiX} from "react-icons/pi"
 import {useQuery, useQueryClient} from "@tanstack/react-query"
 import {getOrder} from "../services/get-order"
 import {Loader2} from "lucide-react"
@@ -55,19 +55,38 @@ const OrderDetailDrawer = () => {
         window.open(url, "_blank")
     }
 
+    const handleOpenMidtransSnap = (token: string) => {
+        if (!window.snap) return toast.error("Token is not available.")
+        window.snap.pay(token, {
+            onSuccess: () => toast.success("Payment successful!"),
+            onError: () => toast.error("Something went wrong."),
+        })
+    }
+
     const displayData = [
         {label: "Order ID", value: order?.midtrans_order_id, icon: <PiTicket />, handleFn: () => handleCopy(order?.midtrans_order_id ?? "")},
         {label: "Status", value: order?.status, icon: <PiCheckCircle />},
         {label: "Order Created Date", value: order?.created_at ? format(order?.created_at, "dd MMM yyyy HH:mm") : "-", icon: <PiCalendarDots />},
         {label: "Order Paid Date", value: order?.paid_at ? format(order?.paid_at, "dd MMM yyyy HH:mm") : "-", icon: <PiHandshake />},
-        {label: "Redirect Url", value: order?.midtrans_redirect || "-", icon: <PiLink />, handleFn: () => handleOpenUrl(order?.midtrans_redirect ?? "")},
-        {label: "Token", value: order?.midtrans_token || "-", icon: <PiCoin />, handleFn: () => handleCopy(order?.midtrans_token ?? "")},
+        {
+            label: "Redirect Url",
+            value: order?.midtrans_redirect ? (
+                <div className="flex items-center gap-2">
+                    Open payment <PiArrowSquareOut />
+                </div>
+            ) : (
+                <div>No payment link available</div>
+            ),
+            icon: <PiLink />,
+            handleFn: () => handleOpenUrl(order?.midtrans_redirect ?? ""),
+        },
+        {label: "Token", value: order?.midtrans_token || "-", icon: <PiCoin />, handleFn: () => handleOpenMidtransSnap(order?.midtrans_token ?? "")},
         {label: "Gross Amount", value: order?.gross_amount, icon: <PiMoney />},
     ]
 
     return (
-        <Drawer repositionInputs={false} direction={isMobile ? "bottom" : "right"} open={!!view} onOpenChange={(open) => !open && setParams({view: ""})}>
-            <DrawerContent aria-describedby="order-detail" className={cn(isMobile ? "h-[80vh]" : "min-w-[30vw]")}>
+        <Drawer swipeDirection={isMobile ? "down" : "right"} open={!!view} onOpenChange={(open) => !open && setParams({view: ""})}>
+            <DrawerContent aria-describedby="order-detail" className={cn(isMobile ? "h-[80vh]" : "")}>
                 <DrawerHeader className="flex flex-col items-center justify-center">
                     <DrawerTitle className="flex items-center gap-2">
                         <PiTicket />
@@ -92,9 +111,9 @@ const OrderDetailDrawer = () => {
                             </EmptyHeader>
                         </Empty>
                     ) : (
-                        <AnimDiv>
-                            <div className="flex flex-col items-center justify-center ">
-                                <Avatar className="w-10 h-10 mb-2">
+                        <AnimDiv className="w-full">
+                            <div className="flex flex-col items-center justify-center">
+                                <Avatar className="w-10 h-10 my-2">
                                     <AvatarImage src={order?.user.image || undefined} />
                                     <AvatarFallback>{order?.user.name ? order?.user.name[0].toUpperCase() : "U"}</AvatarFallback>
                                 </Avatar>

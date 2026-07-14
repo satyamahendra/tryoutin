@@ -70,7 +70,7 @@ const UserDetailModal = () => {
     }
 
     return (
-        <Drawer repositionInputs={false} direction={isMobile ? "bottom" : "right"} open={!!view} onOpenChange={(open) => !open && setParams({view: ""})}>
+        <Drawer swipeDirection={isMobile ? "down" : "right"} open={!!view} onOpenChange={(open) => !open && setParams({view: ""})}>
             <DrawerContent aria-describedby="user-form" className={cn(isMobile ? "h-[80vh]" : "")}>
                 <DrawerHeader className="flex flex-col items-center justify-center">
                     <DrawerTitle className="flex items-center gap-4">
@@ -181,11 +181,12 @@ const UserDetailModal = () => {
                 </div>
 
                 <DrawerFooter>
-                    <DrawerClose asChild>
-                        <Button variant="outline" className="w-full">
-                            Cancel
-                        </Button>
-                    </DrawerClose>
+                    <DrawerClose
+                        render={
+                            <Button variant="outline" className="w-full">
+                                Cancel
+                            </Button>
+                        }></DrawerClose>
                     <Button disabled={isPending} type="submit" form="user-form">
                         {isPending ? <Loader2 className="animate-spin" /> : "Submit"}
                     </Button>

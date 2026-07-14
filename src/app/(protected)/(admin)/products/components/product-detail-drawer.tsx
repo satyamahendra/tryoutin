@@ -126,7 +126,7 @@ const ProductForm = () => {
     }
 
     return (
-        <Drawer repositionInputs={false} direction={isMobile ? "bottom" : "right"} open={!!view} onOpenChange={(open) => !open && setParams({view: ""})}>
+        <Drawer swipeDirection={isMobile ? "down" : "right"} open={!!view} onOpenChange={(open) => !open && setParams({view: ""})}>
             <DrawerContent aria-describedby="product-detail" className={cn(isMobile ? "h-[80vh]" : "h-full")}>
                 <DrawerHeader className="flex flex-col items-center justify-center">
                     <DrawerTitle className="flex items-center gap-2">
@@ -312,11 +312,12 @@ const ProductForm = () => {
                 )}
 
                 <DrawerFooter>
-                    <DrawerClose asChild>
-                        <Button variant="outline" className="w-full">
-                            Cancel
-                        </Button>
-                    </DrawerClose>
+                    <DrawerClose
+                        render={
+                            <Button variant="outline" className="w-full">
+                                Cancel
+                            </Button>
+                        }></DrawerClose>
                     <div className="flex w-full gap-2">
                         {product && (
                             <Button disabled={isPending} onClick={() => mutateDelete(product.id)} variant={"destructive"} type="button" className="flex-1">
