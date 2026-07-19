@@ -12,7 +12,6 @@ import {upsertExam} from "../_services/upsert-exam"
 import {toast} from "sonner"
 import {Loader2} from "lucide-react"
 import {useTransition} from "react"
-import {useRouter} from "next/navigation"
 import {Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle} from "@/components/ui/empty"
 import {PiX} from "react-icons/pi"
 import {handleClientError} from "@/utils/helpers/handle-client-errors"
@@ -24,7 +23,6 @@ type ExamFormTypes = {
 const ExamForm = ({id}: ExamFormTypes) => {
     const isNew = id === "new"
     const queryClient = useQueryClient()
-    const router = useRouter()
     const [isPending, startTransition] = useTransition()
 
     const {
@@ -58,14 +56,14 @@ const ExamForm = ({id}: ExamFormTypes) => {
                       questions:
                           p.questions?.map((q) => ({
                               type: q.type ?? null,
-                              question_text: q.question_text ?? null,
+                              question_text: q.question_text ?? "",
                               question_image: q.question_image ?? null,
                               explanation: q.explanation ?? null,
                               explanation_image: null,
                               order_index: q.order_index ?? null,
                               options:
                                   q.options?.map((o) => ({
-                                      option_text: o.option_text ?? null,
+                                      option_text: o.option_text ?? "",
                                       option_image: o.option_image ?? null,
                                       score: o.score ?? null,
                                       is_correct: o.is_correct ?? null,

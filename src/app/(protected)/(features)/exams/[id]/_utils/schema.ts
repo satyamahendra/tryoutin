@@ -9,13 +9,10 @@ function imageUnder50kb(val: string | null | undefined): boolean {
     return bytes <= MAX_IMAGE_BYTES
 }
 
-const imageField = z
-    .string()
-    .nullable()
-    .refine(imageUnder50kb, "Image must be smaller than 50KB")
+const imageField = z.string().nullable().refine(imageUnder50kb, {error: "Image must be smaller than 50KB"})
 
 export const optionSchema = z.object({
-    option_text: z.string().nullable(),
+    option_text: z.string().min(1, {error: "Option text is required"}),
     option_image: imageField,
     score: z.number().nullable(),
     is_correct: z.boolean().nullable(),
@@ -25,58 +22,62 @@ export const optionSchema = z.object({
 export const questionSchema = z
     .object({
         type: z.enum(["multiple_choice", "single_choice", "scaled_choice", "essay"]).nullable(),
-        question_text: z.string().nullable(),
+        question_text: z.string().min(1, {error: "Question text is required"}),
         question_image: imageField,
         explanation: z.string().nullable(),
         explanation_image: imageField,
         order_index: z.number().nullable(),
-        options: z.array(optionSchema).min(1, "At least 1 option is required"),
+        options: z.array(optionSchema).min(1, {error: "At least 1 option is required"}),
     })
     .superRefine((question, ctx) => {
         const options = question.options ?? []
 
+        if (question.type === null) {
+            ctx.addIssue({code: "custom", error: "Question type is required", path: ["type"]})
+        }
+
         if (question.type === "multiple_choice") {
             if (options.length < 2) {
-                ctx.addIssue({code: z.ZodIssueCode.custom, message: "At least 2 options are required for multiple choice", path: ["options"]})
+                ctx.addIssue({code: "custom", error: "At least 2 options are required for multiple choice", path: ["options"]})
             }
             const correctCount = options.filter((o) => o.is_correct).length
             if (correctCount < 1) {
-                ctx.addIssue({code: z.ZodIssueCode.custom, message: "At least 1 correct option is required", path: ["options"]})
+                ctx.addIssue({code: "custom", error: "At least 1 correct option is required", path: ["options"]})
             }
         }
 
         if (question.type === "single_choice") {
             const correctCount = options.filter((o) => o.is_correct).length
             if (correctCount !== 1) {
-                ctx.addIssue({code: z.ZodIssueCode.custom, message: "Exactly 1 correct option is required for single choice", path: ["options"]})
+                ctx.addIssue({code: "custom", error: "Exactly 1 correct option is required for single choice", path: ["options"]})
             }
         }
 
         if (question.type === "scaled_choice") {
             for (let i = 0; i < options.length; i++) {
                 if (options[i].score == null) {
-                    ctx.addIssue({code: z.ZodIssueCode.custom, message: "Score is required for each option", path: ["options", i, "score"]})
+                    ctx.addIssue({code: "custom", error: "Score is required for each option", path: ["options", i, "score"]})
                 }
             }
         }
     })
 
 export const partSchema = z.object({
-    name: z.string().min(1, "Part name is required"),
+    name: z.string().min(1, {error: "Part name is required"}),
     order_index: z.number().nullable(),
-    passing_score: z.number().min(0, "Passing score is required").nullable(),
+    passing_score: z.number().min(0, {error: "Passing score is required"}).nullable(),
     duration_minutes: z.number().nullable(),
-    questions: z.array(questionSchema).min(1, "At least 1 question is required"),
+    questions: z.array(questionSchema).min(1, {error: "At least 1 question is required"}),
 })
 
 export const examSchema = z.object({
     id: z.string(),
-    title: z.string().min(1, "Title is required"),
+    title: z.string().min(1, {error: "Title is required"}),
     description: z.string().nullable(),
-    category: z.string().min(1, "Category is required"),
-    duration_minutes: z.number().min(1, "Duration is required").nullable(),
+    category: z.string().min(1, {error: "Category is required"}),
+    duration_minutes: z.number().min(1, {error: "Duration is required"}).nullable(),
     product_id: z.object({value: z.string(), label: z.string()}).nullable(),
-    parts: z.array(partSchema).min(1, "At least 1 part is required"),
+    parts: z.array(partSchema).min(1, {error: "At least 1 part is required"}),
 })
 
 export type ExamSchema = z.infer<typeof examSchema>

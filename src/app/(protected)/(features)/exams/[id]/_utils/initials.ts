@@ -1,5 +1,5 @@
 export const examOptionInitialValues = {
-    option_text: null,
+    option_text: "",
     option_image: null,
     score: null,
     is_correct: null,
@@ -8,7 +8,7 @@ export const examOptionInitialValues = {
 
 export const examQuestionInitialValues = {
     type: null,
-    question_text: null,
+    question_text: "",
     question_image: null,
     explanation: null,
     explanation_image: null,
