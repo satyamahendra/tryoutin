@@ -1,4 +1,4 @@
-import {PiCardholder, PiCreditCard, PiFlag, PiHouse, PiKey, PiPackage, PiTicket, PiUser} from "react-icons/pi"
+import {PiCardholder, PiCreditCard, PiFileText, PiFlag, PiHouse, PiKey, PiPackage, PiTicket, PiUser} from "react-icons/pi"
 
 export interface MenuItem {
     label: string
@@ -25,6 +25,14 @@ export const menuItems = [
         href: "/home",
         icon: <PiHouse />,
         permissions: ["read home", "manage home"],
+        roles: [],
+        children: [],
+    },
+    {
+        label: "Exams",
+        href: "/exams",
+        icon: <PiFileText />,
+        permissions: ["read exams", "manage exams"],
         roles: [],
         children: [],
     },

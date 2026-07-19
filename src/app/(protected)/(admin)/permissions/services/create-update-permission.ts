@@ -29,8 +29,6 @@ export async function createUpdatePermission(data: PermissionFormSchema): Promis
 
         const {name, name_before, roles = [], is_active} = parsed.data
 
-        console.log(is_active)
-
         if (name_before) {
             permission = await prisma.$transaction(async (tx) => {
                 const updated = await tx.permission.update({

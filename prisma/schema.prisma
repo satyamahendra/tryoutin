@@ -16,12 +16,11 @@ enum ProductType {
   bundle
 }
 
-
 enum ReportStatus {
   open
   in_review
-  waiting_user   
-  waiting_admin 
+  waiting_user
+  waiting_admin
   resolved
   rejected
 }
@@ -32,6 +31,27 @@ enum ReportType {
   content
   account
   other
+}
+
+enum QuestionType {
+  multiple_choice
+  single_choice   // traditional right/wrong question
+  scaled_choice   // "most correct" style question (e.g. TKP), every option has its own point value
+  essay           // free-text answer, requires manual grading
+}
+
+enum ExamSessionStatus {
+  in_progress
+  completed
+  expired
+  abandoned
+}
+
+enum ExamPartSessionStatus {
+  not_started
+  in_progress
+  completed
+  expired
 }
 
 generator client {
@@ -59,6 +79,9 @@ model User {
   entitlements  Entitlement[]
   reports       Report[]
   report_messages ReportMessage[]
+
+  exam_sessions   ExamSession[]
+  graded_answers  UserAnswer[]     @relation("GradedAnswers")
 
   @@map("user")
 }
@@ -175,6 +198,8 @@ model Product {
   included_in  BundleItem[] @relation("products_in_bundle")
   entitlements Entitlement[]
 
+  exam Exam?
+
   @@map("product")
 }
 
@@ -199,8 +224,8 @@ model Order {
   paid_at              DateTime?
   created_at           DateTime    @default(now())
   updated_at           DateTime    @updatedAt
-  midtrans_request    Json?        
-  midtrans_response   Json?     
+  midtrans_request    Json?
+  midtrans_response   Json?
   midtrans_token      String?
   midtrans_redirect   String?
 
@@ -224,12 +249,13 @@ model Entitlement {
   product Product @relation(fields: [product_id], references: [id])
   order   Order   @relation(fields: [order_id], references: [id])
 
+  exam_sessions ExamSession[]
+
   @@index([user_id])
   @@index([order_id])
   @@index([user_id, product_id])
   @@map("entitlement")
 }
-
 
 model Report {
   id          String       @id @default(uuid())
@@ -267,4 +293,140 @@ model ReportMessage {
   @@index([report_id])
   @@index([sender_id])
   @@map("report_message")
+}
+
+model Exam {
+  id               String   @id @default(uuid())
+  product_id       String?  @unique   // links to the purchasable Product, nullable for free/demo exams
+  category         String   // "CPNS", "BUMN", "UTBK", etc.
+  title            String
+  description      String?
+  duration_minutes Int?     // total exam duration, null if timing is fully per-part (see ExamPart)
+  is_active        Boolean  @default(true)
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+
+  product  Product?     @relation(fields: [product_id], references: [id])
+  parts    ExamPart[]
+  sessions ExamSession[]
+
+  @@map("exam")
+}
+
+model ExamPart {
+  id               String   @id @default(uuid())
+  exam_id          String
+  name             String   // "Matematika", "TWK", "TIU", "TKP", "Ekonomi", etc.
+  order_index      Int      @default(0)
+  duration_minutes Int?     // set this if the part has its own timer (CPNS-style sequential sections)
+  passing_score    Float?   // optional passing grade (e.g. TWK ambang batas)
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+
+  exam          Exam              @relation(fields: [exam_id], references: [id], onDelete: Cascade)
+  questions     Question[]
+  session_parts ExamSessionPart[]
+
+  @@index([exam_id])
+  @@map("exam_part")
+}
+
+model Question {
+  id                    String       @id @default(uuid())
+  part_id               String
+  type                  QuestionType @default(single_choice)
+  question_text         String
+  question_image String?      // base64-encoded image for the question stem, nullable
+  explanation           String?      // shown during review/discussion
+  order_index           Int          @default(0)
+  created_at            DateTime     @default(now())
+  updated_at            DateTime     @updatedAt
+
+  part    ExamPart         @relation(fields: [part_id], references: [id], onDelete: Cascade)
+  options QuestionOption[]
+  answers UserAnswer[]
+
+  @@index([part_id])
+  @@map("question")
+}
+
+model QuestionOption {
+  id                  String  @id @default(uuid())
+  question_id         String
+  option_text         String?
+  option_image String? // base64-encoded image for the option, nullable
+  score               Int     @default(0) // points awarded if this option is picked
+  is_correct          Boolean @default(false) // convenience flag for single_choice UI/review, ignored for scaled_choice
+  order_index         Int     @default(0)
+
+  question Question     @relation(fields: [question_id], references: [id], onDelete: Cascade)
+  answers  UserAnswer[]
+
+  @@index([question_id])
+  @@map("question_option")
+}
+
+model ExamSession {
+  id             String            @id @default(uuid())
+  user_id        String
+  exam_id        String
+  entitlement_id String?           // proof of purchase this session was started under
+  status         ExamSessionStatus @default(in_progress)
+  started_at     DateTime          @default(now())
+  ends_at        DateTime?         // started_at + exam.duration_minutes, computed at session creation
+  submitted_at   DateTime?
+  total_score    Float?
+  created_at     DateTime          @default(now())
+  updated_at     DateTime          @updatedAt
+
+  user          User              @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  exam          Exam              @relation(fields: [exam_id], references: [id])
+  entitlement   Entitlement?      @relation(fields: [entitlement_id], references: [id])
+  answers       UserAnswer[]
+  part_sessions ExamSessionPart[]
+
+  @@index([user_id])
+  @@index([exam_id])
+  @@index([user_id, status]) // fast lookup of a user's "active" session
+  @@map("exam_session")
+}
+
+model ExamSessionPart {
+  id           String                @id @default(uuid())
+  session_id   String
+  part_id      String
+  status       ExamPartSessionStatus @default(not_started)
+  started_at   DateTime?
+  ends_at      DateTime?
+  submitted_at DateTime?
+
+  session ExamSession @relation(fields: [session_id], references: [id], onDelete: Cascade)
+  part    ExamPart    @relation(fields: [part_id], references: [id])
+
+  @@unique([session_id, part_id])
+  @@map("exam_session_part")
+}
+
+model UserAnswer {
+  id             String    @id @default(uuid())
+  session_id     String
+  question_id    String
+  option_id      String?   // set for single_choice / scaled_choice, null for essay
+  answer_text    String?   // set for essay, null for single_choice / scaled_choice
+  score_awarded  Float?    // auto-filled on submit for MC/scaled; null until manually graded for essay
+  is_graded      Boolean   @default(true) // false for essay until an admin/reviewer scores it
+  graded_by      String?   // user_id of the admin/reviewer who graded the essay
+  graded_at      DateTime?
+  is_flagged     Boolean   @default(false) // "mark for review" during the exam
+  answered_at    DateTime  @default(now())
+  updated_at     DateTime  @updatedAt
+
+  session  ExamSession     @relation(fields: [session_id], references: [id], onDelete: Cascade)
+  question Question        @relation(fields: [question_id], references: [id], onDelete: Cascade)
+  option   QuestionOption? @relation(fields: [option_id], references: [id])
+  grader   User?           @relation("GradedAnswers", fields: [graded_by], references: [id])
+
+  @@unique([session_id, question_id]) // one answer per question per session, upsert on change
+  @@index([is_graded]) // fast lookup of "essays pending review"
+  @@map("user_answer")
 }
