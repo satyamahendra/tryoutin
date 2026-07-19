@@ -11,6 +11,7 @@ import {PiClock, PiListNumbers, PiPlus, PiShoppingBag, PiTag, PiTextAa} from "re
 import {InfiniteCombobox} from "@/components/custom/combobox"
 import type {ExamSchema} from "../_utils/schema"
 import {getProducts} from "@/app/(protected)/(admin)/products/services/get-products"
+import TagPicker from "./tag-picker"
 
 type ExamGeneralFormProps = {
     form: UseFormReturn<ExamSchema>
@@ -126,6 +127,18 @@ const ExamGeneralForm = ({form}: ExamGeneralFormProps) => {
                                 }}
                             />
                             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                        </Field>
+                    )}
+                />
+                <Controller
+                    name="tags"
+                    control={form.control}
+                    render={({field}) => (
+                        <Field>
+                            <FieldLabel className="flex items-center gap-1.5">
+                                <PiTag className="w-4 h-4" /> Tags
+                            </FieldLabel>
+                            <TagPicker value={field.value ?? []} onChange={field.onChange} />
                         </Field>
                     )}
                 />

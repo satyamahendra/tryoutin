@@ -48,6 +48,7 @@ const ExamForm = ({id}: ExamFormTypes) => {
                   category: exam?.category ?? "",
                   duration_minutes: exam?.duration_minutes ?? null,
                   product_id: exam?.product_id ? {value: exam.product_id, label: exam.product?.name ?? ""} : null,
+                  tags: exam?.tags?.map((t) => ({value: t.tag.id, label: t.tag.name})) ?? [],
                   parts: exam?.parts?.map((p) => ({
                       name: p.name ?? "",
                       order_index: p.order_index ?? null,
@@ -62,17 +63,19 @@ const ExamForm = ({id}: ExamFormTypes) => {
                               explanation_image: null,
                               order_index: q.order_index ?? null,
                               options:
-                                  q.options?.map((o) => ({
+                                  q.options?.map((o, i) => ({
                                       option_text: o.option_text ?? "",
                                       option_image: o.option_image ?? null,
                                       score: o.score ?? null,
                                       is_correct: o.is_correct ?? null,
-                                      order_index: o.order_index ?? null,
+                                      order_index: o.order_index ?? i,
                                   })) ?? [],
                           })) ?? [],
                   })) ?? [examInitialValues.parts[0]],
               },
     })
+
+    console.log(form.formState.errors)
 
     const {mutate, isPending: isMutating} = useMutation({
         mutationFn: upsertExam,

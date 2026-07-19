@@ -21,6 +21,16 @@ const examSelect = Prisma.validator<Prisma.ExamSelect>()({
     is_active: true,
     created_at: true,
     updated_at: true,
+    tags: {
+        select: {
+            tag: {
+                select: {
+                    id: true,
+                    name: true,
+                },
+            },
+        },
+    },
     parts: {
         orderBy: {order_index: "asc"},
         select: {

@@ -15,7 +15,7 @@ export async function upsertExam(data: ExamSchema): Promise<ServerResult<Pick<Ex
 
         const parsed = examSchema.parse(data)
 
-        const {id, title, description, category, duration_minutes, product_id, parts} = parsed
+        const {id, title, description, category, duration_minutes, product_id, tags, parts} = parsed
 
         const partsPayload = parts.map((part, pi) => ({
             name: part.name ?? "",
@@ -44,9 +44,14 @@ export async function upsertExam(data: ExamSchema): Promise<ServerResult<Pick<Ex
 
         let exam: Pick<Exam, "id">
 
+        const tagsPayload = tags.map((t) => ({
+            tag_id: t.value,
+        }))
+
         if (id) {
             exam = await prisma.$transaction(async (tx) => {
                 await tx.examPart.deleteMany({where: {exam_id: id}})
+                await tx.examTag.deleteMany({where: {exam_id: id}})
 
                 return tx.exam.update({
                     where: {id},
@@ -56,6 +61,9 @@ export async function upsertExam(data: ExamSchema): Promise<ServerResult<Pick<Ex
                         category,
                         duration_minutes,
                         product_id: product_id?.value ?? null,
+                        tags: {
+                            create: tagsPayload,
+                        },
                         parts: {
                             create: partsPayload,
                         },
@@ -72,6 +80,9 @@ export async function upsertExam(data: ExamSchema): Promise<ServerResult<Pick<Ex
                         category,
                         duration_minutes,
                         product_id: product_id?.value ?? null,
+                        tags: {
+                            create: tagsPayload,
+                        },
                         parts: {
                             create: partsPayload,
                         },
