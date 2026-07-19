@@ -50,7 +50,7 @@ const ExamList = async ({search}: ExamListProps) => {
             acc[key].push(exam)
             return acc
         },
-        {} as Record<string, typeof data.data.exams>
+        {} as Record<string, typeof data.data.exams>,
     )
 
     const sortedCategories = Object.keys(grouped).sort()
@@ -65,12 +65,12 @@ const ExamList = async ({search}: ExamListProps) => {
                     </div>
                     <CategoryRow>
                         {grouped[category].map((exam) => (
-                            <div key={exam.id} className="min-w-[280px] shrink-0">
+                            <div key={exam.id} className="w-[160px] shrink-0">
                                 <ExamItem exam={exam} />
                             </div>
                         ))}
                     </CategoryRow>
-                    <div className="hidden grid-cols-3 gap-4 md:grid">
+                    <div className="hidden grid-cols-4 gap-4 md:grid">
                         {grouped[category].map((exam) => (
                             <div key={exam.id}>
                                 <ExamItem exam={exam} />

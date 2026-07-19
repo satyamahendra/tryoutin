@@ -30,5 +30,6 @@ export const examInitialValues = {
     description: null,
     category: "",
     duration_minutes: null,
+    product_id: null,
     parts: [examPartInitialValues],
 }

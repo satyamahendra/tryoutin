@@ -13,29 +13,28 @@ const ExamItem = ({exam}: ExamItemProps) => {
 
     return (
         <Link href={`/exams/${exam.id}`} className="block">
-            <Card className="h-full transition-colors hover:bg-muted/50">
+            <Card size="sm" className="h-full transition-colors hover:bg-muted/50">
                 <CardHeader>
-                    <CardTitle className="line-clamp-2 text-base">{exam.title}</CardTitle>
+                    <CardTitle className="line-clamp-2 text-sm">{exam.title}</CardTitle>
                 </CardHeader>
-                <CardContent className="flex flex-col gap-2">
-                    {exam.description && <p className="line-clamp-2 text-sm text-muted-foreground">{exam.description}</p>}
-                    <div className="flex flex-wrap items-center gap-2">
+                <CardContent className="flex flex-col gap-1.5">
+                    <div className="flex flex-wrap items-center gap-1.5">
                         {exam.duration_minutes && (
-                            <Badge variant="outline" className="gap-1">
-                                <Clock className="size-3" />
-                                {exam.duration_minutes} min
+                            <Badge variant="outline" className="gap-1 text-[10px]">
+                                <Clock className="size-2.5" />
+                                {exam.duration_minutes}m
                             </Badge>
                         )}
                         {exam.parts.length > 0 && (
-                            <Badge variant="outline" className="gap-1">
-                                <FileText className="size-3" />
-                                {exam.parts.length} parts
+                            <Badge variant="outline" className="gap-1 text-[10px]">
+                                <FileText className="size-2.5" />
+                                {exam.parts.length}
                             </Badge>
                         )}
                         {questionCount > 0 && (
-                            <Badge variant="outline" className="gap-1">
-                                <HelpCircle className="size-3" />
-                                {questionCount} questions
+                            <Badge variant="outline" className="gap-1 text-[10px]">
+                                <HelpCircle className="size-2.5" />
+                                {questionCount}
                             </Badge>
                         )}
                     </div>

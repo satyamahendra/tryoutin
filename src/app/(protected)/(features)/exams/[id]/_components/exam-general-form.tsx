@@ -7,9 +7,10 @@ import {Controller, useFieldArray, type UseFormReturn} from "react-hook-form"
 import ExamPartForm from "./exam-part-form"
 import {Button} from "@/components/ui/button"
 import {examPartInitialValues} from "../_utils/initials"
-import {PiClock, PiListNumbers, PiPlus, PiTag, PiTextAa} from "react-icons/pi"
+import {PiClock, PiListNumbers, PiPlus, PiShoppingBag, PiTag, PiTextAa} from "react-icons/pi"
 import {InfiniteCombobox} from "@/components/custom/combobox"
 import type {ExamSchema} from "../_utils/schema"
+import {getProducts} from "@/app/(protected)/(admin)/products/services/get-products"
 
 type ExamGeneralFormProps = {
     form: UseFormReturn<ExamSchema>
@@ -98,6 +99,36 @@ const ExamGeneralForm = ({form}: ExamGeneralFormProps) => {
                         )}
                     />
                 </div>
+                <Controller
+                    name="product_id"
+                    control={form.control}
+                    render={({field, fieldState}) => (
+                        <Field data-invalid={fieldState.invalid}>
+                            <FieldLabel className="flex items-center gap-1.5">
+                                <PiShoppingBag className="w-4 h-4" /> Product (optional)
+                            </FieldLabel>
+                            <InfiniteCombobox
+                                value={field.value}
+                                onChange={field.onChange}
+                                placeholder="Link a product"
+                                queryKey={["products"]}
+                                queryFn={(page, search) => getProducts(page, search)}
+                                getItems={(page) =>
+                                    page.data?.products.map((p) => ({
+                                        value: p.id,
+                                        label: p.name,
+                                    })) ?? []
+                                }
+                                getNextPage={(page) => {
+                                    if (!page.data) return undefined
+                                    const {page: current, pageCount} = page.data.pagination
+                                    return current < pageCount ? current + 1 : undefined
+                                }}
+                            />
+                            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                        </Field>
+                    )}
+                />
             </FieldGroup>
 
             <div className="flex flex-col gap-4 mt-2">

@@ -15,7 +15,7 @@ export async function upsertExam(data: ExamSchema): Promise<ServerResult<Pick<Ex
 
         const parsed = examSchema.parse(data)
 
-        const {id, title, description, category, duration_minutes, parts} = parsed
+        const {id, title, description, category, duration_minutes, product_id, parts} = parsed
 
         const partsPayload = parts.map((part, pi) => ({
             name: part.name ?? "",
@@ -55,6 +55,7 @@ export async function upsertExam(data: ExamSchema): Promise<ServerResult<Pick<Ex
                         description,
                         category,
                         duration_minutes,
+                        product_id: product_id?.value ?? null,
                         parts: {
                             create: partsPayload,
                         },
@@ -70,6 +71,7 @@ export async function upsertExam(data: ExamSchema): Promise<ServerResult<Pick<Ex
                         description,
                         category,
                         duration_minutes,
+                        product_id: product_id?.value ?? null,
                         parts: {
                             create: partsPayload,
                         },

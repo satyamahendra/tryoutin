@@ -75,6 +75,7 @@ export const examSchema = z.object({
     description: z.string().nullable(),
     category: z.string().min(1, "Category is required"),
     duration_minutes: z.number().min(1, "Duration is required").nullable(),
+    product_id: z.object({value: z.string(), label: z.string()}).nullable(),
     parts: z.array(partSchema).min(1, "At least 1 part is required"),
 })
 

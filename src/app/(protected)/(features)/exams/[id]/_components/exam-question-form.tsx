@@ -63,7 +63,7 @@ const ExamQuestionForm = ({partIndex, questionIndex, form, onRemove}: ExamQuesti
 
     return (
         <div className="rounded-lg border bg-card">
-            <button type="button" className="flex items-center gap-3 w-full p-3 text-left hover:bg-muted/50 transition-colors" onClick={() => setIsOpen(!isOpen)}>
+            <div className="flex items-center gap-3 w-full p-3 text-left hover:bg-muted/50 transition-colors" onClick={() => setIsOpen(!isOpen)}>
                 <span className="flex items-center justify-center w-6 h-6 rounded-md bg-primary/10 text-primary text-xs font-bold shrink-0">{questionIndex + 1}</span>
                 {questionType && (
                     <span
@@ -76,7 +76,7 @@ const ExamQuestionForm = ({partIndex, questionIndex, form, onRemove}: ExamQuesti
                     <PiTrash />
                 </Button>
                 <PiMinus className={`w-4 h-4 text-muted-foreground transition-transform shrink-0 ${isOpen ? "" : "rotate-45"}`} />
-            </button>
+            </div>
 
             {isOpen && (
                 <div className="p-4 border-t">

@@ -11,7 +11,7 @@ const CategoryRow = ({children}: CategoryRowProps) => {
     return (
         <div className="md:hidden">
             <ScrollArea className="w-full">
-                <div className="flex gap-4 pb-4 pr-4">{children}</div>
+                <div className="flex gap-3 p-2">{children}</div>
                 <ScrollBar orientation="horizontal" />
             </ScrollArea>
         </div>

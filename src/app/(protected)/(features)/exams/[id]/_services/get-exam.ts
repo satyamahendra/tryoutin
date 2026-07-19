@@ -11,6 +11,12 @@ const examSelect = Prisma.validator<Prisma.ExamSelect>()({
     title: true,
     description: true,
     category: true,
+    product_id: true,
+    product: {
+        select: {
+            name: true,
+        },
+    },
     duration_minutes: true,
     is_active: true,
     created_at: true,

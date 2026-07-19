@@ -49,6 +49,7 @@ const ExamForm = ({id}: ExamFormTypes) => {
                   description: exam?.description ?? null,
                   category: exam?.category ?? "",
                   duration_minutes: exam?.duration_minutes ?? null,
+                  product_id: exam?.product_id ? {value: exam.product_id, label: exam.product?.name ?? ""} : null,
                   parts: exam?.parts?.map((p) => ({
                       name: p.name ?? "",
                       order_index: p.order_index ?? null,
@@ -82,7 +83,6 @@ const ExamForm = ({id}: ExamFormTypes) => {
             toast.success(res.message)
             startTransition(() => {
                 queryClient.invalidateQueries({queryKey: ["exams"]})
-                router.push("/exams")
             })
         },
         onError: (error) => {
