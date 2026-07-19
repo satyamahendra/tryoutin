@@ -52,7 +52,7 @@ export type GetTryouts = {
     tryouts: (GetTryout & {owned: boolean})[]
 }
 
-export async function getTryouts({search, category, tag}: {search?: string; category?: string; tag?: string}): Promise<ServerResult<GetTryouts>> {
+export async function getTryouts({search, category, tags}: {search?: string; category?: string; tags?: string}): Promise<ServerResult<GetTryouts>> {
     try {
         const session = await authServer()
         if (!session) throw new Error("Unauthorized")
@@ -74,8 +74,11 @@ export async function getTryouts({search, category, tag}: {search?: string; cate
             where.category = category
         }
 
-        if (tag) {
-            where.tags = {some: {tag_id: tag}}
+        if (tags) {
+            const tagNames = tags.split(",").filter(Boolean)
+            if (tagNames.length > 0) {
+                where.tags = {some: {tag: {name: {in: tagNames}}}}
+            }
         }
 
         const [tryouts, entitlements] = await Promise.all([

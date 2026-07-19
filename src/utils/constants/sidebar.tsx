@@ -1,4 +1,4 @@
-import {PiCardholder, PiCreditCard, PiFileText, PiFlag, PiHouse, PiKey, PiPackage, PiStorefront, PiTag, PiTicket, PiUser} from "react-icons/pi"
+import {PiCardholder, PiCreditCard, PiFileText, PiFlag, PiGear, PiHouse, PiKey, PiPackage, PiStorefront, PiTag, PiTicket, PiUser} from "react-icons/pi"
 
 export interface MenuItem {
     label: string
@@ -28,14 +28,7 @@ export const menuItems = [
         roles: [],
         children: [],
     },
-    {
-        label: "Exams",
-        href: "/exams",
-        icon: <PiFileText />,
-        permissions: ["read exams", "manage exams"],
-        roles: [],
-        children: [],
-    },
+
     {
         label: "Tryouts",
         href: "/tryouts",
@@ -44,13 +37,31 @@ export const menuItems = [
         roles: [],
         children: [],
     },
+
     {
-        label: "Tags",
-        href: "/tags",
-        icon: <PiTag />,
-        permissions: ["read tags", "manage tags"],
+        label: "Settings",
+        href: "",
+        icon: <PiGear />,
+        permissions: [],
         roles: [],
-        children: [],
+        children: [
+            {
+                label: "Exams",
+                href: "/exams",
+                icon: <PiFileText />,
+                permissions: ["read exams", "manage exams"],
+                roles: [],
+                children: [],
+            },
+            {
+                label: "Tags",
+                href: "/tags",
+                icon: <PiTag />,
+                permissions: ["read tags", "manage tags"],
+                roles: [],
+                children: [],
+            },
+        ],
     },
     {
         label: "Admin",
