@@ -7,6 +7,7 @@ import SearchParams from "@/components/custom/search-params"
 import {Suspense} from "react"
 import {Loader2} from "lucide-react"
 import CreateExamButton from "./_components/create-exam-button"
+import ImportExamButton from "./_components/import-exam-button"
 import ExamList from "./_components/exam-list"
 
 type PageProps = {
@@ -23,7 +24,7 @@ const Page = async ({searchParams}: PageProps) => {
 
     return (
         <AnimDiv className="flex flex-col gap-4">
-            <PageHeader title="Exams" description="Manage exams" icon={<PiFileText />} subComponent={<CreateExamButton />} />
+            <PageHeader title="Exams" description="Manage exams" icon={<PiFileText />} subComponent={<div className="flex items-center gap-2"><ImportExamButton /><CreateExamButton /></div>} />
             <SearchParams className="w-48 self-end" />
             <Suspense
                 key={`$${search}`}

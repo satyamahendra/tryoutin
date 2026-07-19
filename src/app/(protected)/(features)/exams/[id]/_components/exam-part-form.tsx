@@ -27,20 +27,22 @@ const ExamPartForm = ({partIndex, form, onRemove}: ExamPartFormProps) => {
     return (
         <Collapsible>
             <div className="relative rounded-xl border bg-card ">
-                <CollapsibleTrigger className="flex items-center gap-3 w-full p-4 text-left hover:bg-muted/50 transition-colors">
-                    <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary text-primary-foreground text-sm font-bold shrink-0">
-                        {partIndex + 1}
-                    </span>
-                    <div className="flex flex-col flex-1 min-w-0">
-                        <span className="text-sm font-medium truncate">{partName || "Untitled Part"}</span>
-                        <span className="text-xs text-muted-foreground">
-                            {fields.length} question{fields.length !== 1 ? "s" : ""}
+                <CollapsibleTrigger asChild className="flex items-center gap-3 w-full p-4 text-left hover:bg-muted/50 transition-colors">
+                    <div>
+                        <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary text-primary-foreground text-sm font-bold shrink-0">
+                            {partIndex + 1}
                         </span>
+                        <div className="flex flex-col flex-1 min-w-0">
+                            <span className="text-sm font-medium truncate">{partName || "Untitled Part"}</span>
+                            <span className="text-xs text-muted-foreground">
+                                {fields.length} question{fields.length !== 1 ? "s" : ""}
+                            </span>
+                        </div>
+                        <Button type="button" variant="destructive" size="icon" onClick={onRemove}>
+                            <PiTrash />
+                        </Button>
+                        <PiMinus className="w-4 h-4 text-muted-foreground transition-transform shrink-0 [[data-state=open]>&]:rotate-45" />
                     </div>
-                    <Button type="button" variant="destructive" size="icon" onClick={onRemove}>
-                        <PiTrash />
-                    </Button>
-                    <PiMinus className="w-4 h-4 text-muted-foreground transition-transform shrink-0 [[data-state=open]>&]:rotate-45" />
                 </CollapsibleTrigger>
 
                 <CollapsibleContent>

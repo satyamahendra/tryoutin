@@ -1,8 +1,22 @@
 import {z} from "zod"
 
+const MAX_IMAGE_BYTES = 50 * 1024
+
+function imageUnder50kb(val: string | null | undefined): boolean {
+    if (!val) return true
+    const base64 = val.includes(",") ? val.split(",")[1] : val
+    const bytes = Math.ceil((base64.length * 3) / 4)
+    return bytes <= MAX_IMAGE_BYTES
+}
+
+const imageField = z
+    .string()
+    .nullable()
+    .refine(imageUnder50kb, "Image must be smaller than 50KB")
+
 export const optionSchema = z.object({
     option_text: z.string().nullable(),
-    option_image: z.string().nullable(),
+    option_image: imageField,
     score: z.number().nullable(),
     is_correct: z.boolean().nullable(),
     order_index: z.number().nullable(),
@@ -12,9 +26,9 @@ export const questionSchema = z
     .object({
         type: z.enum(["multiple_choice", "single_choice", "scaled_choice", "essay"]).nullable(),
         question_text: z.string().nullable(),
-        question_image: z.string().nullable(),
+        question_image: imageField,
         explanation: z.string().nullable(),
-        explanation_image: z.string().nullable(),
+        explanation_image: imageField,
         order_index: z.number().nullable(),
         options: z.array(optionSchema).min(1, "At least 1 option is required"),
     })
