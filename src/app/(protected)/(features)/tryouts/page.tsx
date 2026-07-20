@@ -25,16 +25,16 @@ const Page = async ({searchParams}: PageProps) => {
 
     return (
         <AnimDiv className="flex flex-col gap-6">
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/90 via-primary to-primary/70 text-primary-foreground px-6 pb-8 pt-10 md:px-8 md:pt-12 md:pb-10">
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/90 via-primary to-primary/70 text-primary-foreground px-6 pb-5 pt-6 md:px-8 md:pt-8 md:pb-5">
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_20%,rgba(255,255,255,0.12),transparent_50%)]" />
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(255,255,255,0.08),transparent_40%)]" />
-                <div className="relative flex flex-col gap-5">
-                    <div className="flex flex-col gap-2">
+                <div className="relative flex flex-col gap-3">
+                    <div className="flex flex-col gap-1.5">
                         <div className="flex items-center gap-2 text-primary-foreground/70 text-sm font-medium">
                             <PiStorefront className="w-4 h-4" />
                             Marketplace
                         </div>
-                        <h1 className="text-2xl font-bold md:text-3xl">Find Your Perfect Tryout</h1>
+                        <h1 className="text-xl font-bold md:text-2xl">Find Your Perfect Tryout</h1>
                         <p className="text-primary-foreground/80 text-sm max-w-md leading-relaxed">
                             Practice with real exam simulations. Choose from various categories and start your preparation journey today.
                         </p>
@@ -47,10 +47,6 @@ const Page = async ({searchParams}: PageProps) => {
                         <div className="flex items-center gap-1.5">
                             <PiFlask className="w-4 h-4 text-primary-foreground" />
                             <span>{allTags.length} Tags</span>
-                        </div>
-                        <div className="flex items-center gap-1.5">
-                            <PiTrophy className="w-4 h-4 text-primary-foreground" />
-                            <span>Instant Access</span>
                         </div>
                     </div>
                 </div>
