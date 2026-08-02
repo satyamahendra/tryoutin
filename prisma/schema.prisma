@@ -54,6 +54,11 @@ enum ExamPartSessionStatus {
   expired
 }
 
+enum ExamSessionType {
+  simulation
+  practice
+}
+
 generator client {
   provider = "prisma-client-js"
   output   = "./generated/prisma"
@@ -393,6 +398,7 @@ model ExamSession {
   user_id        String
   exam_id        String
   entitlement_id String?           // proof of purchase this session was started under
+  type           ExamSessionType   @default(simulation)
   status         ExamSessionStatus @default(in_progress)
   started_at     DateTime          @default(now())
   ends_at        DateTime?         // started_at + exam.duration_minutes, computed at session creation

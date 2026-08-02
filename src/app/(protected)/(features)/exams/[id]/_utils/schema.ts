@@ -12,6 +12,7 @@ function imageUnder50kb(val: string | null | undefined): boolean {
 const imageField = z.string().nullable().refine(imageUnder50kb, {error: "Image must be smaller than 50KB"})
 
 export const optionSchema = z.object({
+    id: z.string().nullable(),
     option_text: z.string().min(1, {error: "Option text is required"}),
     option_image: imageField,
     score: z.number().nullable(),
@@ -21,6 +22,7 @@ export const optionSchema = z.object({
 
 export const questionSchema = z
     .object({
+        id: z.string().nullable(),
         type: z.enum(["multiple_choice", "single_choice", "scaled_choice", "essay"]).nullable(),
         question_text: z.string().min(1, {error: "Question text is required"}),
         question_image: imageField,
@@ -63,6 +65,7 @@ export const questionSchema = z
     })
 
 export const partSchema = z.object({
+    id: z.string().nullable(),
     name: z.string().min(1, {error: "Part name is required"}),
     order_index: z.number().nullable(),
     passing_score: z.number().min(0, {error: "Passing score is required"}).nullable(),
@@ -71,7 +74,7 @@ export const partSchema = z.object({
 })
 
 export const examSchema = z.object({
-    id: z.string(),
+    id: z.uuid().nullable(),
     title: z.string().min(1, {error: "Title is required"}),
     description: z.string().nullable(),
     category: z.string().min(1, {error: "Category is required"}),

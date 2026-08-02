@@ -3,7 +3,7 @@
 import {Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle} from "@/components/ui/drawer"
 import {Badge} from "@/components/ui/badge"
 import {Button} from "@/components/ui/button"
-import {PiCheck, PiClock, PiGameController, PiListChecks, PiPlay, PiTrophy, PiX} from "react-icons/pi"
+import {PiCheck, PiClock, PiGameController, PiListChecks, PiPlay, PiTrophy} from "react-icons/pi"
 import {useQueryParams} from "@/utils/hooks/useQueryParams"
 import {useQuery} from "@tanstack/react-query"
 import {getMyTryoutDetail} from "../_services/get-my-tryout-detail"
@@ -11,9 +11,11 @@ import {Loader2} from "lucide-react"
 import {useScreenSize} from "@/utils/hooks/useScreenSize"
 import {cn} from "@/lib/utils"
 import {toast} from "sonner"
+import {useRouter} from "next/navigation"
 
 const MyTryoutDetailModal = () => {
     const {getParam, setParams} = useQueryParams()
+    const router = useRouter()
     const {isMobile} = useScreenSize()
     const view = getParam("view")
 
@@ -27,16 +29,25 @@ const MyTryoutDetailModal = () => {
     const totalQuestions = tryout?.parts.reduce((sum, part) => sum + part._count.questions, 0) ?? 0
 
     const handleStartTryout = () => {
-        toast.info("Start Tryout feature coming soon!")
+        if (tryout) {
+            router.push(`/tryout-session/${tryout.id}?mode=simulation`)
+            setParams({view: ""})
+        }
     }
 
     const handlePracticeMode = () => {
-        toast.info("Practice Mode feature coming soon!")
+        if (tryout) {
+            const firstPart = tryout.parts[0]
+            if (firstPart) {
+                router.push(`/tryout-session/${tryout.id}?mode=practice&part=${firstPart.id}`)
+                setParams({view: ""})
+            }
+        }
     }
 
     return (
         <Drawer swipeDirection={isMobile ? "down" : "right"} open={!!view} onOpenChange={(open) => !open && setParams({view: ""})}>
-            <DrawerContent aria-describedby="my-tryout-detail" className={cn(isMobile ? "h-[85vh]" : "h-full")}>
+            <DrawerContent aria-describedby="my-tryout-detail" className={cn(isMobile ? "h-[85vh]" : "")}>
                 {isLoading ? (
                     <div className="flex items-center justify-center h-full">
                         <Loader2 className="animate-spin w-6 h-6 text-muted-foreground" />
@@ -45,16 +56,9 @@ const MyTryoutDetailModal = () => {
                     <div className="flex items-center justify-center h-full text-sm text-muted-foreground">Tryout not found.</div>
                 ) : (
                     <>
-                        <div className="relative bg-gradient-to-br from-violet-600 via-violet-600 to-violet-500 text-primary-foreground px-6 py-8">
+                        <div className="relative bg-gradient-to-br from-primary/90 via-primary to-primary/70 text-primary-foreground px-6 py-8">
                             <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.15),transparent_50%)]" />
                             <div className="relative flex flex-col gap-3">
-                                <div className="flex items-start justify-end">
-                                    <button
-                                        onClick={() => setParams({view: ""})}
-                                        className="rounded-full bg-white/15 p-1.5 text-primary-foreground/70 hover:bg-white/25 hover:text-primary-foreground transition-colors">
-                                        <PiX className="w-4 h-4" />
-                                    </button>
-                                </div>
                                 <DrawerHeader className="p-0 gap-2 text-left">
                                     <div className="flex items-start justify-between gap-3">
                                         <div className="flex flex-col gap-2">
@@ -72,7 +76,10 @@ const MyTryoutDetailModal = () => {
                                     {tryout.tags.length > 0 && (
                                         <div className="flex flex-wrap gap-1.5">
                                             {tryout.tags.map((t) => (
-                                                <Badge key={t.tag.id} variant="outline" className="text-[10px] font-normal bg-white/10 text-primary-foreground border-white/25">
+                                                <Badge
+                                                    key={t.tag.id}
+                                                    variant="outline"
+                                                    className="text-[10px] font-normal bg-white/10 text-primary-foreground border-white/25">
                                                     {t.tag.name}
                                                 </Badge>
                                             ))}
@@ -114,7 +121,7 @@ const MyTryoutDetailModal = () => {
                                 <div className="flex flex-col gap-2.5">
                                     {tryout.parts.map((part, i) => (
                                         <div key={part.id} className="flex items-start gap-3 rounded-xl border bg-card p-4 transition-colors hover:bg-muted/50">
-                                            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-violet-100 text-violet-700 text-sm font-bold shrink-0 mt-0.5 dark:bg-violet-900/30 dark:text-violet-400">
+                                            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 text-primary text-sm font-bold shrink-0 mt-0.5">
                                                 {i + 1}
                                             </div>
                                             <div className="flex flex-col gap-1 flex-1 min-w-0">
@@ -138,26 +145,26 @@ const MyTryoutDetailModal = () => {
                                                     )}
                                                 </div>
                                             </div>
-                                            <PiCheck className="w-4 h-4 text-violet-500 shrink-0 mt-1" />
+                                            <PiCheck className="w-4 h-4 text-primary shrink-0 mt-1" />
                                         </div>
                                     ))}
-                </div>
+                                </div>
                             </div>
                         </div>
 
                         <div className="border-t bg-muted/30 px-6 py-5">
-                            <div className="flex items-center gap-3">
+                            <div className="flex flex-col justify-between gap-4">
                                 <Badge variant="default" className="gap-1.5 px-4 py-2 text-sm shrink-0">
                                     <PiCheck /> In Your Collection
                                 </Badge>
-                                <div className="flex gap-2 ml-auto flex-wrap">
+                                <div className="flex gap-2 shrink-0">
                                     <Button size="sm" onClick={handleStartTryout}>
                                         <PiPlay className="mr-1.5" />
                                         Start Tryout
                                     </Button>
                                     <Button size="sm" variant="secondary" onClick={handlePracticeMode}>
                                         <PiGameController className="mr-1.5" />
-                                        Practice Mode
+                                        Practice
                                     </Button>
                                 </div>
                             </div>

@@ -1,0 +1,127 @@
+"use server"
+
+import {authServer} from "@/lib/auth-server"
+import prisma from "@/lib/prisma/client"
+import {handleServerError} from "@/utils/helpers/handle-server-errors"
+import {ServerResult} from "@/utils/types/server-action"
+
+export type SubmitPartResult = {
+    completed: boolean
+    nextPartId?: string
+    nextPartQuestionId?: string
+    sessionStatus?: string
+}
+
+export async function submitPart(sessionId: string, partId: string, expired = false): Promise<ServerResult<SubmitPartResult>> {
+    try {
+        const session = await authServer()
+        if (!session) throw new Error("Unauthorized")
+
+        const examSession = await prisma.examSession.findFirst({
+            where: {id: sessionId, user_id: session.user.id, status: "in_progress"},
+            select: {
+                id: true,
+                exam: {
+                    select: {
+                        parts: {
+                            orderBy: {order_index: "asc"},
+                            select: {id: true, duration_minutes: true},
+                        },
+                    },
+                },
+                part_sessions: {
+                    orderBy: {part: {order_index: "asc"}},
+                    select: {id: true, part_id: true, status: true},
+                },
+            },
+        })
+
+        if (!examSession) throw new Error("Session not found or not in progress")
+
+        const now = new Date()
+        const parts = examSession.exam.parts
+        const currentIndex = parts.findIndex((p) => p.id === partId)
+        if (currentIndex === -1) throw new Error("Part not found")
+
+        const partSession = examSession.part_sessions.find((ps) => ps.part_id === partId)
+        if (!partSession) throw new Error("Part session not found")
+
+        const nextIndex = currentIndex + 1
+
+        if (nextIndex >= parts.length) {
+            const [correctCount] = await prisma.$transaction(async (tx) => {
+                await tx.examSessionPart.update({
+                    where: {id: partSession.id},
+                    data: {
+                        status: expired ? "expired" : "completed",
+                        submitted_at: now,
+                    },
+                })
+
+                await tx.examSession.update({
+                    where: {id: sessionId},
+                    data: {
+                        status: "completed",
+                        submitted_at: now,
+                    },
+                })
+
+                const count = await tx.userAnswer.count({
+                    where: {
+                        session_id: sessionId,
+                        option: {is_correct: true},
+                    },
+                })
+                return [count]
+            })
+
+            return {
+                success: true,
+                message: "All parts completed — " + correctCount + " correct",
+                data: {completed: true, sessionStatus: "completed"},
+            }
+        }
+
+        const nextPart = parts[nextIndex]
+        const nextPartSession = examSession.part_sessions.find((ps) => ps.part_id === nextPart.id)
+
+        await prisma.$transaction(async (tx) => {
+            await tx.examSessionPart.update({
+                where: {id: partSession.id},
+                data: {
+                    status: expired ? "expired" : "completed",
+                    submitted_at: now,
+                },
+            })
+
+            if (nextPartSession) {
+                await tx.examSessionPart.update({
+                    where: {id: nextPartSession.id},
+                    data: {
+                        status: "in_progress",
+                        started_at: now,
+                        ends_at: nextPart.duration_minutes ? new Date(now.getTime() + nextPart.duration_minutes * 60000) : null,
+                    },
+                })
+            }
+        })
+
+        const nextQuestion = await prisma.question.findFirst({
+            where: {part_id: nextPart.id},
+            orderBy: {order_index: "asc"},
+            select: {id: true},
+        })
+
+        return {
+            success: true,
+            message: "Part submitted",
+            data: {
+                completed: false,
+                nextPartId: nextPart.id,
+                nextPartQuestionId: nextQuestion?.id,
+            },
+        }
+    } catch (error) {
+        return handleServerError(error)
+    }
+}

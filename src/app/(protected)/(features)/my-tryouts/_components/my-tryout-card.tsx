@@ -4,7 +4,7 @@ import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card"
 import {Badge} from "@/components/ui/badge"
 import {Button} from "@/components/ui/button"
 import {PiClock, PiEye, PiGameController, PiListChecks, PiPlay} from "react-icons/pi"
-import {toast} from "sonner"
+import {useRouter} from "next/navigation"
 import {GetMyTryout} from "../_services/get-my-tryouts"
 import {useQueryParams} from "@/utils/hooks/useQueryParams"
 
@@ -13,6 +13,7 @@ type MyTryoutCardProps = {
 }
 
 const MyTryoutCard = ({tryout}: MyTryoutCardProps) => {
+    const router = useRouter()
     const {setParams} = useQueryParams()
     const product = tryout.product
     const totalQuestions = tryout.parts.reduce((sum, part) => sum + part._count.questions, 0)
@@ -22,11 +23,14 @@ const MyTryoutCard = ({tryout}: MyTryoutCardProps) => {
     }
 
     const handleStartTryout = () => {
-        toast.info("Start Tryout feature coming soon!")
+        router.push(`/tryout-session/${tryout.id}?mode=simulation`)
     }
 
     const handlePracticeMode = () => {
-        toast.info("Practice Mode feature coming soon!")
+        const firstPart = tryout.parts[0]
+        if (firstPart) {
+            router.push(`/tryout-session/${tryout.id}?mode=practice&part=${firstPart.id}`)
+        }
     }
 
     return (

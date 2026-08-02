@@ -42,7 +42,7 @@ const ExamForm = ({id}: ExamFormTypes) => {
         values: isNew
             ? examInitialValues
             : {
-                  id: exam?.id ?? "",
+                  id: exam?.id ?? null,
                   title: exam?.title ?? "",
                   description: exam?.description ?? null,
                   category: exam?.category ?? "",
@@ -50,12 +50,14 @@ const ExamForm = ({id}: ExamFormTypes) => {
                   product_id: exam?.product_id ? {value: exam.product_id, label: exam.product?.name ?? ""} : null,
                   tags: exam?.tags?.map((t) => ({value: t.tag.id, label: t.tag.name})) ?? [],
                   parts: exam?.parts?.map((p) => ({
+                      id: p.id || null,
                       name: p.name ?? "",
                       order_index: p.order_index ?? null,
                       passing_score: p.passing_score ?? null,
                       duration_minutes: p.duration_minutes ?? null,
                       questions:
                           p.questions?.map((q) => ({
+                              id: q.id || null,
                               type: q.type ?? null,
                               question_text: q.question_text ?? "",
                               question_image: q.question_image ?? null,
@@ -64,6 +66,7 @@ const ExamForm = ({id}: ExamFormTypes) => {
                               order_index: q.order_index ?? null,
                               options:
                                   q.options?.map((o, i) => ({
+                                      id: o.id || null,
                                       option_text: o.option_text ?? "",
                                       option_image: o.option_image ?? null,
                                       score: o.score ?? null,
@@ -74,8 +77,6 @@ const ExamForm = ({id}: ExamFormTypes) => {
                   })) ?? [examInitialValues.parts[0]],
               },
     })
-
-    console.log(form.formState.errors)
 
     const {mutate, isPending: isMutating} = useMutation({
         mutationFn: upsertExam,

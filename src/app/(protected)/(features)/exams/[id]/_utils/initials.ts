@@ -1,4 +1,5 @@
 export const examOptionInitialValues = {
+    id: null,
     option_text: "",
     option_image: null,
     score: null,
@@ -7,6 +8,7 @@ export const examOptionInitialValues = {
 }
 
 export const examQuestionInitialValues = {
+    id: null,
     type: null,
     question_text: "",
     question_image: null,
@@ -17,6 +19,7 @@ export const examQuestionInitialValues = {
 }
 
 export const examPartInitialValues = {
+    id: null,
     name: "",
     order_index: null,
     passing_score: 0,
@@ -25,7 +28,7 @@ export const examPartInitialValues = {
 }
 
 export const examInitialValues = {
-    id: "",
+    id: null,
     title: "",
     description: null,
     category: "",

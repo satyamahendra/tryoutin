@@ -20,10 +20,7 @@ const TryoutDetailModal = () => {
     const {isMobile} = useScreenSize()
     const view = getParam("view")
 
-    const {
-        data: tryoutData,
-        isLoading,
-    } = useQuery({
+    const {data: tryoutData, isLoading} = useQuery({
         queryKey: ["tryout-detail", view],
         queryFn: () => getTryoutDetail(view!),
         enabled: !!view,
@@ -58,7 +55,7 @@ const TryoutDetailModal = () => {
 
     return (
         <Drawer swipeDirection={isMobile ? "down" : "right"} open={!!view} onOpenChange={(open) => !open && setParams({view: ""})}>
-            <DrawerContent aria-describedby="tryout-detail" className={cn(isMobile ? "h-[85vh]" : "h-full")}>
+            <DrawerContent aria-describedby="tryout-detail" className={cn(isMobile ? "h-[85vh]" : "")}>
                 {isLoading ? (
                     <div className="flex items-center justify-center h-full">
                         <Loader2 className="animate-spin w-6 h-6 text-muted-foreground" />
@@ -74,7 +71,9 @@ const TryoutDetailModal = () => {
                                     <div className="flex items-start justify-between gap-3">
                                         <div className="flex flex-col gap-2">
                                             <DrawerTitle className="text-xl font-bold text-primary-foreground leading-snug">{tryout.title}</DrawerTitle>
-                                            {tryout.description && <DrawerDescription className="text-primary-foreground/80 text-sm leading-relaxed">{tryout.description}</DrawerDescription>}
+                                            {tryout.description && (
+                                                <DrawerDescription className="text-primary-foreground/80 text-sm leading-relaxed">{tryout.description}</DrawerDescription>
+                                            )}
                                         </div>
                                         {tryout.category && (
                                             <Badge variant="secondary" className="shrink-0 text-xs bg-white/20 text-primary-foreground border-white/30 hover:bg-white/30">
@@ -85,7 +84,10 @@ const TryoutDetailModal = () => {
                                     {tryout.tags.length > 0 && (
                                         <div className="flex flex-wrap gap-1.5">
                                             {tryout.tags.map((t) => (
-                                                <Badge key={t.tag.id} variant="outline" className="text-[10px] font-normal bg-white/10 text-primary-foreground border-white/25">
+                                                <Badge
+                                                    key={t.tag.id}
+                                                    variant="outline"
+                                                    className="text-[10px] font-normal bg-white/10 text-primary-foreground border-white/25">
                                                     {t.tag.name}
                                                 </Badge>
                                             ))}
