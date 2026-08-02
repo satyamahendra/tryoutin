@@ -1,4 +1,4 @@
-import PageHeader from "@/components/custom/page-header/page-header"
+﻿import PageHeader from "@/components/custom/page-header/page-header"
 import {PiFileText, PiTicket} from "react-icons/pi"
 import {hasPermissions} from "@/utils/helpers/has-ability-server"
 import {redirect} from "next/navigation"
@@ -6,9 +6,9 @@ import AnimDiv from "@/components/custom/anim-div"
 import SearchParams from "@/components/custom/search-params"
 import {Suspense} from "react"
 import {Loader2} from "lucide-react"
-import CreateExamButton from "./_components/create-exam-button"
-import ImportExamButton from "./_components/import-exam-button"
-import ExamList from "./_components/exam-list"
+import CreateExamButton from "./components/create-exam-button"
+import ImportExamButton from "./components/import-exam-button"
+import ExamList from "./components/exam-list"
 
 type PageProps = {
     searchParams: Promise<{
@@ -42,3 +42,4 @@ const Page = async ({searchParams}: PageProps) => {
 }
 
 export default Page
+

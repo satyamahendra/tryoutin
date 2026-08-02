@@ -1,11 +1,11 @@
-import AnimDiv from "@/components/custom/anim-div"
+﻿import AnimDiv from "@/components/custom/anim-div"
 import {Suspense} from "react"
 import {Loader2} from "lucide-react"
-import TryoutSidebar from "./_components/tryout-sidebar"
-import TryoutList from "./_components/tryout-list"
-import TryoutDetailModal from "./_components/tryout-detail-modal"
-import {getTryoutCategories} from "./_services/get-tryout-categories"
-import {getTryoutTags} from "./_services/get-tryout-tags"
+import TryoutSidebar from "./components/tryout-sidebar"
+import TryoutList from "./components/tryout-list"
+import TryoutDetailModal from "./components/tryout-detail-modal"
+import {getTryoutCategories} from "./services/get-tryout-categories"
+import {getTryoutTags} from "./services/get-tryout-tags"
 import {PiFlask, PiLightning, PiStorefront, PiTrophy} from "react-icons/pi"
 
 type PageProps = {
@@ -19,9 +19,7 @@ type PageProps = {
 const Page = async ({searchParams}: PageProps) => {
     const {search, category, tags} = await searchParams
 
-    const [categoriesData, tagsData] = await Promise.all([getTryoutCategories(), getTryoutTags()])
-    const categories = categoriesData.success ? categoriesData.data!.categories : []
-    const allTags = tagsData.success ? tagsData.data!.tags : []
+    const [{categories}, {tags: allTags}] = await Promise.all([getTryoutCategories(), getTryoutTags()])
 
     return (
         <AnimDiv className="flex flex-col gap-6">
@@ -74,3 +72,4 @@ const Page = async ({searchParams}: PageProps) => {
 }
 
 export default Page
+

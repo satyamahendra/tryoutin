@@ -1,8 +1,8 @@
-import {Suspense} from "react"
+﻿import {Suspense} from "react"
 import PageHeader from "@/components/custom/page-header/page-header"
 import {PiClock} from "react-icons/pi"
 import AnimDiv from "@/components/custom/anim-div"
-import MySessionList from "./_components/my-session-list"
+import MySessionList from "./components/my-session-list"
 
 const Page = async () => {
     return (
@@ -20,3 +20,4 @@ const Page = async () => {
 }
 
 export default Page
+

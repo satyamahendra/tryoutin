@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import {useParams, useRouter, useSearchParams} from "next/navigation"
 import {useQuery} from "@tanstack/react-query"
@@ -8,9 +8,9 @@ import {PiCaretLeft, PiCaretRight, PiNotebook, PiCheckCircle} from "react-icons/
 import {Button} from "@/components/ui/button"
 import {Badge} from "@/components/ui/badge"
 import {Separator} from "@/components/ui/separator"
-import {getReviewData} from "./_services/get-review-data"
-import QuestionView from "../../tryout-session/[exam_id]/_components/question-view"
-import NavigationSidebar from "../../tryout-session/[exam_id]/_components/navigation-sidebar"
+import {getReviewData} from "./services/get-review-data"
+import QuestionView from "../../tryout-session/[exam_id]/components/question-view"
+import NavigationSidebar from "../../tryout-session/[exam_id]/components/navigation-sidebar"
 import AnimDiv from "@/components/custom/anim-div"
 
 const ReviewSessionPage = () => {
@@ -217,3 +217,4 @@ const ReviewSessionPage = () => {
 }
 
 export default ReviewSessionPage
+

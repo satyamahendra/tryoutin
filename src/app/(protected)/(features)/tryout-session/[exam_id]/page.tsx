@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import {useParams, useRouter, useSearchParams} from "next/navigation"
 import {useQuery, useMutation} from "@tanstack/react-query"
@@ -9,14 +9,14 @@ import {toast} from "sonner"
 import {Button} from "@/components/ui/button"
 import {Badge} from "@/components/ui/badge"
 import {Separator} from "@/components/ui/separator"
-import {getSession} from "./_services/get-session"
-import {startSession} from "./_services/start-session"
-import {saveAnswer} from "./_services/save-answer"
-import {submitPart} from "./_services/submit-part"
-import TimerDisplay from "./_components/timer-display"
-import QuestionView from "./_components/question-view"
-import NavigationSidebar from "./_components/navigation-sidebar"
-import SubmitPartModal from "./_components/submit-part-modal"
+import {getSession} from "./services/get-session"
+import {startSession} from "./services/start-session"
+import {saveAnswer} from "./services/save-answer"
+import {submitPart} from "./services/submit-part"
+import TimerDisplay from "./components/timer-display"
+import QuestionView from "./components/question-view"
+import NavigationSidebar from "./components/navigation-sidebar"
+import SubmitPartModal from "./components/submit-part-modal"
 
 type PageState = "initializing" | "ready" | "submitting" | "completed" | "error"
 
@@ -403,3 +403,4 @@ const TryoutSessionPage = () => {
 }
 
 export default TryoutSessionPage
+

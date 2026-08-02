@@ -1,11 +1,11 @@
-import PageHeader from "@/components/custom/page-header/page-header"
+﻿import PageHeader from "@/components/custom/page-header/page-header"
 import {PiReceipt} from "react-icons/pi"
 import AnimDiv from "@/components/custom/anim-div"
 import SearchParams from "@/components/custom/search-params"
 import {Suspense} from "react"
 import {Loader2} from "lucide-react"
-import MyOrderList from "./_components/my-order-list"
-import MyOrderDetailDrawer from "./_components/my-order-detail-drawer"
+import MyOrderList from "./components/my-order-list"
+import MyOrderDetailDrawer from "./components/my-order-detail-drawer"
 
 type PageProps = {
     searchParams: Promise<{
@@ -39,3 +39,4 @@ const Page = async ({searchParams}: PageProps) => {
 }
 
 export default Page
+
