@@ -3,14 +3,15 @@
 import {Field, FieldError, FieldGroup, FieldLabel} from "@/components/ui/field"
 import {Input} from "@/components/ui/input"
 import {Textarea} from "@/components/ui/textarea"
-import {Controller, useFieldArray, type UseFormReturn} from "react-hook-form"
+import {Controller, useFieldArray, useFormState, type UseFormReturn} from "react-hook-form"
 import ExamPartForm from "./exam-part-form"
 import {Button} from "@/components/ui/button"
 import {examPartInitialValues} from "../utils/initials"
-import {PiClock, PiListNumbers, PiPlus, PiShoppingBag, PiTag, PiTextAa} from "react-icons/pi"
+import {PiListNumbers, PiPlus, PiShoppingBag, PiTag, PiTextAa} from "react-icons/pi"
 import {InfiniteCombobox} from "@/components/custom/combobox"
 import type {ExamSchema} from "../utils/schema"
 import {getProducts} from "@/app/(protected)/(admin)/products/services/get-products"
+import {arrayErrorMessage} from "../utils/schema"
 import TagPicker from "./tag-picker"
 
 type ExamGeneralFormProps = {
@@ -27,6 +28,8 @@ const categoryOptions = [
 ]
 
 const ExamGeneralForm = ({form}: ExamGeneralFormProps) => {
+    const {errors} = useFormState({control: form.control, name: "parts"})
+
     const {fields, append, remove} = useFieldArray({
         control: form.control,
         name: "parts",
@@ -73,27 +76,6 @@ const ExamGeneralForm = ({form}: ExamGeneralFormProps) => {
                                     onChange={(opt) => field.onChange(opt?.value ?? "")}
                                     placeholder="Select category"
                                     options={categoryOptions}
-                                />
-                                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                            </Field>
-                        )}
-                    />
-                    <Controller
-                        name="duration_minutes"
-                        control={form.control}
-                        render={({field, fieldState}) => (
-                            <Field data-invalid={fieldState.invalid} className="w-48">
-                                <FieldLabel htmlFor="duration_minutes" className="flex items-center gap-1.5">
-                                    <PiClock className="w-4 h-4" /> Duration (minutes)
-                                </FieldLabel>
-                                <Input
-                                    {...field}
-                                    id="duration_minutes"
-                                    type="number"
-                                    aria-invalid={fieldState.invalid}
-                                    placeholder="e.g. 60"
-                                    value={field.value ?? ""}
-                                    onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : null)}
                                 />
                                 {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                             </Field>
@@ -150,10 +132,17 @@ const ExamGeneralForm = ({form}: ExamGeneralFormProps) => {
                         <PiListNumbers className="w-4 h-4" />
                         Exam Parts ({fields.length})
                     </h3>
-                    <Button type="button" variant="outline" size="sm" onClick={() => append(examPartInitialValues)}>
+                    <Button type="button" variant="outline" size="sm" onClick={() => {
+                        append(examPartInitialValues)
+                        form.clearErrors("parts")
+                    }}>
                         <PiPlus className="w-4 h-4" /> Add Part
                     </Button>
                 </div>
+
+                {arrayErrorMessage(errors.parts) && (
+                    <FieldError errors={[{message: arrayErrorMessage(errors.parts)}]} />
+                )}
 
                 <div className="flex flex-col gap-4">
                     {fields.map((field, index) => (

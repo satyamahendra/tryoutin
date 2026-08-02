@@ -11,7 +11,6 @@ const examDataSelect = Prisma.validator<Prisma.ExamSelect>()({
     title: true,
     description: true,
     category: true,
-    duration_minutes: true,
     parts: {
         orderBy: {order_index: "asc"},
         select: {

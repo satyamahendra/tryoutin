@@ -3,6 +3,7 @@
 import {authServer} from "@/lib/auth-server"
 import prisma from "@/lib/prisma/client"
 import {handleServerError} from "@/utils/helpers/handle-server-errors"
+import {computeSessionScores} from "@/utils/helpers/compute-session-scores"
 import {ServerResult} from "@/utils/types/server-action"
 
 export type SubmitPartResult = {
@@ -45,11 +46,14 @@ export async function submitPart(sessionId: string, partId: string, expired = fa
 
         const partSession = examSession.part_sessions.find((ps) => ps.part_id === partId)
         if (!partSession) throw new Error("Part session not found")
+        if (partSession.status !== "in_progress") throw new Error("Part is not the active part")
 
         const nextIndex = currentIndex + 1
 
         if (nextIndex >= parts.length) {
-            const [correctCount] = await prisma.$transaction(async (tx) => {
+            const scores = await computeSessionScores(sessionId)
+
+            await prisma.$transaction(async (tx) => {
                 await tx.examSessionPart.update({
                     where: {id: partSession.id},
                     data: {
@@ -63,21 +67,15 @@ export async function submitPart(sessionId: string, partId: string, expired = fa
                     data: {
                         status: "completed",
                         submitted_at: now,
+                        total_score: scores.totalScore,
+                        scaled_score: scores.scaledScore,
                     },
                 })
-
-                const count = await tx.userAnswer.count({
-                    where: {
-                        session_id: sessionId,
-                        option: {is_correct: true},
-                    },
-                })
-                return [count]
             })
 
             return {
                 success: true,
-                message: "All parts completed — " + correctCount + " correct",
+                message: "All parts completed — " + scores.correctCount + " correct",
                 data: {completed: true, sessionStatus: "completed"},
             }
         }

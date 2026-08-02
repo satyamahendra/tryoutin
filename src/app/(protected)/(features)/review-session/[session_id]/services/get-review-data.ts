@@ -11,16 +11,15 @@ const reviewSelect = Prisma.validator<Prisma.ExamSessionSelect>()({
     type: true,
     status: true,
     started_at: true,
-    ends_at: true,
     submitted_at: true,
     total_score: true,
+    scaled_score: true,
     exam: {
         select: {
             id: true,
             title: true,
             description: true,
             category: true,
-            duration_minutes: true,
             parts: {
                 orderBy: {order_index: "asc"},
                 select: {
@@ -71,6 +70,7 @@ const reviewSelect = Prisma.validator<Prisma.ExamSessionSelect>()({
         select: {
             question_id: true,
             option_id: true,
+            answer_text: true,
             score_awarded: true,
             is_flagged: true,
         },

@@ -58,8 +58,8 @@ const ReviewSessionPage = () => {
     const currentQuestion = useMemo(() => questions.find((q) => q.id === currentQuestionId), [questions, currentQuestionId])
     const currentIndex = useMemo(() => questions.findIndex((q) => q.id === currentQuestionId), [questions, currentQuestionId])
 
-    const getSelectedOptionId = (questionId: string) => {
-        return answers.find((a) => a.question_id === questionId)?.option_id || null
+    const getSelectedOptionIds = (questionId: string) => {
+        return answers.filter((a) => a.question_id === questionId && a.option_id).map((a) => a.option_id as string)
     }
 
     const handleNavigate = (partId: string, questionId: string) => {
@@ -86,15 +86,35 @@ const ReviewSessionPage = () => {
     }, [parts])
 
     const answeredQuestions = useMemo(() => {
-        return new Set(answers.filter((a) => a.option_id).map((a) => a.question_id))
+        return new Set(answers.filter((a) => a.option_id || a.answer_text).map((a) => a.question_id))
     }, [answers])
 
     const flaggedQuestions = useMemo(() => {
         return new Set(answers.filter((a) => a.is_flagged).map((a) => a.question_id))
     }, [answers])
 
+    // ponytail: mirrors scoreAnswers() in compute-session-scores.ts, per-question
+    const correctQuestions = useMemo(() => {
+        const correct = new Set<string>()
+        for (const part of parts) {
+            for (const q of part.questions) {
+                if (q.type === "scaled_choice") continue
+                const selected = new Set(answers.filter((a) => a.question_id === q.id && a.option_id).map((a) => a.option_id as string))
+                if (selected.size === 0) continue
+                const correctOptions = new Set(q.options.filter((o) => o.is_correct).map((o) => o.id))
+                if (correctOptions.size === 0) continue
+                const isCorrect =
+                    q.type === "multiple_choice"
+                        ? selected.size === correctOptions.size && [...correctOptions].every((id) => selected.has(id))
+                        : [...selected].some((id) => correctOptions.has(id))
+                if (isCorrect) correct.add(q.id)
+            }
+        }
+        return correct
+    }, [parts, answers])
+
     const totalQ = parts.reduce((sum, p) => sum + p.questions.length, 0)
-    const answeredQ = answers.filter((a) => a.option_id).length
+    const answeredQ = answers.filter((a) => a.option_id || a.answer_text).length
     const score = session?.total_score
 
     if (isLoading) {
@@ -124,6 +144,10 @@ const ReviewSessionPage = () => {
         <AnimDiv className="flex flex-col h-full">
             <header className="flex items-center gap-3 px-4 py-3 border-b shrink-0 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
                 <div className="flex items-center gap-2 flex-1 min-w-0">
+                    <Button size="sm" variant="ghost" className="shrink-0" onClick={() => router.push("/my-sessions")}>
+                        <ArrowLeft className="w-4 h-4 mr-1" />
+                        Back
+                    </Button>
                     <PiNotebook className="w-4 h-4 text-muted-foreground shrink-0" />
                     <span className="text-sm font-medium truncate">{exam?.title || "Review"}</span>
                     {currentPart && (
@@ -139,6 +163,11 @@ const ReviewSessionPage = () => {
                             <PiCheckCircle className="w-4 h-4 text-primary" />
                             <span className="text-sm font-bold text-primary">{score}</span>
                             <span className="text-[10px] text-muted-foreground">pts</span>
+                            {session?.scaled_score != null && (
+                                <span className="text-sm font-medium text-primary/70">
+                                    +{session.scaled_score} scaled
+                                </span>
+                            )}
                         </div>
                     )}
                     <Badge variant="secondary" className="text-xs shrink-0">
@@ -151,21 +180,29 @@ const ReviewSessionPage = () => {
                 <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
                     <div className="flex-1 p-4 md:p-6">
                         {currentQuestion && (
-                            <QuestionView
-                                question={currentQuestion}
-                                questionNumber={currentIndex + 1}
-                                totalQuestions={questions.length}
-                                selectedOptionId={getSelectedOptionId(currentQuestion.id)}
-                                isFlagged={flaggedQuestions.has(currentQuestion.id)}
-                                showResult={true}
-                                onSelectOption={() => {}}
-                                onToggleFlag={() => {}}
-                            />
+                            <AnimDiv key={currentQuestion.id}>
+                                <QuestionView
+                                    question={currentQuestion}
+                                    questionNumber={currentIndex + 1}
+                                    totalQuestions={questions.length}
+                                    selectedOptionIds={getSelectedOptionIds(currentQuestion.id)}
+                                    answerText={answers.find((a) => a.question_id === currentQuestion.id && a.answer_text)?.answer_text || ""}
+                                    isFlagged={flaggedQuestions.has(currentQuestion.id)}
+                                    showResult={true}
+                                    onSelectOption={() => {}}
+                                    onToggleFlag={() => {}}
+                                />
+                            </AnimDiv>
                         )}
                         {!currentQuestion && <div className="flex items-center justify-center h-full text-sm text-muted-foreground">No questions in this part.</div>}
                     </div>
 
                     <div className="flex items-center justify-between gap-2 px-4 md:px-6 py-3 border-t bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 shrink-0">
+                        <div className="flex items-center gap-2">
+                            <span className="text-xs text-muted-foreground">
+                                {answeredQ}/{totalQ} answered
+                            </span>
+                        </div>
                         <div className="flex items-center gap-2">
                             <Button
                                 size="sm"
@@ -188,15 +225,6 @@ const ReviewSessionPage = () => {
                                 <PiCaretRight className="w-4 h-4 ml-1" />
                             </Button>
                         </div>
-                        <div className="flex items-center gap-2">
-                            <span className="text-xs text-muted-foreground">
-                                {answeredQ}/{totalQ} answered
-                            </span>
-                            <Button size="sm" variant="outline" onClick={() => router.push("/my-sessions")}>
-                                <ArrowLeft className="w-4 h-4 mr-1" />
-                                Back
-                            </Button>
-                        </div>
                     </div>
                 </div>
 
@@ -207,6 +235,7 @@ const ReviewSessionPage = () => {
                     currentQuestionId={currentQuestionId}
                     answeredQuestions={answeredQuestions}
                     flaggedQuestions={flaggedQuestions}
+                    correctQuestions={correctQuestions}
                     mode="practice"
                     lockedParts={new Set()}
                     onNavigate={handleNavigate}

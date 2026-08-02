@@ -1,7 +1,7 @@
 "use client"
 
 import {cn} from "@/lib/utils"
-import {PiFlag, PiFlagFill, PiLightbulb} from "react-icons/pi"
+import {PiFlag, PiFlagFill, PiLightbulb, PiCheck} from "react-icons/pi"
 import {Badge} from "@/components/ui/badge"
 import {useState} from "react"
 
@@ -28,12 +28,15 @@ type QuestionViewProps = {
     question: Question
     questionNumber: number
     totalQuestions: number
-    selectedOptionId: string | null
+    selectedOptionIds: string[]
     isFlagged: boolean
     mode?: "simulation" | "practice"
     showResult?: boolean
+    answerText?: string
     onSelectOption: (questionId: string, optionId: string) => void
     onToggleFlag: (questionId: string) => void
+    onAnswerTextChange?: (questionId: string, text: string) => void
+    onAnswerTextBlur?: (questionId: string, text: string) => void
 }
 
 const typeLabel: Record<string, {label: string; color: string}> = {
@@ -43,11 +46,12 @@ const typeLabel: Record<string, {label: string; color: string}> = {
     essay: {label: "Essay", color: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400"},
 }
 
-const QuestionView = ({question, questionNumber, totalQuestions, selectedOptionId, isFlagged, mode, showResult, onSelectOption, onToggleFlag}: QuestionViewProps) => {
+const QuestionView = ({question, questionNumber, totalQuestions, selectedOptionIds, isFlagged, mode, showResult, answerText, onSelectOption, onToggleFlag, onAnswerTextChange, onAnswerTextBlur}: QuestionViewProps) => {
     const info = typeLabel[question.type] || {label: question.type, color: "bg-muted text-muted-foreground"}
     const [showHint, setShowHint] = useState(false)
 
     const isPractice = mode === "practice"
+    const isMultiple = question.type === "multiple_choice"
 
     return (
         <div className="flex flex-col gap-6 h-full">
@@ -60,6 +64,9 @@ const QuestionView = ({question, questionNumber, totalQuestions, selectedOptionI
                         <Badge className={cn("text-[10px] font-normal px-1.5 py-0", info.color)}>{info.label}</Badge>
                     </div>
                     <p className="text-base leading-relaxed">{question.question_text}</p>
+                    {isMultiple && !showResult && (
+                        <span className="text-xs text-muted-foreground">Select all that apply.</span>
+                    )}
                 </div>
                 <div className="flex items-center gap-1 shrink-0">
                     {isPractice && question.explanation && (
@@ -91,9 +98,31 @@ const QuestionView = ({question, questionNumber, totalQuestions, selectedOptionI
                 </div>
             )}
 
-            <div className="flex flex-col gap-2">
+            {question.type === "essay" ? (
+                <div className="flex flex-col gap-2">
+                    <textarea
+                        value={answerText || ""}
+                        onChange={(e) => onAnswerTextChange?.(question.id, e.target.value)}
+                        onBlur={(e) => onAnswerTextBlur?.(question.id, e.target.value)}
+                        disabled={showResult}
+                        placeholder="Type your answer here..."
+                        rows={6}
+                        className="w-full rounded-xl border border-border bg-card p-4 text-sm leading-relaxed focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary resize-y disabled:opacity-70"
+                    />
+                    {showResult && (
+                        <div className="flex flex-col gap-1">
+                            {question.options.filter((o) => o.is_correct).map((o) => (
+                                <span key={o.id} className="text-xs font-medium text-green-600 dark:text-green-400">
+                                    Correct answer: {o.option_text}
+                                </span>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            ) : (
+                <div className="flex flex-col gap-2">
                 {question.options.map((option) => {
-                    const isSelected = selectedOptionId === option.id
+                    const isSelected = selectedOptionIds.includes(option.id)
                     const isCorrect = option.is_correct
                     const showAsCorrect = showResult && isCorrect
                     const showAsWrong = showResult && isSelected && !isCorrect
@@ -113,14 +142,19 @@ const QuestionView = ({question, questionNumber, totalQuestions, selectedOptionI
                             )}>
                             <div
                                 className={cn(
-                                    "flex items-center justify-center w-5 h-5 rounded-full border-2 shrink-0 mt-0.5 transition-colors",
+                                    "flex items-center justify-center w-5 h-5 border-2 shrink-0 mt-0.5 transition-colors",
+                                    isMultiple ? "rounded" : "rounded-full",
                                     isSelected && !showResult && "border-primary bg-primary",
                                     showAsCorrect && "border-green-500 bg-green-500",
                                     showAsWrong && "border-red-500 bg-red-500",
                                     !isSelected && !showResult && "border-muted-foreground/40",
                                     showResult && !isSelected && !isCorrect && "border-muted-foreground/20",
                                 )}>
-                                {(isSelected || showAsCorrect) && <div className="w-2 h-2 rounded-full bg-white" />}
+                                {isMultiple ? (
+                                    (isSelected || showAsCorrect) && <PiCheck className="w-3.5 h-3.5 text-white" strokeWidth={3} />
+                                ) : (
+                                    (isSelected || showAsCorrect) && <div className="w-2 h-2 rounded-full bg-white" />
+                                )}
                             </div>
                             <div className="flex-1 min-w-0">
                                 <span className="text-sm leading-relaxed">{option.option_text}</span>
@@ -140,7 +174,8 @@ const QuestionView = ({question, questionNumber, totalQuestions, selectedOptionI
                         </button>
                     )
                 })}
-            </div>
+                </div>
+            )}
 
             {(showHint || showResult) && question.explanation && (
                 <div className="rounded-xl border border-amber-200 bg-amber-50 dark:border-amber-900/50 dark:bg-amber-950/20 p-4">

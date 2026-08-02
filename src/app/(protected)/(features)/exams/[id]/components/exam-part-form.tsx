@@ -2,12 +2,13 @@
 
 import {Field, FieldError, FieldGroup, FieldLabel} from "@/components/ui/field"
 import {Input} from "@/components/ui/input"
-import {Controller, useFieldArray, useWatch, type UseFormReturn} from "react-hook-form"
+import {Controller, useFieldArray, useFormState, useWatch, type UseFormReturn} from "react-hook-form"
 import ExamQuestionForm from "./exam-question-form"
 import {Button} from "@/components/ui/button"
 import {examQuestionInitialValues} from "../utils/initials"
 import {PiClock, PiFileText, PiMinus, PiPlus, PiTrash} from "react-icons/pi"
 import {Collapsible, CollapsibleContent, CollapsibleTrigger} from "@/components/ui/collapsible"
+import {arrayErrorMessage} from "../utils/schema"
 import type {ExamSchema, PartNamePath, PartPassingScorePath, PartDurationMinutesPath, PartQuestionsArrayPath} from "../utils/schema"
 
 type ExamPartFormProps = {
@@ -21,6 +22,8 @@ const ExamPartForm = ({partIndex, form, onRemove}: ExamPartFormProps) => {
         control: form.control,
         name: `parts.${partIndex}.questions` as PartQuestionsArrayPath,
     })
+
+    const {errors} = useFormState({control: form.control, name: `parts.${partIndex}.questions` as PartQuestionsArrayPath})
 
     const partName = useWatch({control: form.control, name: `parts.${partIndex}.name` as PartNamePath})
 
@@ -115,10 +118,17 @@ const ExamPartForm = ({partIndex, form, onRemove}: ExamPartFormProps) => {
                                     <PiFileText className="w-3.5 h-3.5" />
                                     Questions ({fields.length})
                                 </h4>
-                                <Button type="button" variant="ghost" size="sm" className="h-7 text-xs" onClick={() => append(examQuestionInitialValues)}>
+                                <Button type="button" variant="ghost" size="sm" className="h-7 text-xs" onClick={() => {
+                                    append(examQuestionInitialValues)
+                                    form.clearErrors(`parts.${partIndex}.questions` as PartQuestionsArrayPath)
+                                }}>
                                     <PiPlus className="w-3 h-3" /> Add
                                 </Button>
                             </div>
+
+                            {arrayErrorMessage(errors.parts?.[partIndex]?.questions) && (
+                                <FieldError errors={[{message: arrayErrorMessage(errors.parts?.[partIndex]?.questions)}]} />
+                            )}
 
                             {fields.map((questionField, index) => (
                                 <ExamQuestionForm key={questionField.id} partIndex={partIndex} questionIndex={index} form={form} onRemove={() => remove(index)} />

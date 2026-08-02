@@ -78,7 +78,6 @@ export const examSchema = z.object({
     title: z.string().min(1, {error: "Title is required"}),
     description: z.string().nullable(),
     category: z.string().min(1, {error: "Category is required"}),
-    duration_minutes: z.number().min(1, {error: "Duration is required"}).nullable(),
     product_id: z.object({value: z.string(), label: z.string()}).nullable(),
     tags: z.array(z.object({value: z.string(), label: z.string()})),
     parts: z.array(partSchema).min(1, {error: "At least 1 part is required"}),
@@ -105,3 +104,6 @@ export type OptionImagePath = `parts.${number}.questions.${number}.options.${num
 export type OptionScorePath = `parts.${number}.questions.${number}.options.${number}.score`
 export type OptionIsCorrectPath = `parts.${number}.questions.${number}.options.${number}.is_correct`
 export type OptionOrderIndexPath = `parts.${number}.questions.${number}.options.${number}.order_index`
+
+export const arrayErrorMessage = (err: {message?: string; root?: {message?: string}} | undefined): string | undefined =>
+    err?.message ?? err?.root?.message

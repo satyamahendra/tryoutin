@@ -46,7 +46,6 @@ const ExamForm = ({id}: ExamFormTypes) => {
                   title: exam?.title ?? "",
                   description: exam?.description ?? null,
                   category: exam?.category ?? "",
-                  duration_minutes: exam?.duration_minutes ?? null,
                   product_id: exam?.product_id ? {value: exam.product_id, label: exam.product?.name ?? ""} : null,
                   tags: exam?.tags?.map((t) => ({value: t.tag.id, label: t.tag.name})) ?? [],
                   parts: exam?.parts?.map((p) => ({
@@ -78,6 +77,8 @@ const ExamForm = ({id}: ExamFormTypes) => {
               },
     })
 
+    console.log(form.formState.errors)
+
     const {mutate, isPending: isMutating} = useMutation({
         mutationFn: upsertExam,
         onSuccess: (res) => {
@@ -93,6 +94,7 @@ const ExamForm = ({id}: ExamFormTypes) => {
     })
 
     const onSubmit = (data: ExamSchema) => {
+        console.log(data)
         mutate(data)
     }
 

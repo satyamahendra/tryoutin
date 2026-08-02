@@ -57,7 +57,7 @@ const ImportExamButton = () => {
         reader.onload = () => {
             try {
                 const parsed = JSON.parse(reader.result as string)
-                const data = examSchema.parse({...parsed, id: ""})
+                const data = examSchema.parse({...parsed, id: null})
                 mutate(data)
             } catch (err) {
                 if (err instanceof Error) {

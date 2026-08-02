@@ -1,7 +1,7 @@
 ﻿"use client"
 
 import {useParams, useRouter, useSearchParams} from "next/navigation"
-import {useQuery, useMutation} from "@tanstack/react-query"
+import {useQuery, useMutation, useQueryClient} from "@tanstack/react-query"
 import {useCallback, useEffect, useMemo, useRef, useState} from "react"
 import {Loader2, CheckCircle, X} from "lucide-react"
 import {PiNotebook, PiCaretLeft, PiCaretRight, PiListChecks, PiPlay} from "react-icons/pi"
@@ -17,11 +17,13 @@ import TimerDisplay from "./components/timer-display"
 import QuestionView from "./components/question-view"
 import NavigationSidebar from "./components/navigation-sidebar"
 import SubmitPartModal from "./components/submit-part-modal"
+import AnimDiv from "@/components/custom/anim-div"
 
 type PageState = "initializing" | "ready" | "submitting" | "completed" | "error"
 
 const TryoutSessionPage = () => {
     const router = useRouter()
+    const queryClient = useQueryClient()
     const params = useParams()
     const searchParams = useSearchParams()
     const examId = params.exam_id as string
@@ -31,11 +33,13 @@ const TryoutSessionPage = () => {
     const mode = (searchParams.get("mode") as "simulation" | "practice") || "simulation"
 
     const [pageState, setPageState] = useState<PageState>("initializing")
-    const [answers, setAnswers] = useState<Record<string, string>>({})
+    const [answers, setAnswers] = useState<Record<string, string[]>>({})
+    const [answerTexts, setAnswerTexts] = useState<Record<string, string>>({})
     const [flagged, setFlagged] = useState<Set<string>>(new Set())
     const [modalState, setModalState] = useState<{type: "time-up" | "submit"; partId: string} | null>(null)
     const [errorMsg, setErrorMsg] = useState("")
     const timerExpiredRef = useRef(false)
+    const essaySaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
     const sessionQuery = useQuery({
         queryKey: ["session", sessionId],
@@ -56,7 +60,31 @@ const TryoutSessionPage = () => {
                 if (result.data.completed) {
                     setPageState("completed")
                 } else if (result.data.nextPartId && result.data.nextPartQuestionId) {
-                    const url = `/tryout-session/${examId}?session=${sessionId}&part=${result.data.nextPartId}&question=${result.data.nextPartQuestionId}&mode=${mode}`
+                    const {nextPartId} = result.data
+                    queryClient.setQueryData<Awaited<ReturnType<typeof getSession>>>(["session", sessionId], (old) => {
+                        if (!old?.success) return old
+                        const now = new Date()
+                        return {
+                            ...old,
+                            data: {
+                                ...old.data,
+                                part_sessions: old.data.part_sessions.map((ps) => {
+                                    if (ps.part_id === currentPartId) return {...ps, status: "completed", submitted_at: now}
+                                    if (ps.part_id === nextPartId) {
+                                        const dur = old.data.exam.parts.find((p) => p.id === nextPartId)?.duration_minutes
+                                        return {
+                                            ...ps,
+                                            status: "in_progress",
+                                            started_at: now,
+                                            ends_at: dur ? new Date(now.getTime() + dur * 60000) : null,
+                                        }
+                                    }
+                                    return ps
+                                }),
+                            },
+                        }
+                    })
+                    const url = `/tryout-session/${examId}?session=${sessionId}&part=${nextPartId}&question=${result.data.nextPartQuestionId}&mode=${mode}`
                     router.replace(url)
                     setPageState("ready")
                 }
@@ -71,30 +99,37 @@ const TryoutSessionPage = () => {
     const partSessions = useMemo(() => sessionQuery.data?.data?.part_sessions || [], [sessionQuery.data])
 
     const parts = useMemo(() => examData?.parts || [], [examData])
-    const currentPartId = useMemo(() => partParam || parts[0]?.id || "", [partParam, parts])
+    const activePartSession = mode === "simulation" ? partSessions.find((ps) => ps.status === "in_progress") : undefined
+    const currentPartId = mode !== "simulation" ? partParam || parts[0]?.id || "" : activePartSession?.part_id || parts[0]?.id || ""
     const currentPart = useMemo(() => parts.find((p) => p.id === currentPartId), [parts, currentPartId])
     const questions = useMemo(() => currentPart?.questions || [], [currentPart])
     const currentQuestionId = useMemo(() => questionParam || questions[0]?.id || "", [questionParam, questions])
     const currentQuestion = useMemo(() => questions.find((q) => q.id === currentQuestionId), [questions, currentQuestionId])
     const currentQuestionIndex = useMemo(() => questions.findIndex((q) => q.id === currentQuestionId), [questions, currentQuestionId])
 
-    const answeredCount = useMemo(() => questions.filter((q) => answers[q.id]).length, [questions, answers])
+    const answeredCount = useMemo(
+        () =>
+            questions.filter((q) => {
+                if ((answers[q.id]?.length ?? 0) > 0) return true
+                return q.type === "essay" && (answerTexts[q.id] || "").trim().length > 0
+            }).length,
+        [questions, answers, answerTexts],
+    )
 
     const isLastPart = useMemo(() => {
         const idx = parts.findIndex((p) => p.id === currentPartId)
         return idx === parts.length - 1
     }, [parts, currentPartId])
 
+    const isLastQuestion = useMemo(() => currentQuestionIndex === questions.length - 1, [currentQuestionIndex, questions.length])
+
+    const submitPartLabel = isLastPart ? "Complete Test" : isLastQuestion ? "Finish Part" : "Submit Part"
+
     const lockedParts = useMemo(() => {
         if (mode !== "simulation") return new Set<string>()
         const locked = new Set<string>()
-        let foundCurrent = false
         for (const p of parts) {
-            if (p.id === currentPartId) {
-                foundCurrent = true
-                continue
-            }
-            if (!foundCurrent) locked.add(p.id)
+            if (p.id !== currentPartId) locked.add(p.id)
         }
         return locked
     }, [mode, parts, currentPartId])
@@ -128,18 +163,25 @@ const TryoutSessionPage = () => {
 
     useEffect(() => {
         if (sessionQuery.data?.success) {
+            if (mode === "simulation" && sessionQuery.data.data.status === "completed") {
+                setPageState("completed")
+                return
+            }
             const sessionAnswers = sessionQuery.data.data.answers
-            const ans: Record<string, string> = {}
+            const ans: Record<string, string[]> = {}
+            const essay: Record<string, string> = {}
             const flg = new Set<string>()
             for (const a of sessionAnswers) {
-                if (a.option_id) ans[a.question_id] = a.option_id
+                if (a.option_id) ans[a.question_id] = [...(ans[a.question_id] || []), a.option_id]
+                if (a.answer_text) essay[a.question_id] = a.answer_text
                 if (a.is_flagged) flg.add(a.question_id)
             }
             setAnswers(ans)
+            setAnswerTexts(essay)
             setFlagged(flg)
             setPageState("ready")
         }
-    }, [sessionQuery.data])
+    }, [sessionQuery.data, mode])
 
     useEffect(() => {
         if (!sessionId && !sessionQuery.isLoading) {
@@ -173,10 +215,42 @@ const TryoutSessionPage = () => {
 
     const handleSelectOption = useCallback(
         (questionId: string, optionId: string) => {
-            setAnswers((prev) => ({...prev, [questionId]: optionId}))
-            if (sessionId) {
-                saveAnswerMut.mutate({sessionId, questionId, optionId})
+            const question = questions.find((q) => q.id === questionId)
+            const current = answers[questionId] || []
+            let next: string[]
+            if (question?.type === "multiple_choice") {
+                next = current.includes(optionId) ? current.filter((o) => o !== optionId) : [...current, optionId]
+            } else {
+                next = [optionId]
             }
+            setAnswers((prev) => ({...prev, [questionId]: next}))
+            if (sessionId) {
+                saveAnswerMut.mutate({sessionId, questionId, optionIds: next})
+            }
+        },
+        [questions, answers, sessionId, saveAnswerMut],
+    )
+
+    const handleEssayChange = useCallback(
+        (questionId: string, text: string) => {
+            setAnswerTexts((prev) => ({...prev, [questionId]: text}))
+            if (!sessionId) return
+            if (essaySaveTimer.current) clearTimeout(essaySaveTimer.current)
+            essaySaveTimer.current = setTimeout(() => {
+                saveAnswerMut.mutate({sessionId, questionId, optionIds: [], answerText: text})
+            }, 600)
+        },
+        [sessionId, saveAnswerMut],
+    )
+
+    const handleEssayBlur = useCallback(
+        (questionId: string, text: string) => {
+            if (!sessionId) return
+            if (essaySaveTimer.current) {
+                clearTimeout(essaySaveTimer.current)
+                essaySaveTimer.current = null
+            }
+            saveAnswerMut.mutate({sessionId, questionId, optionIds: [], answerText: text})
         },
         [sessionId, saveAnswerMut],
     )
@@ -266,8 +340,9 @@ const TryoutSessionPage = () => {
 
     if (pageState === "completed") {
         const totalQ = parts.reduce((sum, p) => sum + p.questions.length, 0)
-        const answeredQ = Object.keys(answers).length
+        const answeredQ = Object.values(answers).filter((a) => a.length > 0).length
         const score = sessionQuery.data?.data?.total_score
+        const scaledScore = sessionQuery.data?.data?.scaled_score
         return (
             <div className="flex flex-col items-center justify-center h-full gap-6 px-6">
                 <div className="rounded-full bg-primary/10 p-4">
@@ -276,9 +351,20 @@ const TryoutSessionPage = () => {
                 <div className="text-center">
                     <h2 className="text-xl font-bold">Tryout Complete!</h2>
                     {score != null && (
-                        <div className="mt-3">
-                            <span className="text-4xl font-bold text-primary">{score}</span>
-                            <span className="text-sm text-muted-foreground ml-1">points</span>
+                        <div className="mt-3 flex items-center justify-center gap-3">
+                            <div>
+                                <span className="text-4xl font-bold text-primary">{score}</span>
+                                <span className="text-sm text-muted-foreground ml-1">points</span>
+                            </div>
+                            {scaledScore != null && (
+                                <>
+                                    <span className="text-2xl text-muted-foreground">+</span>
+                                    <div>
+                                        <span className="text-2xl font-semibold text-primary/80">{scaledScore}</span>
+                                        <span className="text-xs text-muted-foreground ml-1">scaled</span>
+                                    </div>
+                                </>
+                            )}
                         </div>
                     )}
                     <p className="text-sm text-muted-foreground mt-2">
@@ -327,32 +413,49 @@ const TryoutSessionPage = () => {
 
             <div className="flex flex-1 min-h-0">
                 <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
-                    <div className="flex-1 p-4 md:p-6">
+                    <div className="flex-1 p-4 md:p-6 flex flex-col gap-4">
                         {currentQuestion && (
-                            <QuestionView
-                                question={currentQuestion}
-                                questionNumber={currentQuestionIndex + 1}
-                                totalQuestions={questions.length}
-                                selectedOptionId={answers[currentQuestion.id] || null}
-                                isFlagged={flagged.has(currentQuestion.id)}
-                                mode={mode}
-                                onSelectOption={handleSelectOption}
-                                onToggleFlag={handleToggleFlag}
-                            />
+                            <AnimDiv key={currentQuestion.id} className="flex-1 min-h-0">
+                                <QuestionView
+                                    question={currentQuestion}
+                                    questionNumber={currentQuestionIndex + 1}
+                                    totalQuestions={questions.length}
+                                    selectedOptionIds={answers[currentQuestion.id] || []}
+                                    answerText={answerTexts[currentQuestion.id] || ""}
+                                    isFlagged={flagged.has(currentQuestion.id)}
+                                    mode={mode}
+                                    onSelectOption={handleSelectOption}
+                                    onToggleFlag={handleToggleFlag}
+                                    onAnswerTextChange={handleEssayChange}
+                                    onAnswerTextBlur={handleEssayBlur}
+                                />
+                            </AnimDiv>
                         )}
                         {!currentQuestion && (
-                            <div className="flex items-center justify-center h-full text-sm text-muted-foreground">
+                            <div className="flex items-center justify-center flex-1 text-sm text-muted-foreground">
                                 No questions in this part.
+                            </div>
+                        )}
+                        {currentQuestion && (
+                            <div className="flex items-center justify-between gap-2 shrink-0">
+                                <span className="text-xs text-muted-foreground">
+                                    <PiListChecks className="w-3 h-3 inline mr-1" />
+                                    {answeredCount}/{questions.length}
+                                </span>
                             </div>
                         )}
                     </div>
 
-                    <div className="flex items-center justify-between gap-2 px-4 md:px-6 py-3 border-t bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 shrink-0">
-                        <div className="flex items-center gap-2">
-                            <Button size="sm" variant="outline" onClick={handlePrevQuestion} disabled={currentQuestionIndex <= 0}>
-                                <PiCaretLeft className="w-4 h-4 mr-1" />
-                                Previous
+                    <div className="flex items-center justify-end gap-2 px-4 md:px-6 py-3 border-t bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 shrink-0">
+                        <Button size="sm" variant="outline" onClick={handlePrevQuestion} disabled={currentQuestionIndex <= 0}>
+                            <PiCaretLeft className="w-4 h-4 mr-1" />
+                            Previous
+                        </Button>
+                        {isLastQuestion ? (
+                            <Button size="sm" onClick={handleRequestSubmit}>
+                                {isLastPart ? "Finish Tryout" : "Submit & Continue"}
                             </Button>
+                        ) : (
                             <Button
                                 size="sm"
                                 variant="outline"
@@ -361,16 +464,7 @@ const TryoutSessionPage = () => {
                                 Next
                                 <PiCaretRight className="w-4 h-4 ml-1" />
                             </Button>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <span className="text-xs text-muted-foreground">
-                                <PiListChecks className="w-3 h-3 inline mr-1" />
-                                {answeredCount}/{questions.length}
-                            </span>
-                            <Button size="sm" onClick={handleRequestSubmit}>
-                                {isLastPart ? "Complete" : "Submit Part"}
-                            </Button>
-                        </div>
+                        )}
                     </div>
                 </div>
 
@@ -379,11 +473,16 @@ const TryoutSessionPage = () => {
                     questionsByPart={questionNavMap}
                     currentPartId={currentPartId}
                     currentQuestionId={currentQuestionId}
-                    answeredQuestions={new Set(Object.keys(answers))}
+                    answeredQuestions={new Set([
+                        ...Object.entries(answers).filter(([, v]) => v.length > 0).map(([k]) => k),
+                        ...Object.entries(answerTexts).filter(([, v]) => v.trim().length > 0).map(([k]) => k),
+                    ])}
                     flaggedQuestions={flagged}
                     mode={mode}
                     lockedParts={lockedParts}
                     onNavigate={handleNavigate}
+                    submitPartLabel={submitPartLabel}
+                    onSubmitPart={handleRequestSubmit}
                 />
             </div>
 

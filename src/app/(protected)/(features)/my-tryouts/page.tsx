@@ -1,9 +1,9 @@
 ﻿import AnimDiv from "@/components/custom/anim-div"
 import {Suspense} from "react"
 import {Loader2} from "lucide-react"
-import {PiFlask, PiLightning, PiNotebook, PiTrophy} from "react-icons/pi"
+import {PiFlask, PiLightning, PiNotebook} from "react-icons/pi"
 import PageHeader from "@/components/custom/page-header/page-header"
-import MyTryoutSidebar from "./components/my-tryout-sidebar"
+import FilterSidebar from "@/components/custom/filter-sidebar/filter-sidebar"
 import MyTryoutList from "./components/my-tryout-list"
 import MyTryoutDetailModal from "./components/my-tryout-detail-modal"
 import {getMyTryoutCategories} from "./services/get-my-tryout-categories"
@@ -23,7 +23,7 @@ const Page = async ({searchParams}: PageProps) => {
     const [{categories}, {tags: allTags}] = await Promise.all([getMyTryoutCategories(), getMyTryoutTags()])
 
     return (
-        <AnimDiv className="flex flex-col gap-6">
+        <AnimDiv className="flex flex-col gap-4 h-full min-h-0 overflow-hidden">
             <PageHeader
                 icon={<PiNotebook />}
                 title="Your Tryout Collection"
@@ -42,21 +42,18 @@ const Page = async ({searchParams}: PageProps) => {
                 }
             />
 
-            <div className="flex flex-col md:flex-row gap-8">
-                <div className="w-full md:w-52 shrink-0 md:border-r md:border-border/60 md:pr-6">
-                    <MyTryoutSidebar categories={categories} tags={allTags} />
-                </div>
-                <div className="flex-1 min-w-0 pt-1 md:pt-0">
-                    <Suspense
-                        key={`${search}-${category}-${tags}`}
-                        fallback={
-                            <div className="flex items-center justify-center h-20">
-                                <Loader2 className="animate-spin text-primary" />
-                            </div>
-                        }>
-                        <MyTryoutList search={search} category={category} tags={tags} />
-                    </Suspense>
-                </div>
+            <FilterSidebar searchPlaceholder="Search my tryouts..." categories={categories} tags={allTags} />
+
+            <div className="flex flex-col flex-1 min-h-0">
+                <Suspense
+                    key={`${search}-${category}-${tags}`}
+                    fallback={
+                        <div className="flex items-center justify-center h-20">
+                            <Loader2 className="animate-spin text-primary" />
+                        </div>
+                    }>
+                    <MyTryoutList search={search} category={category} tags={tags} />
+                </Suspense>
             </div>
             <MyTryoutDetailModal />
         </AnimDiv>

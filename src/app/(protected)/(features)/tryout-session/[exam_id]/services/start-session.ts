@@ -11,7 +11,6 @@ const sessionPartSelect = Prisma.validator<Prisma.ExamSessionSelect>()({
     type: true,
     status: true,
     started_at: true,
-    ends_at: true,
     part_sessions: {
         include: {
             part: {
@@ -55,7 +54,6 @@ export async function startSession(examId: string, entitlementId?: string, sessi
             where: {id: examId, is_active: true},
             select: {
                 id: true,
-                duration_minutes: true,
                 parts: {
                     orderBy: {order_index: "asc"},
                     select: {id: true, duration_minutes: true},
@@ -77,7 +75,7 @@ export async function startSession(examId: string, entitlementId?: string, sessi
                     entitlement_id: entitlementId ?? null,
                     status: "in_progress",
                     started_at: now,
-                    ends_at: isPractice ? null : (exam.duration_minutes ? new Date(now.getTime() + exam.duration_minutes * 60000) : null),
+                    ends_at: null,
                 },
                 select: sessionPartSelect,
             })

@@ -10,6 +10,7 @@ import AnimDiv from "@/components/custom/anim-div"
 import {Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle} from "@/components/ui/empty"
 import {cn} from "@/lib/utils"
 import MySessionCard from "./my-session-card"
+import {ScrollArea} from "@/components/ui/scroll-area"
 
 type FilterType = "simulation" | "practice" | "all"
 
@@ -78,8 +79,8 @@ const MySessionList = () => {
     }
 
     return (
-        <AnimDiv className="flex flex-col gap-4">
-            <div className="flex items-center gap-1 bg-muted/50 rounded-lg p-1 w-fit">
+        <div className="flex flex-col gap-4 flex-1 min-h-0">
+            <div className="flex items-center gap-1 bg-muted/50 rounded-lg p-1 w-fit shrink-0">
                 {FILTERS.map((f) => (
                     <button
                         key={f.value}
@@ -96,32 +97,36 @@ const MySessionList = () => {
                 ))}
             </div>
 
-            {filteredSessions.length === 0 ? (
-                <div className="rounded-xl border border-dashed border-border py-12">
-                    <Empty>
-                        <EmptyHeader>
-                            <EmptyMedia variant="icon">
-                                <PiTimer />
-                            </EmptyMedia>
-                            <EmptyTitle>No {filter === "simulation" ? "Simulation" : filter === "practice" ? "Practice" : ""} Sessions</EmptyTitle>
-                            <EmptyDescription>
-                                {filter === "simulation"
-                                    ? "Start a tryout simulation from your collection."
-                                    : filter === "practice"
-                                      ? "Try a practice session from your collection."
-                                      : "Start a tryout from your collection to see your sessions here."}
-                            </EmptyDescription>
-                        </EmptyHeader>
-                    </Empty>
-                </div>
-            ) : (
-                <div className="overflow-hidden space-y-2">
-                    {filteredSessions.map((session) => (
-                        <MySessionCard key={session.id} session={session} />
-                    ))}
-                </div>
-            )}
-        </AnimDiv>
+            <AnimDiv key={filter} className="flex-1 min-h-0 overflow-hidden">
+                <ScrollArea className="h-full">
+                    {filteredSessions.length === 0 ? (
+                        <div className="rounded-xl border border-dashed border-border py-12">
+                            <Empty>
+                                <EmptyHeader>
+                                    <EmptyMedia variant="icon">
+                                        <PiTimer />
+                                    </EmptyMedia>
+                                    <EmptyTitle>No {filter === "simulation" ? "Simulation" : filter === "practice" ? "Practice" : ""} Sessions</EmptyTitle>
+                                    <EmptyDescription>
+                                        {filter === "simulation"
+                                            ? "Start a tryout simulation from your collection."
+                                            : filter === "practice"
+                                              ? "Try a practice session from your collection."
+                                              : "Start a tryout from your collection to see your sessions here."}
+                                    </EmptyDescription>
+                                </EmptyHeader>
+                            </Empty>
+                        </div>
+                    ) : (
+                        <div className="space-y-2">
+                            {filteredSessions.map((session) => (
+                                <MySessionCard key={session.id} session={session} />
+                            ))}
+                        </div>
+                    )}
+                </ScrollArea>
+            </AnimDiv>
+        </div>
     )
 }
 

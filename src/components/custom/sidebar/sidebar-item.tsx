@@ -43,29 +43,23 @@ const SidebarItem = ({menu, userPermissions, userRoles, isExpand}: SidebarItemPr
     )
 
     if (!hasChildren) {
-        const linkElement = (
-            <Link href={menu.href} className={linkClass}>
-                <span className="text-lg shrink-0 flex items-center justify-center">{menu.icon}</span>
-                <span
-                    className={cn(
-                        "whitespace-nowrap overflow-hidden transition-all duration-300",
-                        isExpand ? "max-w-[200px] opacity-100 ml-3" : "max-w-0 opacity-0 ml-0",
-                    )}>
-                    {menu.label}
-                </span>
-            </Link>
-        )
-
         return (
             <li>
-                {isExpand ? (
-                    linkElement
-                ) : (
-                    <Tooltip delayDuration={0}>
-                        <TooltipTrigger asChild>{linkElement}</TooltipTrigger>
-                        <TooltipContent side="right">{menu.label}</TooltipContent>
-                    </Tooltip>
-                )}
+                <Tooltip delayDuration={0}>
+                    <TooltipTrigger asChild>
+                        <Link href={menu.href} className={linkClass}>
+                            <span className="text-lg shrink-0 flex items-center justify-center">{menu.icon}</span>
+                            <span
+                                className={cn(
+                                    "whitespace-nowrap overflow-hidden transition-all duration-300",
+                                    isExpand ? "max-w-[200px] opacity-100 ml-3" : "max-w-0 opacity-0 ml-0",
+                                )}>
+                                {menu.label}
+                            </span>
+                        </Link>
+                    </TooltipTrigger>
+                    {!isExpand && <TooltipContent side="right">{menu.label}</TooltipContent>}
+                </Tooltip>
             </li>
         )
     }

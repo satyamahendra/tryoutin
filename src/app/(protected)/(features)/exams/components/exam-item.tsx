@@ -10,6 +10,7 @@ type ExamItemProps = {
 
 const ExamItem = ({exam}: ExamItemProps) => {
     const isActive = exam.is_active
+    const totalDuration = exam.parts.reduce((sum, p) => sum + (p.duration_minutes || 0), 0)
 
     return (
         <Link href={`/exams/${exam.id}`} className="block">
@@ -28,12 +29,14 @@ const ExamItem = ({exam}: ExamItemProps) => {
                             </Badge>
                             {exam.parts.length} {exam.parts.length === 1 ? "Part" : "Parts"}
                         </div>
-                        <div className="flex items-center gap-2">
-                            <Badge variant="outline" className="p-0 aspect-square">
-                                <PiClock />
-                            </Badge>
-                            {exam.duration_minutes} min
-                        </div>
+                        {totalDuration > 0 && (
+                            <div className="flex items-center gap-2">
+                                <Badge variant="outline" className="p-0 aspect-square">
+                                    <PiClock />
+                                </Badge>
+                                {totalDuration} min
+                            </div>
+                        )}
                         {exam.product?.name && (
                             <div className="flex items-center gap-2">
                                 <Badge variant="outline" className="p-0 aspect-square">

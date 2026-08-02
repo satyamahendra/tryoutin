@@ -50,12 +50,13 @@ const TryoutDetailModal = () => {
 
     const product = tryout?.product
     const totalQuestions = tryout?.parts.reduce((sum, part) => sum + part._count.questions, 0) ?? 0
+    const totalDuration = tryout?.parts.reduce((sum, p) => sum + (p.duration_minutes || 0), 0) ?? 0
     const discount = product ? calculateDiscount(product.price_actual, product.price_alternate) : 0
     const hasDiscount = discount > 0
 
     return (
         <Drawer swipeDirection={isMobile ? "down" : "right"} open={!!view} onOpenChange={(open) => !open && setParams({view: ""})}>
-            <DrawerContent aria-describedby="tryout-detail" className={cn(isMobile ? "h-[85vh]" : "")}>
+            <DrawerContent aria-describedby={tryout?.description ? "tryout-detail" : undefined} className={cn(isMobile ? "h-[85vh]" : "", "border-0")}>
                 {isLoading ? (
                     <div className="flex items-center justify-center h-full">
                         <Loader2 className="animate-spin w-6 h-6 text-muted-foreground" />
@@ -72,7 +73,7 @@ const TryoutDetailModal = () => {
                                         <div className="flex flex-col gap-2">
                                             <DrawerTitle className="text-xl font-bold text-primary-foreground leading-snug">{tryout.title}</DrawerTitle>
                                             {tryout.description && (
-                                                <DrawerDescription className="text-primary-foreground/80 text-sm leading-relaxed">{tryout.description}</DrawerDescription>
+                                                <DrawerDescription id="tryout-detail" className="text-primary-foreground/80 text-sm leading-relaxed">{tryout.description}</DrawerDescription>
                                             )}
                                         </div>
                                         {tryout.category && (
@@ -111,12 +112,12 @@ const TryoutDetailModal = () => {
                                             {totalQuestions} {totalQuestions === 1 ? "Question" : "Questions"}
                                         </span>
                                     </div>
-                                    {tryout.duration_minutes && (
+                                    {totalDuration > 0 && (
                                         <div className="flex items-center gap-1.5">
                                             <Badge variant="outline" className="p-0 aspect-square bg-white/15 border-white/25">
                                                 <PiClock />
                                             </Badge>
-                                            <span>{tryout.duration_minutes} min</span>
+                                            <span>{totalDuration} min</span>
                                         </div>
                                     )}
                                 </div>

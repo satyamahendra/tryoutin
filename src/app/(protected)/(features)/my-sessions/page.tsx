@@ -6,7 +6,7 @@ import MySessionList from "./components/my-session-list"
 
 const Page = async () => {
     return (
-        <AnimDiv className="flex flex-col gap-4">
+        <AnimDiv className="flex flex-col gap-4 h-full min-h-0">
             <PageHeader
                 icon={<PiClock />}
                 title="My Sessions"

@@ -66,6 +66,11 @@ const MySessionCard = ({session}: MySessionCardProps) => {
                         {isCompleted && (
                             <>
                                 <Separator orientation="vertical" className="h-3" />
+                                <span className="font-medium text-primary">{session.total_score} pts</span>
+                                {session.scaled_score != null && (
+                                    <span className="font-medium text-primary/70">+{session.scaled_score} scaled</span>
+                                )}
+                                <Separator orientation="vertical" className="h-3" />
                                 <span className="font-medium text-foreground">{session.correct_count}/{totalQuestions} correct</span>
                             </>
                         )}

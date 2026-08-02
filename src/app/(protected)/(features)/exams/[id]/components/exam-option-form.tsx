@@ -2,8 +2,8 @@
 
 import {Field, FieldError, FieldGroup, FieldLabel} from "@/components/ui/field"
 import {Input} from "@/components/ui/input"
-import {Controller, useWatch, type UseFormReturn} from "react-hook-form"
-import type {ExamSchema, OptionTextPath, OptionIsCorrectPath, OptionScorePath, QuestionTypePath} from "../utils/schema"
+import {Controller, useFormState, useWatch, type UseFormReturn} from "react-hook-form"
+import type {ExamSchema, OptionTextPath, OptionIsCorrectPath, OptionScorePath, OptionImagePath, QuestionTypePath} from "../utils/schema"
 import {Checkbox} from "@/components/ui/checkbox"
 import {PiImage, PiPlus, PiTrash, PiX} from "react-icons/pi"
 import {Button} from "@/components/ui/button"
@@ -28,6 +28,8 @@ const ExamOptionForm = ({partIndex, questionIndex, optionIndex, form, remove}: E
 
     const fileInputRef = useRef<HTMLInputElement>(null)
     const optionImage = useWatch({control: form.control, name: `${basePath}.option_image`})
+
+    const {errors} = useFormState({control: form.control, name: `${basePath}.option_image` as OptionImagePath})
 
     const handleSelectFile = () => {
         fileInputRef.current?.click()
@@ -122,6 +124,9 @@ const ExamOptionForm = ({partIndex, questionIndex, optionIndex, form, remove}: E
                             </Button>
                         )}
                     </div>
+                    {errors.parts?.[partIndex]?.questions?.[questionIndex]?.options?.[optionIndex]?.option_image?.message && (
+                        <FieldError errors={[errors.parts[partIndex].questions[questionIndex].options[optionIndex].option_image]} />
+                    )}
                 </div>
 
                 <Button onClick={() => remove(optionIndex)} size="icon-sm" variant="destructive" type="button">

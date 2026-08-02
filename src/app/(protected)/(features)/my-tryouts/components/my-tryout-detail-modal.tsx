@@ -1,8 +1,10 @@
 ﻿"use client"
 
-import {Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle} from "@/components/ui/drawer"
+import {Drawer, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle} from "@/components/ui/drawer"
 import {Badge} from "@/components/ui/badge"
 import {Button} from "@/components/ui/button"
+import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs"
+import AnimDiv from "@/components/custom/anim-div"
 import {PiCheck, PiClock, PiGameController, PiListChecks, PiPlay, PiTrophy} from "react-icons/pi"
 import {useQueryParams} from "@/utils/hooks/useQueryParams"
 import {useQuery} from "@tanstack/react-query"
@@ -11,6 +13,9 @@ import {Loader2} from "lucide-react"
 import {useScreenSize} from "@/utils/hooks/useScreenSize"
 import {cn} from "@/lib/utils"
 import {useRouter} from "next/navigation"
+import {useState} from "react"
+
+import MyTryoutPerformance from "./my-tryout-performance"
 
 const MyTryoutDetailModal = () => {
     const {getParam, setParams} = useQueryParams()
@@ -26,6 +31,9 @@ const MyTryoutDetailModal = () => {
 
     const tryout = tryoutData?.data
     const totalQuestions = tryout?.parts.reduce((sum, part) => sum + part._count.questions, 0) ?? 0
+const totalDuration = tryout?.parts.reduce((sum, p) => sum + (p.duration_minutes || 0), 0) ?? 0
+
+    const [activeTab, setActiveTab] = useState<"stats" | "details">("stats")
 
     const handleStartTryout = () => {
         if (tryout) {
@@ -44,7 +52,7 @@ const MyTryoutDetailModal = () => {
 
     return (
         <Drawer swipeDirection={isMobile ? "down" : "right"} open={!!view} onOpenChange={(open) => !open && setParams({view: ""})}>
-            <DrawerContent aria-describedby="my-tryout-detail" className={cn(isMobile ? "h-[85vh]" : "")}>
+            <DrawerContent aria-describedby={tryout?.description ? "my-tryout-detail" : undefined} className={cn(isMobile ? "h-[85vh]" : "", "border-0")}>
                 {isLoading ? (
                     <div className="flex items-center justify-center h-full">
                         <Loader2 className="animate-spin w-6 h-6 text-muted-foreground" />
@@ -61,7 +69,7 @@ const MyTryoutDetailModal = () => {
                                         <div className="flex flex-col gap-2">
                                             <DrawerTitle className="text-xl font-bold text-primary-foreground leading-snug">{tryout.title}</DrawerTitle>
                                             {tryout.description && (
-                                                <DrawerDescription className="text-primary-foreground/80 text-sm leading-relaxed">{tryout.description}</DrawerDescription>
+                                                <DrawerDescription id="my-tryout-detail" className="text-primary-foreground/80 text-sm leading-relaxed">{tryout.description}</DrawerDescription>
                                             )}
                                         </div>
                                         {tryout.category && (
@@ -100,12 +108,12 @@ const MyTryoutDetailModal = () => {
                                             {totalQuestions} {totalQuestions === 1 ? "Question" : "Questions"}
                                         </span>
                                     </div>
-                                    {tryout.duration_minutes && (
+                                    {totalDuration > 0 && (
                                         <div className="flex items-center gap-1.5">
                                             <Badge variant="outline" className="p-0 aspect-square bg-white/15 border-white/25">
                                                 <PiClock />
                                             </Badge>
-                                            <span>{tryout.duration_minutes} min</span>
+                                            <span>{totalDuration} min</span>
                                         </div>
                                     )}
                                 </div>
@@ -113,63 +121,66 @@ const MyTryoutDetailModal = () => {
                         </div>
 
                         <div className="flex flex-col gap-5 px-6 py-6 overflow-y-auto flex-1">
-                            <div className="flex flex-col gap-3">
-                                <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">What you will get</h3>
-                                <div className="flex flex-col gap-2.5">
-                                    {tryout.parts.map((part, i) => (
-                                        <div key={part.id} className="flex items-start gap-3 rounded-xl border bg-card p-4 transition-colors hover:bg-muted/50">
-                                            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 text-primary text-sm font-bold shrink-0 mt-0.5">
-                                                {i + 1}
-                                            </div>
-                                            <div className="flex flex-col gap-1 flex-1 min-w-0">
-                                                <span className="font-medium text-sm">{part.name}</span>
-                                                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
-                                                    <span className="flex items-center gap-1">
-                                                        <PiListChecks className="w-3 h-3" />
-                                                        {part._count.questions} {part._count.questions === 1 ? "question" : "questions"}
-                                                    </span>
-                                                    {part.duration_minutes && (
-                                                        <span className="flex items-center gap-1">
-                                                            <PiClock className="w-3 h-3" />
-                                                            {part.duration_minutes} min
-                                                        </span>
-                                                    )}
-                                                    {part.passing_score != null && part.passing_score > 0 && (
-                                                        <span className="flex items-center gap-1">
-                                                            <PiTrophy className="w-3 h-3" />
-                                                            Pass: {part.passing_score}
-                                                        </span>
-                                                    )}
+                            <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
+                                <TabsList>
+                                    <TabsTrigger value="stats">Stats</TabsTrigger>
+                                    <TabsTrigger value="details">Details</TabsTrigger>
+                                </TabsList>
+                                <TabsContent value="stats" className="flex flex-col gap-3 mt-4">
+                                    <AnimDiv key={activeTab} className="flex flex-col gap-3">
+                                        <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Your Performance</h3>
+                                        <MyTryoutPerformance sessions={tryout.sessions} />
+                                    </AnimDiv>
+                                </TabsContent>
+                                <TabsContent value="details" className="flex flex-col gap-3 mt-4">
+                                    <AnimDiv key={activeTab} className="flex flex-col gap-3">
+                                        <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">What you will get</h3>
+                                        <div className="flex flex-col gap-2.5">
+                                            {tryout.parts.map((part, i) => (
+                                                <div key={part.id} className="flex items-start gap-3 rounded-xl border bg-card p-4 transition-colors hover:bg-muted/50">
+                                                    <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 text-primary text-sm font-bold shrink-0 mt-0.5">
+                                                        {i + 1}
+                                                    </div>
+                                                    <div className="flex flex-col gap-1 flex-1 min-w-0">
+                                                        <span className="font-medium text-sm">{part.name}</span>
+                                                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+                                                            <span className="flex items-center gap-1">
+                                                                <PiListChecks className="w-3 h-3" />
+                                                                {part._count.questions} {part._count.questions === 1 ? "question" : "questions"}
+                                                            </span>
+                                                            {part.duration_minutes && (
+                                                                <span className="flex items-center gap-1">
+                                                                    <PiClock className="w-3 h-3" />
+                                                                    {part.duration_minutes} min
+                                                                </span>
+                                                            )}
+                                                            {part.passing_score != null && part.passing_score > 0 && (
+                                                                <span className="flex items-center gap-1">
+                                                                    <PiTrophy className="w-3 h-3" />
+                                                                    Pass: {part.passing_score}
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                    <PiCheck className="w-4 h-4 text-primary shrink-0 mt-1" />
                                                 </div>
-                                            </div>
-                                            <PiCheck className="w-4 h-4 text-primary shrink-0 mt-1" />
+                                            ))}
                                         </div>
-                                    ))}
-                                </div>
-                            </div>
+                                    </AnimDiv>
+                                </TabsContent>
+                            </Tabs>
                         </div>
 
                         <DrawerFooter className="border-t bg-muted/30 px-6 py-5">
                             <div className="flex flex-col gap-4">
-                                <Badge variant="default" className="gap-1.5 px-4 py-2 text-sm shrink-0">
-                                    <PiCheck /> In Your Collection
-                                </Badge>
-                                <DrawerClose
-                                    render={
-                                        <Button className="w-full" onClick={handleStartTryout}>
-                                            <PiPlay className="mr-1.5" />
-                                            Start Tryout
-                                        </Button>
-                                    }
-                                />
-                                <DrawerClose
-                                    render={
-                                        <Button variant="secondary" className="w-full" onClick={handlePracticeMode}>
-                                            <PiGameController className="mr-1.5" />
-                                            Practice
-                                        </Button>
-                                    }
-                                />
+                                <Button className="w-full" onClick={handleStartTryout}>
+                                    <PiPlay className="mr-1.5" />
+                                    Start Tryout
+                                </Button>
+                                <Button variant="secondary" className="w-full" onClick={handlePracticeMode}>
+                                    <PiGameController className="mr-1.5" />
+                                    Practice
+                                </Button>
                             </div>
                         </DrawerFooter>
                     </>

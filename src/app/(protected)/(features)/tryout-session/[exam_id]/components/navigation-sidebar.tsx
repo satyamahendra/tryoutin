@@ -2,6 +2,7 @@
 
 import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "@/components/ui/accordion"
 import {Drawer, DrawerContent, DrawerDescription, DrawerTitle} from "@/components/ui/drawer"
+import {Button} from "@/components/ui/button"
 import {cn} from "@/lib/utils"
 import {PiGridFour, PiListChecks, PiLock, PiFlagFill} from "react-icons/pi"
 import {useState} from "react"
@@ -25,13 +26,16 @@ type NavigationSidebarProps = {
     currentQuestionId: string
     answeredQuestions: Set<string>
     flaggedQuestions: Set<string>
+    correctQuestions?: Set<string>
     mode: "simulation" | "practice"
     lockedParts: Set<string>
     onNavigate: (partId: string, questionId: string) => void
+    submitPartLabel?: string
+    onSubmitPart?: () => void
 }
 
 const DesktopSidebar = (props: NavigationSidebarProps) => {
-    const {parts, questionsByPart, currentPartId, currentQuestionId, answeredQuestions, flaggedQuestions, mode, lockedParts, onNavigate} = props
+    const {parts, questionsByPart, currentPartId, currentQuestionId, answeredQuestions, flaggedQuestions, correctQuestions, mode, lockedParts, onNavigate, submitPartLabel, onSubmitPart} = props
 
     return (
         <div className="w-64 shrink-0 border-l border-border/60 h-full overflow-y-auto p-3 hidden md:block">
@@ -64,6 +68,7 @@ const DesktopSidebar = (props: NavigationSidebarProps) => {
                                     {questions.map((q) => {
                                         const isCurrent = q.id === currentQuestionId
                                         const isAnswered = answeredQuestions.has(q.id)
+                                        const isCorrect = correctQuestions?.has(q.id)
                                         const isFlagged = flaggedQuestions.has(q.id)
                                         const isClickable = !isLocked
 
@@ -75,7 +80,11 @@ const DesktopSidebar = (props: NavigationSidebarProps) => {
                                                 className={cn(
                                                     "relative flex items-center justify-center w-full aspect-square rounded-md text-xs font-medium transition-all",
                                                     isCurrent && "ring-2 ring-primary",
-                                                    isAnswered ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/80",
+                                                    isCorrect
+                                                        ? "bg-green-500 text-white"
+                                                        : isAnswered
+                                                          ? "bg-primary text-primary-foreground"
+                                                          : "bg-muted text-muted-foreground hover:bg-muted/80",
                                                     !isClickable && "opacity-40 cursor-not-allowed",
                                                 )}>
                                                 {q.order_index + 1}
@@ -88,6 +97,11 @@ const DesktopSidebar = (props: NavigationSidebarProps) => {
                                         )
                                     })}
                                 </div>
+                                {part.id === currentPartId && onSubmitPart && (
+                                    <Button size="sm" className="mt-3 w-full" onClick={onSubmitPart}>
+                                        {submitPartLabel}
+                                    </Button>
+                                )}
                             </AccordionContent>
                         </AccordionItem>
                     )
@@ -98,7 +112,7 @@ const DesktopSidebar = (props: NavigationSidebarProps) => {
 }
 
 const MobileDrawer = (props: NavigationSidebarProps) => {
-    const {parts, questionsByPart, currentPartId, currentQuestionId, answeredQuestions, flaggedQuestions, mode, lockedParts, onNavigate} = props
+    const {parts, questionsByPart, currentPartId, currentQuestionId, answeredQuestions, flaggedQuestions, correctQuestions, mode, lockedParts, onNavigate, submitPartLabel, onSubmitPart} = props
     const [open, setOpen] = useState(false)
 
     const handleNavigate = (partId: string, questionId: string) => {
@@ -147,6 +161,7 @@ const MobileDrawer = (props: NavigationSidebarProps) => {
                                                     {questions.map((q) => {
                                                         const isCurrent = q.id === currentQuestionId
                                                         const isAnswered = answeredQuestions.has(q.id)
+                                                        const isCorrect = correctQuestions?.has(q.id)
                                                         const isFlagged = flaggedQuestions.has(q.id)
                                                         const isClickable = !isLocked
 
@@ -158,9 +173,11 @@ const MobileDrawer = (props: NavigationSidebarProps) => {
                                                                 className={cn(
                                                                     "relative flex items-center justify-center w-full aspect-square rounded-md text-xs font-medium transition-all",
                                                                     isCurrent && "ring-2 ring-primary",
-                                                                    isAnswered
-                                                                        ? "bg-primary text-primary-foreground"
-                                                                        : "bg-muted text-muted-foreground hover:bg-muted/80",
+                                                                    isCorrect
+                                                                        ? "bg-green-500 text-white"
+                                                                        : isAnswered
+                                                                          ? "bg-primary text-primary-foreground"
+                                                                          : "bg-muted text-muted-foreground hover:bg-muted/80",
                                                                     !isClickable && "opacity-40 cursor-not-allowed",
                                                                 )}>
                                                                 {q.order_index + 1}
@@ -173,6 +190,11 @@ const MobileDrawer = (props: NavigationSidebarProps) => {
                                                         )
                                                     })}
                                                 </div>
+                                                {part.id === currentPartId && onSubmitPart && (
+                                                    <Button size="sm" className="mt-3 w-full" onClick={onSubmitPart}>
+                                                        {submitPartLabel}
+                                                    </Button>
+                                                )}
                                             </AccordionContent>
                                         </AccordionItem>
                                     )

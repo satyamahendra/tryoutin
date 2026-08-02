@@ -327,7 +327,6 @@ model Exam {
   category         String   // "CPNS", "BUMN", "UTBK", etc.
   title            String
   description      String?
-  duration_minutes Int?     // total exam duration, null if timing is fully per-part (see ExamPart)
   is_active        Boolean  @default(true)
   created_at       DateTime @default(now())
   updated_at       DateTime @updatedAt
@@ -401,9 +400,10 @@ model ExamSession {
   type           ExamSessionType   @default(simulation)
   status         ExamSessionStatus @default(in_progress)
   started_at     DateTime          @default(now())
-  ends_at        DateTime?         // started_at + exam.duration_minutes, computed at session creation
+  ends_at        DateTime?         // retained for backward compat; timing is per-part (ExamSessionPart.ends_at)
   submitted_at   DateTime?
   total_score    Float?
+  scaled_score   Float? // points from scaled_choice questions only (TKP-style), kept separate from total_score
   created_at     DateTime          @default(now())
   updated_at     DateTime          @updatedAt
 
@@ -454,7 +454,7 @@ model UserAnswer {
   option   QuestionOption? @relation(fields: [option_id], references: [id])
   grader   User?           @relation("GradedAnswers", fields: [graded_by], references: [id])
 
-  @@unique([session_id, question_id]) // one answer per question per session, upsert on change
+  @@index([session_id, question_id]) // one or more rows per question (multiple_choice = one row per selected option)
   @@index([is_graded]) // fast lookup of "essays pending review"
   @@map("user_answer")
 }

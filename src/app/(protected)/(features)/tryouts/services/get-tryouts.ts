@@ -9,7 +9,6 @@ const tryoutSelect = Prisma.validator<Prisma.ExamSelect>()({
     title: true,
     description: true,
     category: true,
-    duration_minutes: true,
     product: {
         select: {
             id: true,

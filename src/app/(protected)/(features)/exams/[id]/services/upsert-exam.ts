@@ -9,13 +9,14 @@ import {examSchema, type ExamSchema} from "../utils/schema"
 import {revalidatePath} from "next/cache"
 
 export async function upsertExam(data: ExamSchema): Promise<ServerResult<Pick<Exam, "id">>> {
+    console.group(data)
     try {
         const session = await authServer()
         if (!session) throw new Error("Unauthorized")
 
         const parsed = examSchema.parse(data)
 
-        const {id, title, description, category, duration_minutes, product_id, tags, parts} = parsed
+        const {id, title, description, category, product_id, tags, parts} = parsed
 
         const tagsPayload = tags.map((t) => ({tag_id: t.value}))
 
@@ -30,7 +31,6 @@ export async function upsertExam(data: ExamSchema): Promise<ServerResult<Pick<Ex
                             title,
                             description,
                             category,
-                            duration_minutes,
                             product_id: product_id?.value ?? null,
                         },
                         select: {id: true},
@@ -173,7 +173,6 @@ export async function upsertExam(data: ExamSchema): Promise<ServerResult<Pick<Ex
                         title,
                         description,
                         category,
-                        duration_minutes,
                         product_id: product_id?.value ?? null,
                         tags: {create: tagsPayload},
                         parts: {

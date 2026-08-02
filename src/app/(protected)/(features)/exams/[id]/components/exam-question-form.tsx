@@ -3,7 +3,7 @@
 import {Field, FieldError, FieldGroup, FieldLabel} from "@/components/ui/field"
 import {Textarea} from "@/components/ui/textarea"
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select"
-import {Controller, useFieldArray, useWatch, type UseFormReturn} from "react-hook-form"
+import {Controller, useFieldArray, useFormState, useWatch, type UseFormReturn} from "react-hook-form"
 import ExamOptionForm from "./exam-option-form"
 import {Button} from "@/components/ui/button"
 import {examOptionInitialValues} from "../utils/initials"
@@ -11,6 +11,7 @@ import {PiImage, PiListMagnifyingGlass, PiMinus, PiPlus, PiTrash, PiX} from "rea
 import {useRef, useState} from "react"
 import {fileToBase64} from "@/utils/helpers/file-to-base64"
 import {Input} from "@/components/ui/input"
+import {arrayErrorMessage} from "../utils/schema"
 import type {
     ExamSchema,
     QuestionTypePath,
@@ -57,6 +58,11 @@ const ExamQuestionForm = ({partIndex, questionIndex, form, onRemove}: ExamQuesti
 
     const questionImageRef = useRef<HTMLInputElement>(null)
     const explanationImageRef = useRef<HTMLInputElement>(null)
+
+    const {errors} = useFormState({
+        control: form.control,
+        name: [`${basePath}.options` as QuestionOptionsArrayPath, `${basePath}.question_image` as QuestionImagePath],
+    })
 
     const truncatedText = questionText ? (questionText.length > 60 ? questionText.substring(0, 60) + "..." : questionText) : "Untitled question"
     const typeLabel = questionTypes.find((t) => t.value === questionType)?.label ?? "No type"
@@ -201,16 +207,27 @@ const ExamQuestionForm = ({partIndex, questionIndex, form, onRemove}: ExamQuesti
                         )}
                     </div>
 
+                    {errors.parts?.[partIndex]?.questions?.[questionIndex]?.question_image?.message && (
+                        <FieldError errors={[errors.parts[partIndex].questions[questionIndex].question_image]} />
+                    )}
+
                     <div className="flex flex-col gap-3">
                         <div className="flex items-center justify-between">
                             <h5 className="text-xs font-medium text-muted-foreground uppercase tracking-wide flex items-center gap-1.5">
                                 <PiListMagnifyingGlass className="w-3.5 h-3.5" />
                                 Options ({fields.length})
                             </h5>
-                            <Button type="button" variant="ghost" size="sm" className="h-7 text-xs" onClick={() => append(examOptionInitialValues)}>
+                            <Button type="button" variant="ghost" size="sm" className="h-7 text-xs" onClick={() => {
+                                append(examOptionInitialValues)
+                                form.clearErrors(`${basePath}.options` as QuestionOptionsArrayPath)
+                            }}>
                                 <PiPlus className="w-3 h-3" /> Add
                             </Button>
                         </div>
+
+                        {arrayErrorMessage(errors.parts?.[partIndex]?.questions?.[questionIndex]?.options) && (
+                            <FieldError errors={[{message: arrayErrorMessage(errors.parts?.[partIndex]?.questions?.[questionIndex]?.options)}]} />
+                        )}
 
                         {fields.map((optionField, index) => (
                             <div key={optionField.id}>
