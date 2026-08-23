@@ -74,6 +74,7 @@ const sessionFullSelect = Prisma.validator<Prisma.ExamSessionSelect>()({
             question_id: true,
             option_id: true,
             answer_text: true,
+            score_awarded: true,
             is_flagged: true,
         },
     },

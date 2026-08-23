@@ -12,6 +12,7 @@ import {getReviewData} from "./services/get-review-data"
 import QuestionView from "../../tryout-session/[exam_id]/components/question-view"
 import NavigationSidebar from "../../tryout-session/[exam_id]/components/navigation-sidebar"
 import AnimDiv from "@/components/custom/anim-div"
+import {scoreAnswers, type ScoreQuestion, type ScoreAnswer} from "@/utils/helpers/score-parts"
 
 const ReviewSessionPage = () => {
     const router = useRouter()
@@ -115,7 +116,28 @@ const ReviewSessionPage = () => {
 
     const totalQ = parts.reduce((sum, p) => sum + p.questions.length, 0)
     const answeredQ = answers.filter((a) => a.option_id || a.answer_text).length
-    const score = session?.total_score
+
+    // ponytail: per-part 0-100 MC/SC + separate scaled, computed on the fly from exam + answers
+    const breakdown = useMemo(() => {
+        if (parts.length === 0 || answers.length === 0) return null
+        const questions: ScoreQuestion[] = []
+        for (const part of parts) {
+            for (const q of part.questions) {
+                questions.push({
+                    id: q.id,
+                    part_id: part.id,
+                    type: q.type ?? "",
+                    options: (q.options ?? []).map((o) => ({id: o.id, is_correct: o.is_correct, score: o.score})),
+                })
+            }
+        }
+        const ans: ScoreAnswer[] = answers.map((a) => ({
+            question_id: a.question_id,
+            option_id: a.option_id,
+            score_awarded: a.score_awarded,
+        }))
+        return scoreAnswers(ans, questions)
+    }, [parts, answers])
 
     if (isLoading) {
         return (
@@ -158,14 +180,14 @@ const ReviewSessionPage = () => {
                     )}
                 </div>
                 <div className="flex items-center gap-3">
-                    {score != null && (
+                    {breakdown?.mcScore != null && (
                         <div className="flex items-center gap-1.5">
                             <PiCheckCircle className="w-4 h-4 text-primary" />
-                            <span className="text-sm font-bold text-primary">{score}</span>
-                            <span className="text-[10px] text-muted-foreground">pts</span>
-                            {session?.scaled_score != null && (
-                                <span className="text-sm font-medium text-primary/70">
-                                    +{session.scaled_score} scaled
+                            <span className="text-sm font-bold text-primary tabular-nums">{breakdown.mcScore}</span>
+                            <span className="text-[10px] text-muted-foreground">/100</span>
+                            {breakdown.scaledScore > 0 && (
+                                <span className="text-sm font-medium text-primary/70 tabular-nums">
+                                    +{breakdown.scaledScore} TKP
                                 </span>
                             )}
                         </div>
@@ -175,6 +197,32 @@ const ReviewSessionPage = () => {
                     </Badge>
                 </div>
             </header>
+
+            {breakdown && breakdown.parts.length > 0 && (
+                <div className="flex flex-wrap items-center gap-2 px-4 py-2 border-b bg-muted/30">
+                    {breakdown.parts.map((p) => {
+                        const part = parts.find((pp) => pp.id === p.partId)
+                        return (
+                            <span
+                                key={p.partId}
+                                className="flex items-center gap-1.5 rounded-lg bg-background px-2 py-1 text-xs border">
+                                <span className="font-medium truncate max-w-28">{part?.name || p.partName || "Part"}</span>
+                                <span className="font-bold text-primary tabular-nums">{p.partScore ?? "-"}</span>
+                                <span className="text-[10px] text-muted-foreground">/100</span>
+                                {p.scMax > 0 && (
+                                    <span className="text-muted-foreground">SC {p.scEarned}/{p.scMax}</span>
+                                )}
+                                {p.mcMax > 0 && (
+                                    <span className="text-muted-foreground">MC {p.mcEarned}/{p.mcMax}</span>
+                                )}
+                                {p.scaledEarned > 0 && (
+                                    <span className="font-medium text-primary/70 tabular-nums">+{p.scaledEarned} TKP</span>
+                                )}
+                            </span>
+                        )
+                    })}
+                </div>
+            )}
 
             <div className="flex flex-1 min-h-0">
                 <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
@@ -186,7 +234,6 @@ const ReviewSessionPage = () => {
                                     questionNumber={currentIndex + 1}
                                     totalQuestions={questions.length}
                                     selectedOptionIds={getSelectedOptionIds(currentQuestion.id)}
-                                    answerText={answers.find((a) => a.question_id === currentQuestion.id && a.answer_text)?.answer_text || ""}
                                     isFlagged={flaggedQuestions.has(currentQuestion.id)}
                                     showResult={true}
                                     onSelectOption={() => {}}

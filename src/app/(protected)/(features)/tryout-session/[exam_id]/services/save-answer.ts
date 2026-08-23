@@ -31,7 +31,7 @@ export async function saveAnswer(input: SaveAnswerInput): Promise<ServerResult<{
                 type: true,
                 part_id: true,
                 options: {
-                    select: {id: true, option_text: true, score: true, question_id: true},
+                    select: {id: true, option_text: true, score: true, question_id: true, is_correct: true},
                 },
             },
         })
@@ -44,40 +44,9 @@ export async function saveAnswer(input: SaveAnswerInput): Promise<ServerResult<{
         })
         if (!partSession || partSession.status !== "in_progress") throw new Error("Part is not active")
 
-        if (question.type === "essay") {
-            const text = input.answerText ?? ""
-            await prisma.$transaction(async (tx) => {
-                const existing = await tx.userAnswer.findMany({
-                    where: {session_id: input.sessionId, question_id: input.questionId},
-                    select: {is_flagged: true},
-                    take: 1,
-                })
-                const flagged = existing[0]?.is_flagged ?? false
-
-                await tx.userAnswer.deleteMany({
-                    where: {session_id: input.sessionId, question_id: input.questionId},
-                })
-
-                if (text.trim()) {
-                    // ponytail: simple keyword match — answer containing an option's value scores that option
-                    const match = question.options.find((o) => o.option_text && text.toLowerCase().includes(o.option_text.toLowerCase()))
-                    await tx.userAnswer.create({
-                        data: {
-                            session_id: input.sessionId,
-                            question_id: input.questionId,
-                            answer_text: text,
-                            score_awarded: match ? match.score : 0,
-                            is_flagged: flagged,
-                        },
-                    })
-                }
-            })
-            return {success: true, message: "Answer saved", data: {id: input.questionId}}
-        }
-
         const requested = new Set(input.optionIds)
         const allowed = new Set(question.options.filter((o) => o.question_id === input.questionId).map((o) => o.id))
-        if (question.type === "single_choice" && requested.size > 1) throw new Error("Only one option allowed")
+        if ((question.type === "single_choice" || question.type === "scaled_choice") && requested.size > 1) throw new Error("Only one option allowed")
         for (const id of requested) {
             if (!allowed.has(id)) throw new Error("Invalid option")
         }
@@ -96,18 +65,38 @@ export async function saveAnswer(input: SaveAnswerInput): Promise<ServerResult<{
             })
 
             if (requested.size > 0) {
-                await tx.userAnswer.createMany({
-                    data: question.options
-                        .filter((o) => requested.has(o.id))
-                        .map((o) => ({
-                            session_id: input.sessionId,
-                            question_id: input.questionId,
-                            option_id: o.id,
-                            answer_text: answerText,
-                            score_awarded: o.score,
-                            is_flagged: flagged,
-                        })),
-                })
+                if (question.type === "scaled_choice") {
+                    await tx.userAnswer.createMany({
+                        data: question.options
+                            .filter((o) => requested.has(o.id))
+                            .map((o) => ({
+                                session_id: input.sessionId,
+                                question_id: input.questionId,
+                                option_id: o.id,
+                                answer_text: answerText,
+                                score_awarded: o.score, // Use option's score for scaled_choice
+                                is_flagged: flagged,
+                            })),
+                    });
+                } else if (question.type === "single_choice" || question.type === "multiple_choice") {
+                    const correctOptions = new Set(question.options.filter(opt => opt.is_correct).map(opt => opt.id));
+                    const selectedCorrectly = question.type === "single_choice"
+                        ? [...requested].some(optId => correctOptions.has(optId))
+                        : (requested.size === correctOptions.size && [...correctOptions].every(optId => requested.has(optId)));
+
+                    await tx.userAnswer.createMany({
+                        data: question.options
+                            .filter((o) => requested.has(o.id))
+                            .map((o) => ({
+                                session_id: input.sessionId,
+                                question_id: input.questionId,
+                                option_id: o.id,
+                                answer_text: answerText,
+                                score_awarded: selectedCorrectly ? 1 : 0, // Award 1 point for correctly answered MC/SC question
+                                is_flagged: flagged,
+                            })),
+                    });
+                }
             }
         })
 

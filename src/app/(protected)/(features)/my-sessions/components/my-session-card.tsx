@@ -10,7 +10,7 @@ import {cn} from "@/lib/utils"
 import type {GetMySession} from "../services/get-my-sessions"
 
 type MySessionCardProps = {
-    session: GetMySession & {correct_count: number}
+    session: GetMySession
 }
 
 const MySessionCard = ({session}: MySessionCardProps) => {
@@ -65,13 +65,21 @@ const MySessionCard = ({session}: MySessionCardProps) => {
                         <span>{answeredCount}/{totalQuestions} questions</span>
                         {isCompleted && (
                             <>
-                                <Separator orientation="vertical" className="h-3" />
-                                <span className="font-medium text-primary">{session.total_score} pts</span>
+                                {session.mc_score != null && (
+                                    <>
+                                        <Separator orientation="vertical" className="h-3" />
+                                        <span className="font-medium text-primary">{session.mc_score}</span>
+                                        <span className="text-[10px] text-primary/70">/100</span>
+                                    </>
+                                )}
                                 {session.scaled_score != null && (
-                                    <span className="font-medium text-primary/70">+{session.scaled_score} scaled</span>
+                                    <span className="font-medium text-primary/70">+{session.scaled_score} TKP</span>
                                 )}
                                 <Separator orientation="vertical" className="h-3" />
-                                <span className="font-medium text-foreground">{session.correct_count}/{totalQuestions} correct</span>
+                                <span className="font-medium text-foreground">
+                                    SC {session.sc_earned}/{session.sc_max} · MC {session.mc_earned}/{session.mc_max}
+                                    {session.scaled_max ? ` · TKP ${session.scaled_score}/${session.scaled_max}` : ""}
+                                </span>
                             </>
                         )}
                     </div>

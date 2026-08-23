@@ -69,6 +69,13 @@ export async function submitPart(sessionId: string, partId: string, expired = fa
                         submitted_at: now,
                         total_score: scores.totalScore,
                         scaled_score: scores.scaledScore,
+                        scaled_max: scores.scaledMax,
+                        mc_score: scores.mcScore,
+                        sc_earned: scores.totalScEarned,
+                        sc_max: scores.totalScMax,
+                        mc_earned: scores.totalMcEarned,
+                        mc_max: scores.totalMcMax,
+                        objective_answered: scores.objectiveAnswered,
                     },
                 })
             })

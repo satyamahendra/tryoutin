@@ -6,8 +6,10 @@ import {Badge} from "@/components/ui/badge"
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover"
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select"
 import {PiMagnifyingGlass, PiSquaresFour, PiTag, PiX} from "react-icons/pi"
+import {useEffect, useState} from "react"
 import {cn} from "@/lib/utils"
 import {useQueryParams} from "@/utils/hooks/useQueryParams"
+import {useDebounce} from "@/utils/hooks/useDebounce"
 
 type FilterSidebarProps = {
     searchPlaceholder: string
@@ -18,13 +20,19 @@ type FilterSidebarProps = {
 const FilterSidebar = ({searchPlaceholder, categories, tags}: FilterSidebarProps) => {
     const {getParam, setParams} = useQueryParams()
     const search = getParam("search") || ""
+    const [searchInput, setSearchInput] = useState(search)
+    const debouncedSearch = useDebounce(searchInput, 300)
     const activeCategory = getParam("category") || ""
     const activeTags = getParam("tags")?.split(",").filter(Boolean) ?? []
     const hasFilters = !!activeCategory || activeTags.length > 0 || !!search
 
-    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setParams({search: e.target.value}, {delay: 200})
-    }
+    useEffect(() => {
+        if (debouncedSearch !== search) setParams({search: debouncedSearch})
+    }, [debouncedSearch]) // ponytail: compares against latest search via closure; skip pushing on external change
+
+    useEffect(() => {
+        if (search === "" && searchInput !== "") setSearchInput("")
+    }, [search]) // ponytail: sync local input when URL is cleared externally (Clear button)
 
     const handleCategory = (value: string) => {
         setParams({category: value === "all" ? "" : value})
@@ -42,7 +50,7 @@ const FilterSidebar = ({searchPlaceholder, categories, tags}: FilterSidebarProps
     return (
         <aside className="flex flex-wrap items-center gap-2 w-full rounded-2xl border border-border/60 bg-card/70 p-3 backdrop-blur-sm">
             <InputGroup className="bg-background/80 backdrop-blur-sm border-border/50 flex-1 min-w-[180px]">
-                <InputGroupInput placeholder={searchPlaceholder} value={search} onChange={handleSearch} />
+                <InputGroupInput placeholder={searchPlaceholder} value={searchInput} onChange={(e) => setSearchInput(e.target.value)} />
                 <InputGroupAddon>
                     <PiMagnifyingGlass />
                 </InputGroupAddon>

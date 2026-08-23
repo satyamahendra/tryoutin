@@ -37,7 +37,6 @@ enum QuestionType {
   multiple_choice
   single_choice   // traditional right/wrong question
   scaled_choice   // "most correct" style question (e.g. TKP), every option has its own point value
-  essay           // free-text answer, requires manual grading
 }
 
 enum ExamSessionStatus {
@@ -86,7 +85,6 @@ model User {
   report_messages ReportMessage[]
 
   exam_sessions   ExamSession[]
-  graded_answers  UserAnswer[]     @relation("GradedAnswers")
 
   @@map("user")
 }
@@ -404,6 +402,13 @@ model ExamSession {
   submitted_at   DateTime?
   total_score    Float?
   scaled_score   Float? // points from scaled_choice questions only (TKP-style), kept separate from total_score
+  scaled_max     Float? // max possible scaled_choice score for this session's exam (stored at submit for leaderboard normalization)
+  mc_score       Float? // overall 0-100 MC/SC score (avg of per-part scores, stored at submit)
+  sc_earned      Int    @default(0) // single_choice questions answered correctly
+  sc_max         Int    @default(0) // single_choice questions in the exam
+  mc_earned      Int    @default(0) // multiple_choice questions answered correctly
+  mc_max         Int    @default(0) // multiple_choice questions in the exam
+  objective_answered Int @default(0) // single + multiple choice questions the user actually answered
   created_at     DateTime          @default(now())
   updated_at     DateTime          @updatedAt
 
@@ -441,10 +446,7 @@ model UserAnswer {
   question_id    String
   option_id      String?   // set for single_choice / scaled_choice, null for essay
   answer_text    String?   // set for essay, null for single_choice / scaled_choice
-  score_awarded  Float?    // auto-filled on submit for MC/scaled; null until manually graded for essay
-  is_graded      Boolean   @default(true) // false for essay until an admin/reviewer scores it
-  graded_by      String?   // user_id of the admin/reviewer who graded the essay
-  graded_at      DateTime?
+  score_awarded  Float?    // points awarded by the system auto-grader (MC / scaled_choice / essay)
   is_flagged     Boolean   @default(false) // "mark for review" during the exam
   answered_at    DateTime  @default(now())
   updated_at     DateTime  @updatedAt
@@ -452,9 +454,7 @@ model UserAnswer {
   session  ExamSession     @relation(fields: [session_id], references: [id], onDelete: Cascade)
   question Question        @relation(fields: [question_id], references: [id], onDelete: Cascade)
   option   QuestionOption? @relation(fields: [option_id], references: [id])
-  grader   User?           @relation("GradedAnswers", fields: [graded_by], references: [id])
 
   @@index([session_id, question_id]) // one or more rows per question (multiple_choice = one row per selected option)
-  @@index([is_graded]) // fast lookup of "essays pending review"
   @@map("user_answer")
 }

@@ -6,7 +6,7 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import {Controller, useFieldArray, useFormState, useWatch, type UseFormReturn} from "react-hook-form"
 import ExamOptionForm from "./exam-option-form"
 import {Button} from "@/components/ui/button"
-import {examOptionInitialValues} from "../utils/initials"
+import {makeExamOption} from "../utils/initials"
 import {PiImage, PiListMagnifyingGlass, PiMinus, PiPlus, PiTrash, PiX} from "react-icons/pi"
 import {useRef, useState} from "react"
 import {fileToBase64} from "@/utils/helpers/file-to-base64"
@@ -33,7 +33,6 @@ const questionTypes = [
     {value: "multiple_choice", label: "Multiple Choice"},
     {value: "single_choice", label: "Single Choice"},
     {value: "scaled_choice", label: "Scaled Choice"},
-    {value: "essay", label: "Essay"},
 ]
 
 const typeBadgeColors: Record<string, string> = {
@@ -218,7 +217,7 @@ const ExamQuestionForm = ({partIndex, questionIndex, form, onRemove}: ExamQuesti
                                 Options ({fields.length})
                             </h5>
                             <Button type="button" variant="ghost" size="sm" className="h-7 text-xs" onClick={() => {
-                                append(examOptionInitialValues)
+                                append(makeExamOption())
                                 form.clearErrors(`${basePath}.options` as QuestionOptionsArrayPath)
                             }}>
                                 <PiPlus className="w-3 h-3" /> Add

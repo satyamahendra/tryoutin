@@ -114,7 +114,7 @@ export async function upsertExam(data: ExamSchema): Promise<ServerResult<Pick<Ex
                         for (let qi = 0; qi < part.questions.length; qi++) {
                             const q = part.questions[qi]
                             const questionData = {
-                                type: (q.type ?? "single_choice") as "single_choice" | "multiple_choice" | "scaled_choice" | "essay",
+                                type: (q.type ?? "single_choice") as "single_choice" | "multiple_choice" | "scaled_choice",
                                 question_text: q.question_text ?? "",
                                 question_image: q.question_image ?? null,
                                 explanation: q.explanation ?? null,
@@ -183,7 +183,7 @@ export async function upsertExam(data: ExamSchema): Promise<ServerResult<Pick<Ex
                                 duration_minutes: part.duration_minutes ?? null,
                                 questions: {
                                     create: part.questions.map((q, qi) => ({
-                                        type: (q.type ?? "single_choice") as "single_choice" | "multiple_choice" | "scaled_choice" | "essay",
+                                type: (q.type ?? "single_choice") as "single_choice" | "multiple_choice" | "scaled_choice",
                                         question_text: q.question_text ?? "",
                                         question_image: q.question_image ?? null,
                                         explanation: q.explanation ?? null,

@@ -3,12 +3,12 @@
 import {Drawer, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle} from "@/components/ui/drawer"
 import {Badge} from "@/components/ui/badge"
 import {Button} from "@/components/ui/button"
-import {PiCheck, PiClock, PiListChecks, PiPackage, PiTag, PiTrophy} from "react-icons/pi"
+import {PiCheck, PiClock, PiListChecks, PiPackage, PiTag, PiTrophy, PiGift} from "react-icons/pi"
 import {useQueryParams} from "@/utils/hooks/useQueryParams"
-import {useQuery, useMutation} from "@tanstack/react-query"
+import {useQuery, useMutation, useQueryClient} from "@tanstack/react-query"
 import {getTryoutDetail} from "../services/get-tryout-detail"
 import {calculateDiscount} from "@/utils/helpers/calculate-discount"
-import axios from "axios"
+import axios, {AxiosError} from "axios"
 import {toast} from "sonner"
 import {handleClientError} from "@/utils/helpers/handle-client-errors"
 import {Loader2} from "lucide-react"
@@ -26,13 +26,15 @@ const TryoutDetailModal = () => {
         enabled: !!view,
     })
 
-    const tryout = tryoutData?.data
+const tryout = tryoutData?.data
 
     const {mutate, isPending} = useMutation({
         mutationFn: async (data: {id_product: string}) => await axios.post("/api/midtrans/token", data),
         onSuccess: (data) => {
             window.snap.pay(data.data.data.token, {
-                onSuccess: () => {
+                onSuccess: async (result) => {
+                    // ponytail: result.order_id is the midtrans order id; hits /api/midtrans/status to finalize order + entitlements
+                    await axios.get(`/api/midtrans/status?order_id=${(result as {order_id: string}).order_id}`)
                     toast.success("Payment successful!")
                     setParams({view: ""})
                 },
@@ -41,6 +43,24 @@ const TryoutDetailModal = () => {
         },
         onError: (error) => {
             toast.error(handleClientError(error))
+        },
+    })
+
+    const queryClient = useQueryClient()
+    const isFree = tryout?.tags.some((t) => t.tag.name.toLowerCase() === "free")
+
+    const {mutate: claimFree, isPending: claiming} = useMutation({
+        mutationFn: async (examId: string) => await axios.post("/api/tryouts/claim-free", {examId}),
+        onSuccess: () => {
+            toast.success("Tryout claimed for free!")
+            queryClient.invalidateQueries({queryKey: ["tryouts"]})
+            queryClient.invalidateQueries({queryKey: ["my-tryouts"]})
+            queryClient.invalidateQueries({queryKey: ["tryout-detail", view]})
+            setParams({view: ""})
+        },
+        onError: (error) => {
+            const message = error instanceof AxiosError ? error.response?.data?.message : error.message
+            toast.error(message || "Failed to claim tryout")
         },
     })
 
@@ -161,7 +181,7 @@ const TryoutDetailModal = () => {
                             </div>
                         </div>
 
-                        {product && (
+{product && (
                             <DrawerFooter className="border-t bg-muted/30 px-6 py-5">
                                 {tryout.owned ? (
                                     <div className="flex items-center gap-3">
@@ -172,6 +192,17 @@ const TryoutDetailModal = () => {
                                         <Badge variant="default" className="gap-1.5 px-5 py-2.5 text-sm">
                                             <PiCheck /> You own this
                                         </Badge>
+                                    </div>
+                                ) : isFree ? (
+                                    <div className="w-full">
+                                        <div className="flex flex-col text-center mb-4">
+                                            <span className="text-lg font-bold text-green-600">FREE</span>
+                                            <span className="text-sm text-muted-foreground">This tryout is free to claim</span>
+                                        </div>
+                                        <Button size="lg" className="w-full px-8 font-semibold" disabled={claiming} onClick={() => claimFree(tryout.id)}>
+                                            {claiming ? <Loader2 className="animate-spin mr-1.5" /> : <PiGift className="mr-1.5" />}
+                                            Claim for Free
+                                        </Button>
                                     </div>
                                 ) : (
                                     <div className="flex items-end justify-between gap-4">

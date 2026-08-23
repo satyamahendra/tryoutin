@@ -32,21 +32,17 @@ type QuestionViewProps = {
     isFlagged: boolean
     mode?: "simulation" | "practice"
     showResult?: boolean
-    answerText?: string
     onSelectOption: (questionId: string, optionId: string) => void
     onToggleFlag: (questionId: string) => void
-    onAnswerTextChange?: (questionId: string, text: string) => void
-    onAnswerTextBlur?: (questionId: string, text: string) => void
 }
 
 const typeLabel: Record<string, {label: string; color: string}> = {
     single_choice: {label: "Single Choice", color: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"},
     scaled_choice: {label: "Scaled Choice", color: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400"},
     multiple_choice: {label: "Multiple Choice", color: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"},
-    essay: {label: "Essay", color: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400"},
 }
 
-const QuestionView = ({question, questionNumber, totalQuestions, selectedOptionIds, isFlagged, mode, showResult, answerText, onSelectOption, onToggleFlag, onAnswerTextChange, onAnswerTextBlur}: QuestionViewProps) => {
+const QuestionView = ({question, questionNumber, totalQuestions, selectedOptionIds, isFlagged, mode, showResult, onSelectOption, onToggleFlag}: QuestionViewProps) => {
     const info = typeLabel[question.type] || {label: question.type, color: "bg-muted text-muted-foreground"}
     const [showHint, setShowHint] = useState(false)
 
@@ -98,29 +94,7 @@ const QuestionView = ({question, questionNumber, totalQuestions, selectedOptionI
                 </div>
             )}
 
-            {question.type === "essay" ? (
-                <div className="flex flex-col gap-2">
-                    <textarea
-                        value={answerText || ""}
-                        onChange={(e) => onAnswerTextChange?.(question.id, e.target.value)}
-                        onBlur={(e) => onAnswerTextBlur?.(question.id, e.target.value)}
-                        disabled={showResult}
-                        placeholder="Type your answer here..."
-                        rows={6}
-                        className="w-full rounded-xl border border-border bg-card p-4 text-sm leading-relaxed focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary resize-y disabled:opacity-70"
-                    />
-                    {showResult && (
-                        <div className="flex flex-col gap-1">
-                            {question.options.filter((o) => o.is_correct).map((o) => (
-                                <span key={o.id} className="text-xs font-medium text-green-600 dark:text-green-400">
-                                    Correct answer: {o.option_text}
-                                </span>
-                            ))}
-                        </div>
-                    )}
-                </div>
-            ) : (
-                <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2">
                 {question.options.map((option) => {
                     const isSelected = selectedOptionIds.includes(option.id)
                     const isCorrect = option.is_correct
@@ -174,8 +148,7 @@ const QuestionView = ({question, questionNumber, totalQuestions, selectedOptionI
                         </button>
                     )
                 })}
-                </div>
-            )}
+            </div>
 
             {(showHint || showResult) && question.explanation && (
                 <div className="rounded-xl border border-amber-200 bg-amber-50 dark:border-amber-900/50 dark:bg-amber-950/20 p-4">

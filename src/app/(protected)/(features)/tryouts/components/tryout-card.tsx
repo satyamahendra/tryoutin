@@ -3,10 +3,13 @@
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card"
 import {Badge} from "@/components/ui/badge"
 import {Button} from "@/components/ui/button"
-import {PiCheck, PiClock, PiEye, PiListChecks, PiStack, PiTag, PiTrophy} from "react-icons/pi"
+import {PiCheck, PiClock, PiEye, PiListChecks, PiStack, PiTag, PiTrophy, PiGift} from "react-icons/pi"
 import {GetTryout} from "../services/get-tryouts"
 import {calculateDiscount} from "@/utils/helpers/calculate-discount"
 import {useQueryParams} from "@/utils/hooks/useQueryParams"
+import {useMutation, useQueryClient} from "@tanstack/react-query"
+import axios, {AxiosError} from "axios"
+import {toast} from "sonner"
 
 type TryoutCardProps = {
     tryout: GetTryout & {owned: boolean}
@@ -15,15 +18,30 @@ type TryoutCardProps = {
 
 const TryoutCard = ({tryout, featured}: TryoutCardProps) => {
     const {setParams} = useQueryParams()
+    const queryClient = useQueryClient()
     const product = tryout.product
     const totalQuestions = tryout.parts.reduce((sum, part) => sum + part._count.questions, 0)
     const totalDuration = tryout.parts.reduce((sum, p) => sum + (p.duration_minutes || 0), 0)
     const discount = product ? calculateDiscount(product.price_actual, product.price_alternate) : 0
     const hasDiscount = discount > 0
+    const isFree = tryout.tags.some((t) => t.tag.name.toLowerCase() === "free")
 
     const formatPrice = (price: number) => {
         return new Intl.NumberFormat("id-ID", {style: "currency", currency: "IDR", minimumFractionDigits: 0}).format(price)
     }
+
+    const {mutate: claimFree, isPending: claiming} = useMutation({
+        mutationFn: async (examId: string) => await axios.post("/api/tryouts/claim-free", {examId}),
+        onSuccess: () => {
+            toast.success("Tryout claimed for free!")
+            queryClient.invalidateQueries({queryKey: ["tryouts"]})
+            queryClient.invalidateQueries({queryKey: ["my-tryouts"]})
+        },
+        onError: (error) => {
+            const message = error instanceof AxiosError ? error.response?.data?.message : error.message
+            toast.error(message || "Failed to claim tryout")
+        },
+    })
 
     return (
         <Card
@@ -93,6 +111,14 @@ const TryoutCard = ({tryout, featured}: TryoutCardProps) => {
                             <Badge variant="default" className="gap-1 px-3 py-1.5">
                                 <PiCheck /> Owned
                             </Badge>
+                        ) : isFree ? (
+                            <Button size="sm" variant="default" onClick={(e) => {
+                                e.stopPropagation()
+                                claimFree(tryout.id)
+                            }} disabled={claiming}>
+                                {claiming ? "Claiming..." : <PiGift className="mr-1" />}
+                                Claim for Free
+                            </Button>
                         ) : (
                             <Button size="sm" variant="outline" onClick={(e) => {
                                 e.stopPropagation()

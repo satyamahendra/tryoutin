@@ -1,13 +1,15 @@
-export const examOptionInitialValues = {
+// ponytail: factories, not singletons — useFieldArray/append must get fresh objects
+// each time, or shared references double-register on the first append (new-exam bug).
+export const makeExamOption = () => ({
     id: null,
     option_text: "",
     option_image: null,
-    score: null,
+    score: 0,
     is_correct: null,
     order_index: null,
-}
+})
 
-export const examQuestionInitialValues = {
+export const makeExamQuestion = () => ({
     id: null,
     type: null,
     question_text: "",
@@ -15,24 +17,24 @@ export const examQuestionInitialValues = {
     explanation: null,
     explanation_image: null,
     order_index: null,
-    options: [examOptionInitialValues],
-}
+    options: [makeExamOption()],
+})
 
-export const examPartInitialValues = {
+export const makeExamPart = () => ({
     id: null,
     name: "",
     order_index: null,
     passing_score: 0,
-    duration_minutes: null,
-    questions: [examQuestionInitialValues],
-}
+    duration_minutes: 0,
+    questions: [makeExamQuestion()],
+})
 
-export const examInitialValues = {
+export const makeExam = () => ({
     id: null,
     title: "",
     description: null,
     category: "",
     product_id: null,
     tags: [],
-    parts: [examPartInitialValues],
-}
+    parts: [makeExamPart()],
+})

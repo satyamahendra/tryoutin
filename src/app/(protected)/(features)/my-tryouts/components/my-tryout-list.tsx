@@ -1,9 +1,9 @@
 ﻿import {Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle} from "@/components/ui/empty"
 import {ScrollArea} from "@/components/ui/scroll-area"
-import AnimDiv from "@/components/custom/anim-div"
 import {PiMagnifyingGlass, PiPackage} from "react-icons/pi"
 import {getMyTryouts} from "../services/get-my-tryouts"
 import MyTryoutCard from "./my-tryout-card"
+import AnimDiv from "@/components/custom/anim-div"
 
 type MyTryoutListProps = {
     search?: string
@@ -20,9 +20,7 @@ const MyTryoutList = async ({search, category, tags}: MyTryoutListProps) => {
             <AnimDiv className="rounded-xl border border-dashed border-border py-16">
                 <Empty>
                     <EmptyHeader>
-                        <EmptyMedia variant="icon">
-                            {hasFilters ? <PiMagnifyingGlass /> : <PiPackage />}
-                        </EmptyMedia>
+                        <EmptyMedia variant="icon">{hasFilters ? <PiMagnifyingGlass /> : <PiPackage />}</EmptyMedia>
                         <EmptyTitle>{hasFilters ? "No matching tryouts" : "No tryouts in your collection"}</EmptyTitle>
                         <EmptyDescription>
                             {hasFilters ? "Try adjusting your filters to find what you're looking for." : "Browse the marketplace to add tryouts to your collection."}
@@ -52,4 +50,3 @@ const MyTryoutList = async ({search, category, tags}: MyTryoutListProps) => {
 }
 
 export default MyTryoutList
-

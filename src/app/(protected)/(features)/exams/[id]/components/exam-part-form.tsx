@@ -5,7 +5,7 @@ import {Input} from "@/components/ui/input"
 import {Controller, useFieldArray, useFormState, useWatch, type UseFormReturn} from "react-hook-form"
 import ExamQuestionForm from "./exam-question-form"
 import {Button} from "@/components/ui/button"
-import {examQuestionInitialValues} from "../utils/initials"
+import {makeExamQuestion} from "../utils/initials"
 import {PiClock, PiFileText, PiMinus, PiPlus, PiTrash} from "react-icons/pi"
 import {Collapsible, CollapsibleContent, CollapsibleTrigger} from "@/components/ui/collapsible"
 import {arrayErrorMessage} from "../utils/schema"
@@ -79,6 +79,8 @@ const ExamPartForm = ({partIndex, form, onRemove}: ExamPartFormProps) => {
                                                 {...field}
                                                 id={`parts.${partIndex}.passing_score`}
                                                 type="number"
+                                                min={0}
+                                                max={100}
                                                 aria-invalid={fieldState.invalid}
                                                 placeholder="e.g. 70"
                                                 value={field.value ?? ""}
@@ -100,6 +102,7 @@ const ExamPartForm = ({partIndex, form, onRemove}: ExamPartFormProps) => {
                                                 {...field}
                                                 id={`parts.${partIndex}.duration_minutes`}
                                                 type="number"
+                                                min={1}
                                                 aria-invalid={fieldState.invalid}
                                                 placeholder="e.g. 30"
                                                 value={field.value ?? ""}
@@ -119,7 +122,7 @@ const ExamPartForm = ({partIndex, form, onRemove}: ExamPartFormProps) => {
                                     Questions ({fields.length})
                                 </h4>
                                 <Button type="button" variant="ghost" size="sm" className="h-7 text-xs" onClick={() => {
-                                    append(examQuestionInitialValues)
+                                    append(makeExamQuestion())
                                     form.clearErrors(`parts.${partIndex}.questions` as PartQuestionsArrayPath)
                                 }}>
                                     <PiPlus className="w-3 h-3" /> Add

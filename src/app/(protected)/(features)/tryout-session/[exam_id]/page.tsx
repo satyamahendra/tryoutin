@@ -18,6 +18,7 @@ import QuestionView from "./components/question-view"
 import NavigationSidebar from "./components/navigation-sidebar"
 import SubmitPartModal from "./components/submit-part-modal"
 import AnimDiv from "@/components/custom/anim-div"
+import {scoreAnswers, type ScoreQuestion, type ScoreAnswer} from "@/utils/helpers/score-parts"
 
 type PageState = "initializing" | "ready" | "submitting" | "completed" | "error"
 
@@ -34,12 +35,10 @@ const TryoutSessionPage = () => {
 
     const [pageState, setPageState] = useState<PageState>("initializing")
     const [answers, setAnswers] = useState<Record<string, string[]>>({})
-    const [answerTexts, setAnswerTexts] = useState<Record<string, string>>({})
     const [flagged, setFlagged] = useState<Set<string>>(new Set())
     const [modalState, setModalState] = useState<{type: "time-up" | "submit"; partId: string} | null>(null)
     const [errorMsg, setErrorMsg] = useState("")
     const timerExpiredRef = useRef(false)
-    const essaySaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
     const sessionQuery = useQuery({
         queryKey: ["session", sessionId],
@@ -99,6 +98,29 @@ const TryoutSessionPage = () => {
     const partSessions = useMemo(() => sessionQuery.data?.data?.part_sessions || [], [sessionQuery.data])
 
     const parts = useMemo(() => examData?.parts || [], [examData])
+
+    // ponytail: per-part 0-100 MC/SC + separate scaled, computed on the fly from exam + answers
+    const breakdown = useMemo(() => {
+        const session = sessionQuery.data?.data
+        if (!session?.exam.parts.length || !session?.answers.length) return null
+        const questions: ScoreQuestion[] = []
+        for (const part of session.exam.parts) {
+            for (const q of part.questions) {
+                questions.push({
+                    id: q.id,
+                    part_id: part.id,
+                    type: q.type ?? "",
+                    options: (q.options ?? []).map((o) => ({id: o.id, is_correct: o.is_correct, score: o.score})),
+                })
+            }
+        }
+        const ans: ScoreAnswer[] = session.answers.map((a) => ({
+            question_id: a.question_id,
+            option_id: a.option_id,
+            score_awarded: a.score_awarded,
+        }))
+        return scoreAnswers(ans, questions)
+    }, [sessionQuery.data])
     const activePartSession = mode === "simulation" ? partSessions.find((ps) => ps.status === "in_progress") : undefined
     const currentPartId = mode !== "simulation" ? partParam || parts[0]?.id || "" : activePartSession?.part_id || parts[0]?.id || ""
     const currentPart = useMemo(() => parts.find((p) => p.id === currentPartId), [parts, currentPartId])
@@ -109,11 +131,8 @@ const TryoutSessionPage = () => {
 
     const answeredCount = useMemo(
         () =>
-            questions.filter((q) => {
-                if ((answers[q.id]?.length ?? 0) > 0) return true
-                return q.type === "essay" && (answerTexts[q.id] || "").trim().length > 0
-            }).length,
-        [questions, answers, answerTexts],
+            questions.filter((q) => (answers[q.id]?.length ?? 0) > 0).length,
+        [questions, answers],
     )
 
     const isLastPart = useMemo(() => {
@@ -169,15 +188,12 @@ const TryoutSessionPage = () => {
             }
             const sessionAnswers = sessionQuery.data.data.answers
             const ans: Record<string, string[]> = {}
-            const essay: Record<string, string> = {}
             const flg = new Set<string>()
             for (const a of sessionAnswers) {
                 if (a.option_id) ans[a.question_id] = [...(ans[a.question_id] || []), a.option_id]
-                if (a.answer_text) essay[a.question_id] = a.answer_text
                 if (a.is_flagged) flg.add(a.question_id)
             }
             setAnswers(ans)
-            setAnswerTexts(essay)
             setFlagged(flg)
             setPageState("ready")
         }
@@ -229,30 +245,6 @@ const TryoutSessionPage = () => {
             }
         },
         [questions, answers, sessionId, saveAnswerMut],
-    )
-
-    const handleEssayChange = useCallback(
-        (questionId: string, text: string) => {
-            setAnswerTexts((prev) => ({...prev, [questionId]: text}))
-            if (!sessionId) return
-            if (essaySaveTimer.current) clearTimeout(essaySaveTimer.current)
-            essaySaveTimer.current = setTimeout(() => {
-                saveAnswerMut.mutate({sessionId, questionId, optionIds: [], answerText: text})
-            }, 600)
-        },
-        [sessionId, saveAnswerMut],
-    )
-
-    const handleEssayBlur = useCallback(
-        (questionId: string, text: string) => {
-            if (!sessionId) return
-            if (essaySaveTimer.current) {
-                clearTimeout(essaySaveTimer.current)
-                essaySaveTimer.current = null
-            }
-            saveAnswerMut.mutate({sessionId, questionId, optionIds: [], answerText: text})
-        },
-        [sessionId, saveAnswerMut],
     )
 
     const handleToggleFlag = useCallback((questionId: string) => {
@@ -341,8 +333,8 @@ const TryoutSessionPage = () => {
     if (pageState === "completed") {
         const totalQ = parts.reduce((sum, p) => sum + p.questions.length, 0)
         const answeredQ = Object.values(answers).filter((a) => a.length > 0).length
-        const score = sessionQuery.data?.data?.total_score
-        const scaledScore = sessionQuery.data?.data?.scaled_score
+        const score = breakdown?.mcScore ?? null
+        const scaledScore = breakdown?.scaledScore ?? 0
         return (
             <div className="flex flex-col items-center justify-center h-full gap-6 px-6">
                 <div className="rounded-full bg-primary/10 p-4">
@@ -353,20 +345,23 @@ const TryoutSessionPage = () => {
                     {score != null && (
                         <div className="mt-3 flex items-center justify-center gap-3">
                             <div>
-                                <span className="text-4xl font-bold text-primary">{score}</span>
-                                <span className="text-sm text-muted-foreground ml-1">points</span>
+                                <span className="text-4xl font-bold text-primary tabular-nums">{score}</span>
+                                <span className="text-sm text-muted-foreground ml-1">/100</span>
                             </div>
-                            {scaledScore != null && (
+                            {scaledScore > 0 && (
                                 <>
                                     <span className="text-2xl text-muted-foreground">+</span>
                                     <div>
-                                        <span className="text-2xl font-semibold text-primary/80">{scaledScore}</span>
-                                        <span className="text-xs text-muted-foreground ml-1">scaled</span>
+                                        <span className="text-2xl font-semibold text-primary/80 tabular-nums">{scaledScore}</span>
+                                        <span className="text-xs text-muted-foreground ml-1">TKP</span>
                                     </div>
                                 </>
                             )}
                         </div>
                     )}
+                    <p className="text-sm text-muted-foreground mt-2">
+                        You answered {answeredQ} of {totalQ} questions.
+                    </p>
                     <p className="text-sm text-muted-foreground mt-2">
                         You answered {answeredQ} of {totalQ} questions.
                     </p>
@@ -421,13 +416,10 @@ const TryoutSessionPage = () => {
                                     questionNumber={currentQuestionIndex + 1}
                                     totalQuestions={questions.length}
                                     selectedOptionIds={answers[currentQuestion.id] || []}
-                                    answerText={answerTexts[currentQuestion.id] || ""}
                                     isFlagged={flagged.has(currentQuestion.id)}
                                     mode={mode}
                                     onSelectOption={handleSelectOption}
                                     onToggleFlag={handleToggleFlag}
-                                    onAnswerTextChange={handleEssayChange}
-                                    onAnswerTextBlur={handleEssayBlur}
                                 />
                             </AnimDiv>
                         )}
@@ -475,7 +467,6 @@ const TryoutSessionPage = () => {
                     currentQuestionId={currentQuestionId}
                     answeredQuestions={new Set([
                         ...Object.entries(answers).filter(([, v]) => v.length > 0).map(([k]) => k),
-                        ...Object.entries(answerTexts).filter(([, v]) => v.trim().length > 0).map(([k]) => k),
                     ])}
                     flaggedQuestions={flagged}
                     mode={mode}

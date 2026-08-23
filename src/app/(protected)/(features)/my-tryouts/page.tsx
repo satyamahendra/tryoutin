@@ -1,7 +1,7 @@
 ﻿import AnimDiv from "@/components/custom/anim-div"
 import {Suspense} from "react"
 import {Loader2} from "lucide-react"
-import {PiFlask, PiLightning, PiNotebook} from "react-icons/pi"
+import {PiNotebook, PiSquaresFour, PiTag} from "react-icons/pi"
 import PageHeader from "@/components/custom/page-header/page-header"
 import FilterSidebar from "@/components/custom/filter-sidebar/filter-sidebar"
 import MyTryoutList from "./components/my-tryout-list"
@@ -31,11 +31,11 @@ const Page = async ({searchParams}: PageProps) => {
                 subComponent={
                     <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
                         <span className="flex items-center gap-1">
-                            <PiLightning className="w-3.5 h-3.5" />
+                            <PiSquaresFour className="w-3.5 h-3.5" />
                             {categories.length} Categories
                         </span>
                         <span className="flex items-center gap-1">
-                            <PiFlask className="w-3.5 h-3.5" />
+                            <PiTag className="w-3.5 h-3.5" />
                             {allTags.length} Tags
                         </span>
                     </div>
@@ -61,4 +61,3 @@ const Page = async ({searchParams}: PageProps) => {
 }
 
 export default Page
-

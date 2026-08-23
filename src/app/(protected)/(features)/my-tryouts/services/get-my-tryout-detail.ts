@@ -5,6 +5,8 @@ import {authServer} from "@/lib/auth-server"
 import prisma from "@/lib/prisma/client"
 import {handleServerError} from "@/utils/helpers/handle-server-errors"
 import {ServerResult} from "@/utils/types/server-action"
+import {PartScore} from "@/utils/helpers/score-parts" // Import PartScore
+import {computeExamSessionsScores} from "@/utils/helpers/compute-session-scores"
 
 const myTryoutDetailSelect = Prisma.validator<Prisma.ExamSelect>()({
     id: true,
@@ -43,6 +45,15 @@ export type GetMyTryoutDetail = Prisma.ExamGetPayload<{select: typeof myTryoutDe
         id: string
         type: "simulation" | "practice"
         total_score: number | null
+        mcScore: number | null
+        scaledScore: number | null // Added scaledScore
+        scaledMax: number | null // Added scaledMax
+        normalizedScaledScore: number | null // Added normalizedScaledScore
+        scEarned: number // Added scEarned
+        scMax: number // Added scMax
+        mcEarned: number // Added mcEarned
+        mcMax: number // Added mcMax
+        parts: PartScore[] // Added parts
         submitted_at: Date | null
     }[]
 }
@@ -78,10 +89,27 @@ export async function getMyTryoutDetail(productId: string): Promise<ServerResult
             select: {id: true, type: true, total_score: true, submitted_at: true},
         })
 
+        const scores = await computeExamSessionsScores(exam.id, sessions.map((s) => s.id))
+        const sessionsWithScore = sessions.map((s) => {
+            const sc = scores.get(s.id)
+            return {
+                ...s,
+                mcScore: sc?.mcScore ?? null,
+                scaledScore: sc?.scaledScore ?? null,
+                scaledMax: sc?.scaledMax ?? null,
+                normalizedScaledScore: sc?.normalizedScaledScore ?? null,
+                scEarned: sc?.totalScEarned ?? 0,
+                scMax: sc?.totalScMax ?? 0,
+                mcEarned: sc?.totalMcEarned ?? 0,
+                mcMax: sc?.totalMcMax ?? 0,
+                parts: sc?.parts ?? [],
+            }
+        })
+
         return {
             success: true,
             message: "Tryout fetched successfully",
-            data: {...exam, sessions},
+            data: {...exam, sessions: sessionsWithScore},
         }
     } catch (error) {
         return handleServerError(error)

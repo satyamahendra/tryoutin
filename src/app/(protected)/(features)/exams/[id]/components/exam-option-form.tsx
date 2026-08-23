@@ -78,7 +78,7 @@ const ExamOptionForm = ({partIndex, questionIndex, optionIndex, form, remove}: E
                                             aria-invalid={fieldState.invalid}
                                             placeholder="Score"
                                             value={field.value ?? ""}
-                                            onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : null)}
+                                            onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : 0)}
                                         />
                                         {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                     </Field>
@@ -86,7 +86,7 @@ const ExamOptionForm = ({partIndex, questionIndex, optionIndex, form, remove}: E
                             />
                         )}
                         <Controller
-                            name={`${basePath}.option_image` as OptionTextPath}
+                            name={`${basePath}.option_image` as OptionImagePath}
                             control={form.control}
                             render={({field}) => (
                                 <Field className="hidden">

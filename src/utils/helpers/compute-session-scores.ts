@@ -1,136 +1,95 @@
 import prisma from "@/lib/prisma/client"
+import {scoreAnswers, type SessionScores, type ScoreQuestion, type ScoreAnswer} from "./score-parts"
 
-export type SessionScores = {
-    totalScore: number
-    scaledScore: number
-    correctCount: number
-}
+const SCORE_ANSWER_SELECT = {
+    question_id: true,
+    option_id: true,
+    score_awarded: true,
+} as const
 
-export type ScoreAnswer = {
-    question_id: string
-    option_id: string | null
-    score_awarded: number | null
-}
-
-export type ScoreQuestion = {
-    id: string
-    type: string
-    options: {id: string; is_correct: boolean}[]
-}
-
-export function scoreAnswers(answers: ScoreAnswer[], questions: ScoreQuestion[]): SessionScores {
-    const questionById = new Map(questions.map((q) => [q.id, q]))
-
-    let totalScore = 0
-    let scaledScore = 0
-    for (const a of answers) {
-        const q = questionById.get(a.question_id)
-        if (!q) continue
-        const points = a.score_awarded ?? 0
-        if (q.type === "scaled_choice") scaledScore += points
-        else totalScore += points
-    }
-
-    const selectedByQuestion = new Map<string, Set<string>>()
-    for (const a of answers) {
-        if (!a.option_id) continue
-        const set = selectedByQuestion.get(a.question_id) || new Set<string>()
-        set.add(a.option_id)
-        selectedByQuestion.set(a.question_id, set)
-    }
-
-    let correct = 0
-    for (const q of questions) {
-        if (q.type === "scaled_choice") continue
-        const selected = selectedByQuestion.get(q.id)
-        if (!selected || selected.size === 0) continue
-
-        const correctOptions = new Set(q.options.filter((o) => o.is_correct).map((o) => o.id))
-        if (q.type === "multiple_choice") {
-            const exact = selected.size === correctOptions.size && [...correctOptions].every((id) => selected.has(id))
-            if (correctOptions.size > 0 && exact) correct++
-        } else {
-            if ([...selected].some((id) => correctOptions.has(id))) correct++
-        }
-    }
-
-    return {totalScore, scaledScore, correctCount: correct}
-}
+const SCORE_QUESTION_SELECT = {
+    id: true,
+    part_id: true,
+    part: {select: {name: true}},
+    type: true,
+    options: {select: {id: true, is_correct: true, score: true}},
+} as const
 
 export async function computeSessionScores(sessionId: string): Promise<SessionScores> {
     const answers = await prisma.userAnswer.findMany({
-        where: {session_id: sessionId, is_graded: true, score_awarded: {not: null}},
-        select: {question_id: true, option_id: true, score_awarded: true},
+        where: {session_id: sessionId, score_awarded: {not: null}},
+        select: SCORE_ANSWER_SELECT,
     })
 
     const questionIds = [...new Set(answers.map((a) => a.question_id))]
-    if (questionIds.length === 0) return {totalScore: 0, scaledScore: 0, correctCount: 0}
+    if (questionIds.length === 0)
+        return {
+            totalScore: 0,
+            scaledScore: 0,
+            scaledMax: 0,
+            normalizedScaledScore: null,
+            correctCount: 0,
+            objectiveAnswered: 0,
+            parts: [],
+            mcScore: null,
+            totalScEarned: 0,
+            totalScMax: 0,
+            totalMcEarned: 0,
+            totalMcMax: 0,
+        }
 
     const questions = await prisma.question.findMany({
         where: {id: {in: questionIds}},
+        select: SCORE_QUESTION_SELECT,
+    })
+
+    return scoreAnswers(
+        answers as ScoreAnswer[],
+        questions.map((q) => ({...q, part_name: q.part?.name})) as ScoreQuestion[],
+    )
+}
+
+// Re-exports so existing server imports keep working
+export {scoreAnswers} from "./score-parts"
+export type {SessionScores, PartScore, ScoreAnswer, ScoreQuestion} from "./score-parts"
+
+// ponytail: batch-computes 0-100 MC/SC + separate scaled per session for ONE exam.
+// Used by leaderboards so aggregated lists show the same scoring as the detail views.
+export async function computeExamSessionsScores(examId: string, sessionIds: string[]): Promise<Map<string, SessionScores>> {
+    const result = new Map<string, SessionScores>()
+    if (sessionIds.length === 0) return result
+
+    const questions = await prisma.question.findMany({
+        where: {part: {exam_id: examId}},
         select: {
             id: true,
+            part_id: true,
+            part: {select: {name: true}},
             type: true,
-            options: {select: {id: true, is_correct: true}},
+            options: {select: {id: true, is_correct: true, score: true}},
         },
     })
 
-    return scoreAnswers(answers, questions)
-}
+    const answers = await prisma.userAnswer.findMany({
+        where: {session_id: {in: sessionIds}, score_awarded: {not: null}},
+        select: {session_id: true, question_id: true, option_id: true, score_awarded: true},
+    })
 
-if (process.argv[1]?.endsWith("compute-session-scores.ts")) {
-    const qs: ScoreQuestion[] = [
-        {
-            id: "sc",
-            type: "scaled_choice",
-            options: [
-                {id: "sc-o0", is_correct: false},
-                {id: "sc-o1", is_correct: false},
-            ],
-        },
-        {
-            id: "s1",
-            type: "single_choice",
-            options: [
-                {id: "s1-o0", is_correct: true},
-                {id: "s1-o1", is_correct: false},
-            ],
-        },
-        {
-            id: "s2",
-            type: "single_choice",
-            options: [
-                {id: "s2-o0", is_correct: true},
-                {id: "s2-o1", is_correct: false},
-            ],
-        },
-        {
-            id: "mc",
-            type: "multiple_choice",
-            options: [
-                {id: "mc-o0", is_correct: true},
-                {id: "mc-o1", is_correct: true},
-                {id: "mc-o2", is_correct: false},
-            ],
-        },
-    ]
+    const bySession = new Map<string, ScoreAnswer[]>()
+    for (const a of answers) {
+        const arr = bySession.get(a.session_id) ?? []
+        arr.push({question_id: a.question_id, option_id: a.option_id, score_awarded: a.score_awarded})
+        bySession.set(a.session_id, arr)
+    }
 
-    const r = scoreAnswers(
-        [
-            {question_id: "sc", option_id: "sc-o0", score_awarded: 4},
-            {question_id: "sc", option_id: "sc-o1", score_awarded: 1},
-            {question_id: "s1", option_id: "s1-o0", score_awarded: 5},
-            {question_id: "s2", option_id: "s2-o1", score_awarded: 0},
-            {question_id: "mc", option_id: "mc-o0", score_awarded: 3},
-            {question_id: "mc", option_id: "mc-o2", score_awarded: 0},
-            {question_id: "es", option_id: null, score_awarded: null},
-        ],
-        qs,
-    )
-
-    console.assert(r.scaledScore === 5, "scaled sums selected scaled options")
-    console.assert(r.totalScore === 8, "total sums non-scaled options (5 + 3)")
-    console.assert(r.correctCount === 1, "correct = 1 (s1 only; mc not exact, s2 wrong)")
-    console.assert(r.totalScore + r.scaledScore === 13, "scores stay separate")
-    console.log("compute-session-scores self-check OK:", r)
+    for (const sid of sessionIds) {
+        result.set(
+            sid,
+            scoreAnswers(
+                bySession.get(sid) ?? [],
+                questions.map((q) => ({...q, part_name: q.part?.name})) as ScoreQuestion[],
+            ),
+        )
+    }
+    return result
 }

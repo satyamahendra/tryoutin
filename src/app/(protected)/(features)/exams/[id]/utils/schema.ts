@@ -23,7 +23,7 @@ export const optionSchema = z.object({
 export const questionSchema = z
     .object({
         id: z.string().nullable(),
-        type: z.enum(["multiple_choice", "single_choice", "scaled_choice", "essay"]).nullable(),
+        type: z.enum(["multiple_choice", "single_choice", "scaled_choice"]).nullable(),
         question_text: z.string().min(1, {error: "Question text is required"}),
         question_image: imageField,
         explanation: z.string().nullable(),
@@ -68,8 +68,8 @@ export const partSchema = z.object({
     id: z.string().nullable(),
     name: z.string().min(1, {error: "Part name is required"}),
     order_index: z.number().nullable(),
-    passing_score: z.number().min(0, {error: "Passing score is required"}).nullable(),
-    duration_minutes: z.number().nullable(),
+    passing_score: z.number({error: "Passing score is required"}).min(0, {error: "Passing score cannot be negative"}).max(100, {error: "Passing score must be between 0 and 100"}),
+    duration_minutes: z.number({error: "Duration is required"}).min(1, {error: "Duration must be at least 1 minute"}),
     questions: z.array(questionSchema).min(1, {error: "At least 1 question is required"}),
 })
 

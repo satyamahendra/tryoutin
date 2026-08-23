@@ -1,0 +1,267 @@
+{
+  "communities": {
+    "0": [
+      "id_components_exam_general_form",
+      "id_components_exam_general_form_categoryoptions",
+      "id_components_exam_general_form_examgeneralform",
+      "id_components_exam_general_form_examgeneralformprops",
+      "id_components_exam_part_form",
+      "id_components_exam_part_form_exampartform",
+      "id_components_exam_part_form_exampartformprops",
+      "id_components_exam_question_form_examquestionform",
+      "id_components_tag_picker",
+      "id_components_tag_picker_tagpicker",
+      "id_components_tag_picker_tagpickerprops",
+      "id_utils_initials",
+      "id_utils_initials_examinitialvalues",
+      "id_utils_initials_examoptioninitialvalues",
+      "id_utils_initials_exampartinitialvalues",
+      "id_utils_initials_examquestioninitialvalues",
+      "id_utils_schema_arrayerrormessage",
+      "id_utils_schema_partdurationminutespath",
+      "id_utils_schema_partnamepath",
+      "id_utils_schema_partpassingscorepath",
+      "id_utils_schema_partquestionsarraypath"
+    ],
+    "1": [
+      "components_category_row",
+      "components_category_row_categoryrow",
+      "components_category_row_categoryrowprops",
+      "components_exam_item",
+      "components_exam_item_examitem",
+      "components_exam_item_examitemprops",
+      "components_exam_list",
+      "components_exam_list_examlist",
+      "components_exam_list_examlistprops",
+      "services_get_exams",
+      "services_get_exams_examselect",
+      "services_get_exams_getexam",
+      "services_get_exams_getexams"
+    ],
+    "2": [
+      "components_create_exam_button",
+      "components_create_exam_button_createexambutton",
+      "components_import_exam_button",
+      "components_import_exam_button_importexambutton",
+      "id_services_upsert_exam",
+      "id_services_upsert_exam_upsertexam",
+      "id_utils_schema_examschema",
+      "page",
+      "page_page",
+      "page_pageprops",
+      "services_create_exam",
+      "services_create_exam_createexam"
+    ],
+    "3": [
+      "id_components_exam_form",
+      "id_components_exam_form_examform",
+      "id_components_exam_form_examformtypes",
+      "id_components_exam_form_scroll",
+      "id_components_exam_form_scroll_examformscroll",
+      "id_components_exam_form_scroll_examformscrollprops",
+      "id_page",
+      "id_page_page",
+      "id_page_pageprops",
+      "id_services_get_exam",
+      "id_services_get_exam_examselect",
+      "id_services_get_exam_getexam"
+    ],
+    "4": [
+      "id_components_exam_question_form",
+      "id_components_exam_question_form_examquestionformprops",
+      "id_components_exam_question_form_questiontypes",
+      "id_components_exam_question_form_typebadgecolors",
+      "id_utils_schema_questionexplanationimagepath",
+      "id_utils_schema_questionexplanationpath",
+      "id_utils_schema_questionimagepath",
+      "id_utils_schema_questionoptionsarraypath",
+      "id_utils_schema_questiontextpath"
+    ],
+    "5": [
+      "id_utils_schema",
+      "id_utils_schema_imagefield",
+      "id_utils_schema_imageunder50kb",
+      "id_utils_schema_optionorderindexpath",
+      "id_utils_schema_optionschema",
+      "id_utils_schema_partorderindexpath",
+      "id_utils_schema_partschema",
+      "id_utils_schema_questionorderindexpath",
+      "id_utils_schema_questionschema"
+    ],
+    "6": [
+      "id_components_exam_option_form",
+      "id_components_exam_option_form_examoptionform",
+      "id_components_exam_option_form_examoptionformprops",
+      "id_utils_schema_optionimagepath",
+      "id_utils_schema_optioniscorrectpath",
+      "id_utils_schema_optionscorepath",
+      "id_utils_schema_optiontextpath",
+      "id_utils_schema_questiontypepath"
+    ],
+    "7": [
+      "id_components_exam_actions",
+      "id_components_exam_actions_examactions",
+      "id_components_exam_actions_examactionsprops",
+      "id_services_delete_exam",
+      "id_services_delete_exam_deleteexam",
+      "id_services_toggle_archive_exam",
+      "id_services_toggle_archive_exam_togglearchiveexam"
+    ],
+    "8": [
+      "id_services_get_exam_categories",
+      "id_services_get_exam_categories_examcategoryselect",
+      "id_services_get_exam_categories_getexamcategories"
+    ],
+    "9": [
+      "utils_schema"
+    ]
+  },
+  "cohesion": {
+    "0": 0.1380952380952381,
+    "1": 0.23076923076923078,
+    "2": 0.2727272727272727,
+    "3": 0.2727272727272727,
+    "4": 0.2222222222222222,
+    "5": 0.2222222222222222,
+    "6": 0.25,
+    "7": 0.47619047619047616,
+    "8": 0.6666666666666666,
+    "9": 1.0
+  },
+  "gods": [
+    {
+      "id": "id_utils_schema_examschema",
+      "label": "ExamSchema",
+      "degree": 8
+    },
+    {
+      "id": "id_utils_schema_arrayerrormessage",
+      "label": "arrayErrorMessage()",
+      "degree": 7
+    },
+    {
+      "id": "id_services_get_exam_getexam",
+      "label": "GetExam",
+      "degree": 5
+    },
+    {
+      "id": "id_services_upsert_exam_upsertexam",
+      "label": "upsertExam()",
+      "degree": 5
+    },
+    {
+      "id": "id_components_exam_form_examform",
+      "label": "ExamForm()",
+      "degree": 5
+    },
+    {
+      "id": "id_components_exam_actions_examactions",
+      "label": "ExamActions()",
+      "degree": 4
+    },
+    {
+      "id": "services_get_exams_getexams",
+      "label": "GetExams",
+      "degree": 3
+    },
+    {
+      "id": "id_utils_schema_questiontypepath",
+      "label": "QuestionTypePath",
+      "degree": 3
+    },
+    {
+      "id": "id_components_exam_general_form_examgeneralform",
+      "label": "ExamGeneralForm()",
+      "degree": 3
+    },
+    {
+      "id": "id_components_exam_part_form_exampartform",
+      "label": "ExamPartForm()",
+      "degree": 3
+    }
+  ],
+  "surprises": [
+    {
+      "source": "CreateExamButton()",
+      "target": "createExam()",
+      "source_files": [
+        "components/create-exam-button.tsx",
+        "services/create-exam.ts"
+      ],
+      "confidence": "INFERRED",
+      "relation": "indirect_call",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories"
+    },
+    {
+      "source": "ImportExamButton()",
+      "target": "upsertExam()",
+      "source_files": [
+        "components/import-exam-button.tsx",
+        "[id]/services/upsert-exam.ts"
+      ],
+      "confidence": "INFERRED",
+      "relation": "indirect_call",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories"
+    },
+    {
+      "source": "ExamList()",
+      "target": "GetExams",
+      "source_files": [
+        "components/exam-list.tsx",
+        "services/get-exams.ts"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "connects across different repos/directories"
+    },
+    {
+      "source": "ExamForm()",
+      "target": "upsertExam()",
+      "source_files": [
+        "[id]/components/exam-form.tsx",
+        "[id]/services/upsert-exam.ts"
+      ],
+      "confidence": "INFERRED",
+      "relation": "indirect_call",
+      "why": "inferred connection - not explicitly stated in source; bridges separate communities"
+    },
+    {
+      "source": "Page()",
+      "target": "GetExam",
+      "source_files": [
+        "[id]/page.tsx",
+        "[id]/services/get-exam.ts"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "peripheral node `Page()` unexpectedly reaches hub `GetExam`"
+    }
+  ],
+  "questions": [
+    {
+      "type": "bridge_node",
+      "question": "Why does `ExamSchema` connect `Community 2` to `Community 0`, `Community 3`, `Community 4`, `Community 5`, `Community 6`?",
+      "why": "High betweenness centrality (0.088) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `upsertExam()` connect `Community 2` to `Community 3`?",
+      "why": "High betweenness centrality (0.060) - this node is a cross-community bridge."
+    },
+    {
+      "type": "verify_inferred",
+      "question": "Are the 2 inferred relationships involving `upsertExam()` (e.g. with `ImportExamButton()` and `ExamForm()`) actually correct?",
+      "why": "`upsertExam()` has 2 INFERRED edges - model-reasoned connections that need verification."
+    },
+    {
+      "type": "isolated_nodes",
+      "question": "What connects `ExamGeneralFormProps`, `ExamPartFormProps`, `TagPickerProps` to the rest of the system?",
+      "why": "27 weakly-connected nodes found - possible documentation gaps or missing edges."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Community 0` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.1380952380952381 - nodes in this community are weakly interconnected."
+    }
+  ]
+}

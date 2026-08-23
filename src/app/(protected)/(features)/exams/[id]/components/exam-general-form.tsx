@@ -6,7 +6,7 @@ import {Textarea} from "@/components/ui/textarea"
 import {Controller, useFieldArray, useFormState, type UseFormReturn} from "react-hook-form"
 import ExamPartForm from "./exam-part-form"
 import {Button} from "@/components/ui/button"
-import {examPartInitialValues} from "../utils/initials"
+import {makeExamPart} from "../utils/initials"
 import {PiListNumbers, PiPlus, PiShoppingBag, PiTag, PiTextAa} from "react-icons/pi"
 import {InfiniteCombobox} from "@/components/custom/combobox"
 import type {ExamSchema} from "../utils/schema"
@@ -76,6 +76,7 @@ const ExamGeneralForm = ({form}: ExamGeneralFormProps) => {
                                     onChange={(opt) => field.onChange(opt?.value ?? "")}
                                     placeholder="Select category"
                                     options={categoryOptions}
+                                    invalid={fieldState.invalid}
                                 />
                                 {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                             </Field>
@@ -94,6 +95,7 @@ const ExamGeneralForm = ({form}: ExamGeneralFormProps) => {
                                 value={field.value}
                                 onChange={field.onChange}
                                 placeholder="Link a product"
+                                invalid={fieldState.invalid}
                                 queryKey={["products"]}
                                 queryFn={(page, search) => getProducts(page, search)}
                                 getItems={(page) =>
@@ -133,7 +135,7 @@ const ExamGeneralForm = ({form}: ExamGeneralFormProps) => {
                         Exam Parts ({fields.length})
                     </h3>
                     <Button type="button" variant="outline" size="sm" onClick={() => {
-                        append(examPartInitialValues)
+                        append(makeExamPart())
                         form.clearErrors("parts")
                     }}>
                         <PiPlus className="w-4 h-4" /> Add Part

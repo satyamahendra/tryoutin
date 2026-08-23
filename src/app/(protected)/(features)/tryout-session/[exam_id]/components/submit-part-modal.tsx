@@ -8,9 +8,12 @@ import {
     AlertDialogDescription,
     AlertDialogFooter,
     AlertDialogHeader,
+    AlertDialogMedia,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import {Loader2} from "lucide-react"
+import {PiTimer, PiPaperPlaneTilt} from "react-icons/pi"
+import {cn} from "@/lib/utils"
 
 type SubmitPartModalProps = {
     open: boolean
@@ -31,8 +34,18 @@ const SubmitPartModal = ({open, type, partName, isLastPart, isSubmitting, answer
         <AlertDialog open={open} onOpenChange={(open) => !open && onCancel()}>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle className="flex items-center gap-2">
-                        {isTimeUp ? "⏰ Time&apos;s Up!" : "📝 Submit Part"}
+                    <AlertDialogMedia
+                        className={cn(
+                            "size-12 rounded-xl ring-1 ring-inset",
+                            isTimeUp
+                                ? "bg-destructive/10 text-destructive ring-destructive/20"
+                                : "bg-primary/10 text-primary ring-primary/20"
+                        )}
+                    >
+                        {isTimeUp ? <PiTimer className="w-6 h-6" /> : <PiPaperPlaneTilt className="w-6 h-6" />}
+                    </AlertDialogMedia>
+                    <AlertDialogTitle className="text-lg">
+                        {isTimeUp ? "Time's Up!" : "Submit Part"}
                     </AlertDialogTitle>
                     <AlertDialogDescription asChild>
                         <div className="flex flex-col gap-2">

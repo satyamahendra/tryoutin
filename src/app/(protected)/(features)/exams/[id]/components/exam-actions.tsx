@@ -2,10 +2,12 @@
 
 import {Button} from "@/components/ui/button"
 import {useTransition} from "react"
-import {PiArchive, PiArrowArcLeft, PiTrash} from "react-icons/pi"
+import {PiArchive, PiArrowArcLeft, PiDownload, PiTrash} from "react-icons/pi"
 import {useMutation, useQueryClient} from "@tanstack/react-query"
 import {toggleArchiveExam} from "../services/toggle-archive-exam"
 import {deleteExam} from "../services/delete-exam"
+import {getExam} from "../services/get-exam"
+import {buildExamValues} from "./exam-form"
 import {
     AlertDialog,
     AlertDialogCancel,
@@ -32,6 +34,27 @@ const ExamActions = ({id, isActive}: ExamActionsProps) => {
     const router = useRouter()
     const [isPending, startTransition] = useTransition()
     const [isDeleteOpen, setIsDeleteOpen] = useState(false)
+    const [isExporting, setIsExporting] = useState(false)
+
+    const handleExport = async () => {
+        setIsExporting(true)
+        try {
+            const res = await getExam(id)
+            if (!res.success) return toast.error(res.message)
+            const blob = new Blob([JSON.stringify(buildExamValues(res.data), null, 2)], {type: "application/json"})
+            const url = URL.createObjectURL(blob)
+            const a = document.createElement("a")
+            a.href = url
+            a.download = `${res.data.title || "exam"}.json`
+            a.click()
+            URL.revokeObjectURL(url)
+            toast.success("Exam exported")
+        } catch (error) {
+            toast.error(handleClientError(error))
+        } finally {
+            setIsExporting(false)
+        }
+    }
 
     const {mutate: toggleArchive, isPending: isToggling} = useMutation({
         mutationFn: () => toggleArchiveExam(id),
@@ -63,10 +86,14 @@ const ExamActions = ({id, isActive}: ExamActionsProps) => {
         },
     })
 
-    const isLoading = isToggling || isDeleting || isPending
+    const isLoading = isToggling || isDeleting || isPending || isExporting
 
     return (
         <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={handleExport} disabled={isLoading}>
+                {isExporting ? <Loader2 className="animate-spin" /> : <PiDownload />} Export
+            </Button>
+
             <Button variant="outline" size="sm" onClick={() => toggleArchive()} disabled={isLoading}>
                 {isToggling ? (
                     <Loader2 className="animate-spin" />
