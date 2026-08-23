@@ -1,11 +1,11 @@
 ﻿"use client"
 
-import {Field, FieldError, FieldGroup, FieldLabel} from "@/components/ui/field"
+import {Field, FieldError, FieldGroup} from "@/components/ui/field"
 import {Input} from "@/components/ui/input"
 import {Controller, useFormState, useWatch, type UseFormReturn} from "react-hook-form"
 import type {ExamSchema, OptionTextPath, OptionIsCorrectPath, OptionScorePath, OptionImagePath, QuestionTypePath} from "../utils/schema"
 import {Checkbox} from "@/components/ui/checkbox"
-import {PiImage, PiPlus, PiTrash, PiX} from "react-icons/pi"
+import {PiImage, PiTrash, PiX} from "react-icons/pi"
 import {Button} from "@/components/ui/button"
 import {useRef} from "react"
 import {fileToBase64} from "@/utils/helpers/file-to-base64"

@@ -7,7 +7,7 @@ import AnimDiv from "@/components/custom/anim-div"
 import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "@/components/ui/accordion"
 import {ScrollArea} from "@/components/ui/scroll-area"
 import {PartScore} from "@/utils/helpers/score-parts" // Import PartScore
-import {PiChartLineUp, PiBooks} from "react-icons/pi"
+import {PiChartLineUp} from "react-icons/pi"
 import {useMemo, useState} from "react"
 
 type PerformanceSession = {
@@ -30,7 +30,6 @@ const MyTryoutPerformance = ({sessions}: {sessions: PerformanceSession[]}) => {
     const filtered = useMemo(() => sessions.filter((s) => s.type === mode), [sessions, mode])
 
     const hasObjective = useMemo(() => filtered.some((s) => s.mcMax > 0 || s.scMax > 0), [filtered])
-    const hasScaled = useMemo(() => filtered.some((s) => s.scaledMax !== null && s.scaledMax > 0), [filtered])
 
     const best = useMemo(() => {
         if (!filtered.length) return 0

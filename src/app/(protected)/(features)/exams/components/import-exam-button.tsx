@@ -5,7 +5,7 @@ import {useState, useRef} from "react"
 import {PiFileArrowUp} from "react-icons/pi"
 import {useMutation, useQueryClient} from "@tanstack/react-query"
 import {upsertExam} from "../[id]/services/upsert-exam"
-import {examSchema, type ExamSchema} from "../[id]/utils/schema"
+import {examSchema} from "../[id]/utils/schema"
 import {
     Dialog,
     DialogContent,

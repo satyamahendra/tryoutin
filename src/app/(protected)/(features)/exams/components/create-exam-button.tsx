@@ -2,7 +2,7 @@
 
 import {Button} from "@/components/ui/button"
 import {useState, useTransition} from "react"
-import {PiFileText, PiPlus} from "react-icons/pi"
+import {PiPlus} from "react-icons/pi"
 import {useMutation} from "@tanstack/react-query"
 import {createExam} from "../services/create-exam"
 import {

@@ -90,6 +90,7 @@ const QuestionView = ({question, questionNumber, totalQuestions, selectedOptionI
 
             {question.question_image && (
                 <div className="rounded-lg border bg-muted/30 p-3 flex items-center justify-center">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={question.question_image} alt="Question" className="max-w-full max-h-64 object-contain rounded" />
                 </div>
             )}
@@ -133,7 +134,10 @@ const QuestionView = ({question, questionNumber, totalQuestions, selectedOptionI
                             <div className="flex-1 min-w-0">
                                 <span className="text-sm leading-relaxed">{option.option_text}</span>
                                 {option.option_image && (
-                                    <img src={option.option_image} alt="Option" className="mt-2 max-w-full max-h-32 object-contain rounded" />
+                                    <>
+                                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                                        <img src={option.option_image} alt="Option" className="mt-2 max-w-full max-h-32 object-contain rounded" />
+                                    </>
                                 )}
                                 {question.type === "scaled_choice" && (
                                     <span className="block text-[10px] text-muted-foreground mt-1">Score: {option.score}</span>

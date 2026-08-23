@@ -8,10 +8,6 @@ import {handleServerError} from "@/utils/helpers/handle-server-errors"
 import {Pagination} from "@/utils/types/pagination"
 import {ServerResult} from "@/utils/types/server-action"
 
-const examCategorySelect = Prisma.validator<Prisma.ExamSelect>()({
-    category: true,
-})
-
 export type GetExamCategories = {
     categories: {value: string; label: string}[]
     pagination: Pagination

@@ -28,10 +28,12 @@ const FilterSidebar = ({searchPlaceholder, categories, tags}: FilterSidebarProps
 
     useEffect(() => {
         if (debouncedSearch !== search) setParams({search: debouncedSearch})
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [debouncedSearch]) // ponytail: compares against latest search via closure; skip pushing on external change
 
     useEffect(() => {
         if (search === "" && searchInput !== "") setSearchInput("")
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [search]) // ponytail: sync local input when URL is cleared externally (Clear button)
 
     const handleCategory = (value: string) => {
