@@ -1,7 +1,7 @@
 "use server"
 
 import {Prisma} from "@/generated/index"
-import {authServer} from "@/lib/auth-server"
+import {requireAbility} from "@/utils/helpers/has-ability-server"
 import prisma from "@/lib/prisma/client"
 import {handleServerError} from "@/utils/helpers/handle-server-errors"
 import {ServerResult} from "@/utils/types/server-action"
@@ -24,9 +24,7 @@ type Response = Prisma.UserGetPayload<{select: typeof selectUser}>
 
 export async function getUser(id: string): Promise<ServerResult<Response>> {
     try {
-        const session = await authServer()
-
-        if (!session) throw new Error("Unauthorized")
+        await requireAbility(["read users", "manage users"])
 
         const user = await prisma.user.findUnique({
             where: {id: id},

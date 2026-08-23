@@ -5,7 +5,7 @@ import {revalidatePath} from "next/cache"
 import {PermissionFormSchema, permissionSchema} from "../utils/schemas"
 import {ServerResult} from "@/utils/types/server-action"
 import {Permission} from "@/generated/index"
-import {authServer} from "@/lib/auth-server"
+import {requireAbility} from "@/utils/helpers/has-ability-server"
 import {handleServerError} from "@/utils/helpers/handle-server-errors"
 
 export async function createUpdatePermission(data: PermissionFormSchema): Promise<ServerResult<Permission>> {
@@ -23,9 +23,7 @@ export async function createUpdatePermission(data: PermissionFormSchema): Promis
     try {
         let permission: Permission
 
-        const session = await authServer()
-
-        if (!session) throw new Error("Unauthorized")
+        await requireAbility(["manage permissions"])
 
         const {name, name_before, roles = [], is_active} = parsed.data
 

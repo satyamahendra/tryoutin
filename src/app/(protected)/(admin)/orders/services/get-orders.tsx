@@ -1,7 +1,7 @@
 "use server"
 
 import {Prisma} from "@/generated/index"
-import {authServer} from "@/lib/auth-server"
+import {requireAbility} from "@/utils/helpers/has-ability-server"
 import prisma from "@/lib/prisma/client"
 import {PAGE_SIZE} from "@/utils/constants/pagination"
 import {handleServerError} from "@/utils/helpers/handle-server-errors"
@@ -39,8 +39,7 @@ export async function getOrders(page: number = 1, search = ""): Promise<ServerRe
     const skip = (page - 1) * PAGE_SIZE
 
     try {
-        const session = await authServer()
-        if (!session) throw new Error("Unauthorized")
+        await requireAbility(["read orders", "manage orders"])
 
         const where: Prisma.OrderWhereInput = search
             ? {

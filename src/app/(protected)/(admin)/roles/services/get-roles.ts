@@ -2,7 +2,7 @@
 
 import prisma from "@/lib/prisma/client"
 import {Prisma} from "@/generated/index"
-import {authServer} from "@/lib/auth-server"
+import {requireAbility} from "@/utils/helpers/has-ability-server"
 import {Pagination} from "@/utils/types/pagination"
 import {PAGE_SIZE} from "@/utils/constants/pagination"
 
@@ -24,9 +24,7 @@ export type GetRoles = {
 export const getRoles = async (page: number = 1, search = ""): Promise<GetRoles> => {
     const skip = (page - 1) * PAGE_SIZE
 
-    const session = await authServer()
-
-    if (!session) throw new Error("Unauthorized")
+    await requireAbility(["read roles", "manage roles"])
 
     const where: Prisma.RoleWhereInput = search ? {name: {contains: search, mode: "insensitive"}} : {}
 

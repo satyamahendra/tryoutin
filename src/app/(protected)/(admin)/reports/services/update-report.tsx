@@ -3,7 +3,7 @@
 import prisma from "@/lib/prisma/client"
 import {revalidatePath} from "next/cache"
 import {ServerResult} from "@/utils/types/server-action"
-import {authServer} from "@/lib/auth-server"
+import {requireAbility} from "@/utils/helpers/has-ability-server"
 import {handleServerError} from "@/utils/helpers/handle-server-errors"
 import {ReportFormSchema, reportSchema} from "../utils/schema"
 import {Report} from "@/generated/index"
@@ -12,8 +12,7 @@ export async function updateReport(data: ReportFormSchema): Promise<ServerResult
     reportSchema.safeParse(data)
 
     try {
-        const session = await authServer()
-        if (!session) throw new Error("Unauthorized")
+        await requireAbility(["manage reports"])
 
         const report = await prisma.report.update({
             where: {

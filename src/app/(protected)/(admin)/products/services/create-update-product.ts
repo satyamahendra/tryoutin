@@ -5,14 +5,13 @@ import prisma from "@/lib/prisma/client"
 import {revalidatePath} from "next/cache"
 import {ServerResult} from "@/utils/types/server-action"
 import {Product} from "@/generated/index"
-import {authServer} from "@/lib/auth-server"
+import {requireAbility} from "@/utils/helpers/has-ability-server"
 import {handleServerError} from "@/utils/helpers/handle-server-errors"
 import {ProductFormSchema, productSchema} from "../utils/schema"
 
 export async function createUpdateProduct(data: ProductFormSchema): Promise<ServerResult<Pick<Product, "id">>> {
     try {
-        const session = await authServer()
-        if (!session) throw new Error("Unauthorized")
+        await requireAbility(["manage products"])
 
         const parsed = productSchema.parse(data)
 

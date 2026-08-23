@@ -1,7 +1,7 @@
 "use server"
 
 import {Prisma} from "@/generated/index"
-import {authServer} from "@/lib/auth-server"
+import {requireAbility} from "@/utils/helpers/has-ability-server"
 import prisma from "@/lib/prisma/client"
 import {PAGE_SIZE} from "@/utils/constants/pagination"
 import {handleServerError} from "@/utils/helpers/handle-server-errors"
@@ -37,8 +37,7 @@ export async function getProducts(page: number = 1, search = "", limit = PAGE_SI
     const skip = (page - 1) * limit
 
     try {
-        const session = await authServer()
-        if (!session) throw new Error("Unauthorized")
+        await requireAbility(["read products", "manage products"])
 
         const where: Prisma.ProductWhereInput = search
             ? {

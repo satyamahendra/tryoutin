@@ -5,15 +5,14 @@ import {revalidatePath} from "next/cache"
 import {RoleFormSchema, roleSchema} from "../utils/schemas"
 import {ServerResult} from "@/utils/types/server-action"
 import {Role} from "@/generated/index"
-import {authServer} from "@/lib/auth-server"
+import {requireAbility} from "@/utils/helpers/has-ability-server"
 import {handleServerError} from "@/utils/helpers/handle-server-errors"
 
 export async function createUpdateRole(data: RoleFormSchema): Promise<ServerResult<Role>> {
     try {
         const parsed = roleSchema.safeParse(data)
 
-        const session = await authServer()
-        if (!session) throw new Error("Unauthorized")
+        await requireAbility(["manage roles"])
 
         const {name, name_before, permissions = [], is_active} = parsed.data as RoleFormSchema
 

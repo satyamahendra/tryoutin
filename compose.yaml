@@ -3,7 +3,7 @@ services:
         build:
             context: .
             dockerfile: Dockerfile
-        container_name: svtyv-app
+        container_name: tryoutin-app
         restart: unless-stopped
         env_file:
             - .env
@@ -15,7 +15,7 @@ services:
         command: sh -c "npx prisma migrate deploy && node server.js"
     db:
         image: postgres:17-alpine
-        container_name: svtyv-db
+        container_name: tryoutin-db
         restart: unless-stopped
         env_file:
             - .env

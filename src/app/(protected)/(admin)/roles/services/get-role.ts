@@ -1,7 +1,7 @@
 "use server"
 
 import {Prisma} from "@/generated/index"
-import {authServer} from "@/lib/auth-server"
+import {requireAbility} from "@/utils/helpers/has-ability-server"
 import prisma from "@/lib/prisma/client"
 import {handleServerError} from "@/utils/helpers/handle-server-errors"
 import {ServerResult} from "@/utils/types/server-action"
@@ -20,9 +20,7 @@ export type GetRole = Prisma.RoleGetPayload<{select: typeof roleSelect}>
 
 export async function getRole(name: string): Promise<ServerResult<GetRole>> {
     try {
-        const session = await authServer()
-
-        if (!session) throw new Error("Unauthorized")
+        await requireAbility(["read roles", "manage roles"])
 
         const role = await prisma.role.findUnique({
             where: {name},

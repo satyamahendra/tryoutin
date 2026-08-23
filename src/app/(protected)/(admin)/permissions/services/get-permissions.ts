@@ -1,7 +1,7 @@
 "use server"
 
 import {Prisma} from "@/generated/index"
-import {authServer} from "@/lib/auth-server"
+import {requireAbility} from "@/utils/helpers/has-ability-server"
 import prisma from "@/lib/prisma/client"
 import {PAGE_SIZE} from "@/utils/constants/pagination"
 import {Pagination} from "@/utils/types/pagination"
@@ -24,9 +24,7 @@ export type GetPermissions = {
 export async function getPermissions(page: number = 1, search = ""): Promise<GetPermissions> {
     const skip = (page - 1) * PAGE_SIZE
 
-    const session = await authServer()
-
-    if (!session) throw new Error("Unauthorized")
+    await requireAbility(["read permissions", "manage permissions"])
 
     const where: Prisma.PermissionWhereInput = search ? {name: {contains: search, mode: "insensitive"}} : {}
 

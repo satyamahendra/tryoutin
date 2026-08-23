@@ -32,8 +32,8 @@ jobs:
                   context: .
                   push: true
                   tags: |
-                      ghcr.io/satyamahendra/svtyv:latest
-                      ghcr.io/satyamahendra/svtyv:${{ github.sha }}
+                      ghcr.io/satyamahendra/tryoutin:latest
+                      ghcr.io/satyamahendra/tryoutin:${{ github.sha }}
                   cache-from: type=gha
                   cache-to: type=gha,mode=max
                   # Only client-exposed (NEXT_PUBLIC_*) vars go here —
@@ -65,22 +65,22 @@ jobs:
                       echo "$GITHUB_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
 
                       # 2. Ensure isolated Docker network exists
-                      docker network create svtyv-net || true
+                      docker network create tryoutin-net || true
 
                       # 3. Pull the updated app image
-                      docker pull ghcr.io/satyamahendra/svtyv:latest
+                      docker pull ghcr.io/satyamahendra/tryoutin:latest
 
                       # 4. Stop and remove old instances safely
-                      docker stop svtyv-app svtyv-db || true
-                      docker rm svtyv-app svtyv-db || true
+                      docker stop tryoutin-app tryoutin-db || true
+                      docker rm tryoutin-app tryoutin-db || true
 
                       # 5. Spin up Postgres with credentials passed directly.
                       #    Bound to 127.0.0.1 only — not reachable from
                       #    outside the VPS. Drop the -p line entirely if you
                       #    never need to connect to it from your own machine.
                       docker run -d \
-                      --name svtyv-db \
-                      --network svtyv-net \
+                      --name tryoutin-db \
+                      --network tryoutin-net \
                       --restart unless-stopped \
                       -p 127.0.0.1:5433:5432 \
                       -v postgres_data:/var/lib/postgresql/data \
@@ -94,8 +94,8 @@ jobs:
 
                       # 6. Spin up the app, passing only the runtime vars it needs
                       docker run -d \
-                      --name svtyv-app \
-                      --network svtyv-net \
+                      --name tryoutin-app \
+                      --network tryoutin-net \
                       --restart unless-stopped \
                       -p 3001:3000 \
                       -e DATABASE_URL="$DATABASE_URL" \
@@ -106,7 +106,7 @@ jobs:
                       -e GOOGLE_CLIENT_SECRET="$GOOGLE_CLIENT_SECRET" \
                       -e MIDTRANS_SERVER_KEY="$MIDTRANS_SERVER_KEY" \
                       -e WHITELISTED_EMAILS="$WHITELISTED_EMAILS" \
-                      ghcr.io/satyamahendra/svtyv:latest \
+                      ghcr.io/satyamahendra/tryoutin:latest \
                       sh -c "npx prisma migrate deploy && node server.js"
 
                       # 7. Clean up old dangling images
