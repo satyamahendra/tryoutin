@@ -44,10 +44,12 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN addgroup --system --gid 1001 nodejs \
  && adduser  --system --uid 1001 nextjs
 
-COPY --from=deps /app/node_modules/prisma ./node_modules/prisma
-COPY --from=deps /app/node_modules/.bin/prisma ./node_modules/.bin/prisma
-COPY --from=deps /app/node_modules/@prisma ./node_modules/@prisma
-COPY --from=deps /app/package.json ./package.json
+# Copy package.json in first so we can read the pinned prisma version from it
+COPY --from=builder /app/package.json ./package.json
+
+# Install the exact same prisma version declared in package.json — stays in sync automatically
+RUN PRISMA_VERSION=$(node -p "require('./package.json').devDependencies.prisma.replace('^','')") \
+ && npm install prisma@$PRISMA_VERSION
 
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/prisma ./prisma
