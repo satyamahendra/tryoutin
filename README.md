@@ -80,3 +80,7 @@ procedure pushing db edits
 1. npx prisma generate
 2. npx prisma migrate dev --name "<your-migration-name>"
 3. npx prisma migrate deploy
+
+> `prisma` must stay pinned to the exact same version as `@prisma/client`
+> (see `package.json`). Installing a newer major (e.g. Prisma 8) silently
+> removes the `migrate` command and breaks `migrate deploy` at deploy time.
