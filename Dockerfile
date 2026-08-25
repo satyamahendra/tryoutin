@@ -44,7 +44,10 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN addgroup --system --gid 1001 nodejs \
  && adduser  --system --uid 1001 nextjs
 
-RUN npm install prisma
+COPY --from=deps /app/node_modules/prisma ./node_modules/prisma
+COPY --from=deps /app/node_modules/.bin/prisma ./node_modules/.bin/prisma
+COPY --from=deps /app/node_modules/@prisma ./node_modules/@prisma
+COPY --from=deps /app/package.json ./package.json
 
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/prisma ./prisma
