@@ -1,4 +1,5 @@
 import PageHeader from "@/components/custom/page-header/page-header"
+import type {Metadata} from "next"
 import {Suspense} from "react"
 import {PiCardholder} from "react-icons/pi"
 import {RolesTable} from "./components/roles-table"
@@ -8,6 +9,11 @@ import {redirect} from "next/navigation"
 import AnimDiv from "@/components/custom/anim-div"
 import SearchParams from "@/components/custom/search-params"
 import RoleDetailModal from "./components/role-detail-modal"
+
+export const metadata: Metadata = {
+    title: "Roles",
+    description: "Manage roles and the permissions they carry.",
+}
 
 type PageProps = {
     searchParams: Promise<{

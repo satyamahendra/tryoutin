@@ -1,4 +1,5 @@
 import PageHeader from "@/components/custom/page-header/page-header"
+import type {Metadata} from "next"
 import {PiTicket} from "react-icons/pi"
 import {hasPermissions} from "@/utils/helpers/has-ability-server"
 import {redirect} from "next/navigation"
@@ -8,6 +9,11 @@ import {Suspense} from "react"
 import {Loader2} from "lucide-react"
 import OrderList from "./components/order-list"
 import OrderDetailDrawer from "./components/order-detail-drawer"
+
+export const metadata: Metadata = {
+    title: "Orders",
+    description: "Manage orders and payments.",
+}
 
 type PageProps = {
     searchParams: Promise<{

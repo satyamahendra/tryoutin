@@ -1,4 +1,5 @@
 import PageHeader from "@/components/custom/page-header/page-header"
+import type {Metadata} from "next"
 import {Suspense} from "react"
 import {PiUser} from "react-icons/pi"
 import {UsersTable} from "./components/users-table"
@@ -8,6 +9,11 @@ import {redirect} from "next/navigation"
 import AnimDiv from "@/components/custom/anim-div"
 import SearchParams from "@/components/custom/search-params"
 import UserDetailModal from "./components/user-detail-modal"
+
+export const metadata: Metadata = {
+    title: "Users",
+    description: "Manage users and their access.",
+}
 
 type PageProps = {
     searchParams: Promise<{

@@ -1,4 +1,5 @@
 ﻿import PageHeader from "@/components/custom/page-header/page-header"
+import type {Metadata} from "next"
 import {PiFileText} from "react-icons/pi"
 import {hasPermissions} from "@/utils/helpers/has-ability-server"
 import {redirect} from "next/navigation"
@@ -9,6 +10,11 @@ import {Loader2} from "lucide-react"
 import CreateExamButton from "./components/create-exam-button"
 import ImportExamButton from "./components/import-exam-button"
 import ExamList from "./components/exam-list"
+
+export const metadata: Metadata = {
+    title: "Exams",
+    description: "Create, import, and manage exams.",
+}
 
 type PageProps = {
     searchParams: Promise<{

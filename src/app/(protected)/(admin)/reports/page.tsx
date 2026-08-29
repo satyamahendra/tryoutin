@@ -1,4 +1,5 @@
 import PageHeader from "@/components/custom/page-header/page-header"
+import type {Metadata} from "next"
 import {PiFlag} from "react-icons/pi"
 import {hasPermissions} from "@/utils/helpers/has-ability-server"
 import {redirect} from "next/navigation"
@@ -8,6 +9,11 @@ import {Loader2} from "lucide-react"
 import SearchParams from "@/components/custom/search-params"
 import ReportList from "./components/report-list"
 import ReportDetailDrawer from "./components/report-detail-drawer"
+
+export const metadata: Metadata = {
+    title: "Reports",
+    description: "Manage reports submitted by users.",
+}
 
 type PageProps = {
     searchParams: Promise<{

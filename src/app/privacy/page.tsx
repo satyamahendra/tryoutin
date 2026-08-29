@@ -3,7 +3,7 @@ import Link from "next/link"
 import LegalShell from "@/components/custom/legal-shell/legal-shell"
 
 export const metadata: Metadata = {
-    title: "Privacy Policy — Svtyv",
+    title: {absolute: "Privacy Policy — Svtyv"},
     description: "How Svtyv collects, uses, and protects your data.",
 }
 

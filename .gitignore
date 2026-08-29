@@ -42,4 +42,9 @@ next-env.d.ts
 
 /prisma/generated/*
 /graphify-out
+.github/agents
+.github/hooks
+.github/skills
+.opencode
+PRODUCT.md
 

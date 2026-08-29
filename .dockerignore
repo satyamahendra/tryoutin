@@ -32,3 +32,8 @@ README.md
 
 # graphify
 /graphify-out/*
+.github/agents
+.github/hooks
+.github/skills
+.opencode
+PRODUCT.md

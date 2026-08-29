@@ -1,4 +1,5 @@
 ﻿import AnimDiv from "@/components/custom/anim-div"
+import type {Metadata} from "next"
 import {Suspense} from "react"
 import {Loader2} from "lucide-react"
 import {Button} from "@/components/ui/button"
@@ -9,6 +10,11 @@ import {getTryoutCategories} from "./services/get-tryout-categories"
 import {getTryoutTags} from "./services/get-tryout-tags"
 import {getTryoutHero} from "./services/get-tryout-hero"
 import {PiArrowDown, PiFlask, PiListChecks, PiStorefront, PiUsers} from "react-icons/pi"
+
+export const metadata: Metadata = {
+    title: "Tryouts",
+    description: "Browse exam simulation tryouts. Drill a section in practice mode or run the full exam under timed conditions.",
+}
 
 type PageProps = {
     searchParams: Promise<{

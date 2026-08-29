@@ -1,4 +1,5 @@
 ﻿import PageHeader from "@/components/custom/page-header/page-header"
+import type {Metadata} from "next"
 import {PiReceipt} from "react-icons/pi"
 import AnimDiv from "@/components/custom/anim-div"
 import SearchParams from "@/components/custom/search-params"
@@ -6,6 +7,11 @@ import {Suspense} from "react"
 import {Loader2} from "lucide-react"
 import MyOrderList from "./components/my-order-list"
 import MyOrderDetailDrawer from "./components/my-order-detail-drawer"
+
+export const metadata: Metadata = {
+    title: "My Orders",
+    description: "View your tryout purchases and order history.",
+}
 
 type PageProps = {
     searchParams: Promise<{

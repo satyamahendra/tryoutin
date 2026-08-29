@@ -1,200 +1,297 @@
 import type {Metadata} from "next"
 import Link from "next/link"
 import {authServer} from "@/lib/auth-server"
-import {Badge} from "@/components/ui/badge"
-import {Button} from "@/components/ui/button"
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card"
 import Reveal from "@/components/custom/reveal"
 import Footer from "@/components/custom/footer/footer"
-import {PiArrowRight, PiBookOpen, PiChartLineUp, PiCheckCircle, PiLightning, PiMagnifyingGlass, PiPencilSimple, PiTimer, PiUserPlus} from "react-icons/pi"
+import ThemeToggle from "@/components/custom/theme-toggle"
+import {PiArrowRight} from "react-icons/pi"
+
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://tryoutin.svtyv.com"
 
 export const metadata: Metadata = {
-    title: "Svtyv — Score higher on exam day",
-    description: "Realistic tryout simulations with scaled scoring and instant feedback. Train like it's already exam day.",
+    title: {
+        absolute: "Tryout Online Gratis — Lulus CPNS, Masuk PTN, & TOEFL",
+    },
+    description:
+        "Latihan soal tryout online gratis buat lulus CPNS, UTBK, masuk PTN & BUMN, seleksi kedinasan, dan TOEFL. Timer seperti ujian asli, skor instan, pembahasan per soal. Mulai gratis sekarang.",
+    keywords: [
+        "tryout online",
+        "tryout gratis",
+        "tryout cpns",
+        "tryout utbk",
+        "tryout sbmptn",
+        "tryout kedinasan",
+        "latihan soal cpns",
+        "latihan soal utbk",
+        "simulasi toefl",
+        "latihan soal",
+        "simulasi ujian",
+        "belajar cpns",
+        "persiapan utbk",
+        "masuk ptn",
+        "masuk bumn",
+    ],
+    openGraph: {
+        title: "tryoutin — Lulus CPNS, Masuk PTN, Lolos BUMN & Kedinasan",
+        description:
+            "Latihan soal realistis dengan timer ujian asli, skor instan, dan pembahasan per soal. Persiapan terbaik buat lulus CPNS, masuk PTN & BUMN, kedinasan, dan TOEFL. Mulai gratis.",
+    },
+    alternates: {
+        canonical: siteUrl,
+    },
 }
 
 const features = [
     {
-        icon: PiTimer,
-        title: "Simulation mode",
-        description: "Full-length exams under real conditions. Timed parts, no pausing, no shortcuts. You train the pressure before it counts.",
+        title: "Mode simulasi",
+        description:
+            "Tryout full-length dengan kondisi seperti ujian asli. Timer per bagian, tanpa jeda, tanpa jalan pintas. Latihan di hari latihan, bukan di hari H.",
     },
     {
-        icon: PiPencilSimple,
-        title: "Practice mode",
-        description: "Drill any part at your own pace. Instant feedback the moment you answer — you learn while the question is still on screen.",
+        title: "Mode latihan",
+        description:
+            "Latihan soal per bagian dengan kecepatanmu sendiri. Jawab, langsung tahu benar atau salah, sambil materinya masih ada di layar.",
     },
     {
-        icon: PiChartLineUp,
-        title: "Per-section scoring",
-        description: "Objective and TKP-style points, broken down part by part and question by question. See exactly where you stand.",
+        title: "Skor per bagian",
+        description:
+            "Skor objektif dan skor TKP dipecah per bagian dan per soal. Lihat persis di mana posisimu dan bagian mana yang harus dinaikkan.",
     },
     {
-        icon: PiBookOpen,
-        title: "Deep review",
-        description: "Every answer explained after the timer stops. Revisit your flagged questions and hunt down where marks slipped away.",
+        title: "Pembahasan mendalam",
+        description:
+            "Setiap jawaban dijelaskan setelah waktu habis. Pelajari ulang soal yang kamu ragukan dan cari tahu di mana nilai bocor.",
     },
 ]
 
 const steps = [
     {
-        icon: PiUserPlus,
-        title: "Create your account",
-        description: "Free in under a minute. No card, no commitment.",
+        title: "Buat akunmu",
+        description: "Gratis dalam semenit. Tanpa kartu, tanpa komitmen.",
     },
     {
-        icon: PiMagnifyingGlass,
-        title: "Pick your tryout",
-        description: "From single-subject drills to full simulations. Own it and it's yours forever.",
+        title: "Pilih tryoutmu",
+        description: "Dari latihan per bidang sampai simulasi penuh. Sekali kamu memilikinya, tersedia selamanya.",
     },
     {
-        icon: PiCheckCircle,
-        title: "Take it. Get graded.",
-        description: "Instant score, per-section ranking, and a full review the second you submit.",
+        title: "Kerjakan, langsung dinilai",
+        description: "Skor instan, peringkat per bagian, dan pembahasan lengkap begitu kamu submit.",
     },
 ]
+
+// ponytail: static JSON-LD for rich results; only claims things the product actually does
+const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    name: "tryoutin",
+    url: siteUrl,
+    description:
+        "Latihan soal tryout online gratis untuk lulus CPNS, masuk PTN & BUMN, seleksi kedinasan, dan TOEFL. Timer seperti ujian asli, skor instan, dan pembahasan per soal.",
+    applicationCategory: "EducationalApplication",
+    inLanguage: "id",
+    offers: {
+        "@type": "Offer",
+        price: "0",
+        priceCurrency: "IDR",
+    },
+}
+
+const RegMark = ({className = ""}: {className?: string}) => (
+    <span aria-hidden className={`pointer-events-none absolute flex items-center justify-center ${className}`}>
+        <span className="h-px w-6 bg-primary/50" />
+        <span className="absolute h-6 w-px bg-primary/50" />
+    </span>
+)
 
 export default async function Home() {
     const session = await authServer()
     const primaryHref = session ? "/home" : "/auth"
-    const primaryLabel = session ? "Go to dashboard" : "Start training free"
+    const primaryLabel = session ? "Ke dashboard" : "Mulai latihan gratis"
+
+    const cta = (extra = "") =>
+        `group relative inline-flex items-center justify-center gap-2 bg-primary px-8 py-3 text-sm font-bold tracking-wide text-primary-foreground uppercase transition-transform hover:scale-[1.03] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary after:absolute after:inset-0 after:bg-[repeating-linear-gradient(45deg,rgba(0,0,0,0.18)_0px,rgba(0,0,0,0.18)_7px,transparent_7px,transparent_14px)] after:opacity-0 after:transition-opacity after:duration-300 group-hover:after:opacity-100 ${extra}`
 
     return (
-        <main className="relative flex flex-1 flex-col font-sans">
-            <div className="pointer-events-none absolute inset-x-0 top-0 h-[500px] overflow-hidden" aria-hidden>
-                <div className="absolute -top-40 left-1/2 h-[400px] w-[700px] -translate-x-1/2 rounded-full bg-gradient-to-br from-primary/20 via-fuchsia-500/10 to-transparent blur-3xl" />
+        <main className="relative flex min-h-screen flex-col overflow-x-clip bg-background font-sans text-foreground selection:bg-primary/40">
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{
+                    __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
+                }}
+            />
+
+            {/* Screen-print background field */}
+            <div className="pointer-events-none absolute inset-0" aria-hidden>
+                <div className="absolute inset-0 bg-[repeating-linear-gradient(45deg,transparent_0px,transparent_26px,color-mix(in_oklab,var(--primary)_5%,transparent)_26px,color-mix(in_oklab,var(--primary)_5%,transparent)_27px),repeating-linear-gradient(135deg,transparent_0px,transparent_34px,rgba(249,115,22,0.04)_34px,rgba(249,115,22,0.04)_35px)]" />
+                <div className="absolute left-1/2 top-0 h-[480px] w-[900px] -translate-x-1/2 bg-[radial-gradient(ellipse_at_center,color-mix(in_oklab,var(--primary)_9%,transparent),transparent_70%)]" />
             </div>
 
-            <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur">
-                <nav className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
-                    <Link href="/" className="flex items-center gap-2">
-                        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-fuchsia-600 text-primary-foreground">
-                            <PiLightning className="h-4 w-4" />
-                        </span>
-                        <span className="text-lg font-bold tracking-tight">Svtyv</span>
+            <header className="sticky top-0 z-50 border-b border-border bg-background/90 backdrop-blur-sm">
+                <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
+                    <Link href="/" className="flex items-center gap-2.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                        <span className="text-lg font-bold tracking-wide uppercase">tryoutin</span>
                     </Link>
-                    <div className="hidden items-center gap-6 text-sm text-muted-foreground sm:flex">
-                        <Link href="#features" className="transition-colors hover:text-foreground">
-                            Features
+                    <div className="hidden items-center gap-7 text-[11px] font-bold tracking-[0.2em] text-muted-foreground uppercase sm:flex">
+                        <Link href="#features" className="transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary">
+                            Fitur
                         </Link>
-                        <Link href="#how" className="transition-colors hover:text-foreground">
-                            How it works
+                        <Link href="#how" className="transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary">
+                            Cara kerja
                         </Link>
                     </div>
                     <div className="flex items-center gap-2">
+                        <ThemeToggle />
                         {!session && (
-                            <Button variant="ghost" asChild>
-                                <Link href="/auth">Sign in</Link>
-                            </Button>
+                            <Link
+                                href="/auth"
+                                className="hidden text-[11px] font-bold tracking-[0.2em] text-muted-foreground uppercase transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary sm:inline-block"
+                            >
+                                Masuk
+                            </Link>
                         )}
-                        <Button asChild>
-                            <Link href={primaryHref}>{primaryLabel}</Link>
-                        </Button>
+                        <Link href={primaryHref} className={cta("px-4 py-2 text-[11px]")}>
+                            {primaryLabel}
+                            <PiArrowRight className="h-3.5 w-3.5" />
+                        </Link>
                     </div>
                 </nav>
             </header>
 
-            <section className="mx-auto flex max-w-5xl flex-col items-center px-4 pt-24 pb-16 text-center sm:pt-32">
+            {/* Hero — the shouting word */}
+            <section className="relative mx-auto flex min-h-[80vh] w-full max-w-6xl flex-col items-center justify-center px-4 py-24 text-center">
+                <RegMark className="left-2 top-20 md:left-6 md:top-28" />
+                <RegMark className="right-2 top-20 md:right-6 md:top-28" />
+                <RegMark className="bottom-2 left-2 md:bottom-8 md:left-6" />
+                <RegMark className="bottom-2 right-2 md:bottom-8 md:right-6" />
+
                 <Reveal>
-                    <Badge variant="secondary" className="mb-6 gap-1.5 rounded-full px-3 py-1 text-xs">
-                        <PiLightning className="h-3 w-3 text-primary" />
-                        Your unfair advantage for exam day
-                    </Badge>
-                </Reveal>
-                <Reveal delay={0.08}>
-                    <h1 className="max-w-3xl text-4xl font-bold tracking-tight sm:text-6xl">
-                        <span className="bg-gradient-to-r from-primary via-fuchsia-500 to-primary bg-clip-text text-transparent">Score higher</span> on exam day.
-                    </h1>
-                </Reveal>
-                <Reveal delay={0.16}>
-                    <p className="mt-6 max-w-xl text-base leading-7 text-muted-foreground sm:text-lg">
-                        Realistic simulations, scaled scoring, and instant per-question feedback. The closest thing to the real exam without leaving your desk.
+                    <p className="text-[10px] font-bold tracking-[0.35em] text-primary uppercase">
+                        Lulus ujian · Masuk PTN · Lolos BUMN & CPNS
                     </p>
                 </Reveal>
+
+                <Reveal delay={0.08}>
+                    <h1 className="mt-6 text-6xl font-black leading-none tracking-tight text-foreground uppercase sm:text-8xl">
+                        <span className="block">Lulus</span>
+                        <span className="block text-primary">Ujian</span>
+                    </h1>
+                    <p className="mt-3 text-sm font-bold tracking-[0.3em] text-foreground/70 uppercase">
+                        Masuk PTN. Lolos CPNS, BUMN &amp; kedinasan
+                    </p>
+                </Reveal>
+
+                <Reveal delay={0.16}>
+                    <p className="mx-auto mt-8 max-w-md text-sm font-medium leading-relaxed text-muted-foreground sm:text-base">
+                        Latihan soal dengan simulasi yang persis ujian aslinya —
+                        timer, skor instan, dan pembahasan per soal. Dari tryout CPNS,
+                        UTBK, kedinasan, sampai TOEFL, semua dikerjakan dari rumah,
+                        gratis. Format latihanmu hari ini, lulus di hari H.
+                    </p>
+                </Reveal>
+
                 <Reveal delay={0.24}>
                     <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row">
-                        <Button size="lg" asChild className="gap-2 px-8 text-base">
-                            <Link href={primaryHref}>
-                                {primaryLabel}
-                                <PiArrowRight className="h-4 w-4" />
-                            </Link>
-                        </Button>
-                        <Button size="lg" variant="outline" asChild className="px-8 text-base">
-                            <Link href="#how">See how it works</Link>
-                        </Button>
+                        <Link href={primaryHref} className={cta()}>
+                            {primaryLabel}
+                            <PiArrowRight className="h-4 w-4" />
+                        </Link>
+                        <Link
+                            href="#how"
+                            className="inline-flex items-center justify-center px-8 py-3 text-sm font-bold tracking-wide text-foreground uppercase ring-1 ring-border transition-colors hover:ring-foreground/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                        >
+                            Lihat caranya
+                        </Link>
                     </div>
                 </Reveal>
             </section>
 
-            <section id="features" className="mx-auto w-full max-w-5xl scroll-mt-20 px-4 py-12">
+            {/* Features — dense catalog cells */}
+            <section id="features" className="mx-auto w-full max-w-6xl px-4 py-20 sm:py-28">
                 <Reveal>
-                    <div className="mb-10 text-center">
-                        <p className="text-sm font-medium tracking-wide text-primary uppercase">The toolkit</p>
-                        <h2 className="mt-2 text-2xl font-bold tracking-tight sm:text-4xl">Everything you need to peak on exam day</h2>
+                    <div className="mb-14 max-w-xl">
+                        <h2 className="text-4xl font-black tracking-tight text-foreground uppercase sm:text-6xl">
+                            Fitur unggulan
+                        </h2>
+                        <p className="mt-4 text-sm font-medium leading-relaxed text-muted-foreground sm:text-base">
+                            Semua yang kamu butuhkan untuk lulus di hari H — 
+                            dari skor instan sampai pembahasan tiap soal.
+                        </p>
                     </div>
                 </Reveal>
-                <div className="grid gap-4 sm:grid-cols-2">
+
+                <div className="grid gap-px bg-border sm:grid-cols-2">
                     {features.map((f, i) => (
-                        <Reveal key={f.title} delay={i * 0.08}>
-                            <Card className="group hover:-translate-y-0.5 hover:shadow-lg hover:shadow-primary/5 transition-all">
-                                <CardHeader>
-                                    <span className="mb-2 flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-                                        <f.icon className="h-5 w-5" />
-                                    </span>
-                                    <CardTitle className="text-lg">{f.title}</CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                    <CardDescription className="leading-6">{f.description}</CardDescription>
-                                </CardContent>
-                            </Card>
-                        </Reveal>
+                        <div key={f.title} className="group bg-card">
+                            <Reveal delay={i * 0.05}>
+                                <div className="relative h-full border border-border p-7 transition-colors duration-300 group-hover:border-primary/60 sm:p-9">
+                                    <div className="flex flex-col gap-3">
+                                        <span className="text-[10px] font-mono font-bold tracking-[0.25em] text-primary">
+                                            F-0{i + 1}
+                                        </span>
+                                        <h3 className="text-xl font-extrabold tracking-tight text-foreground uppercase">
+                                            {f.title}
+                                        </h3>
+                                        <p className="max-w-md text-sm font-normal leading-relaxed text-muted-foreground">
+                                            {f.description}
+                                        </p>
+                                    </div>
+                                </div>
+                            </Reveal>
+                        </div>
                     ))}
                 </div>
             </section>
 
-            <section id="how" className="mx-auto w-full max-w-5xl scroll-mt-20 px-4 py-12">
+            {/* How it works — sequence */}
+            <section id="how" className="mx-auto w-full max-w-6xl px-4 py-20 sm:py-28">
                 <Reveal>
-                    <div className="mb-10 text-center">
-                        <p className="text-sm font-medium tracking-wide text-primary uppercase">How it works</p>
-                        <h2 className="mt-2 text-2xl font-bold tracking-tight sm:text-4xl">Three steps between you and a better score</h2>
+                    <div className="mb-14 max-w-xl">
+                        <h2 className="text-4xl font-black tracking-tight text-foreground uppercase sm:text-6xl">
+                            Cara kerja
+                        </h2>
+                        <p className="mt-4 text-sm font-medium leading-relaxed text-muted-foreground sm:text-base">
+                            Antara kamu dan bangku yang kamu incar (PTN, CPNS, BUMN) 
+                            cuma tiga langkah latihan.
+                        </p>
                     </div>
                 </Reveal>
-                <div className="grid gap-4 sm:grid-cols-3">
+
+                <div className="grid gap-10 sm:grid-cols-3 sm:gap-6">
                     {steps.map((s, i) => (
                         <Reveal key={s.title} delay={i * 0.08}>
-                            <Card className="relative text-left">
-                                <CardHeader>
-                                    <div className="flex items-center justify-between">
-                                        <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-fuchsia-600 text-primary-foreground">
-                                            <s.icon className="h-5 w-5" />
-                                        </span>
-                                        <span className="text-4xl font-bold text-muted/70">0{i + 1}</span>
-                                    </div>
-                                    <CardTitle className="mt-4 text-lg">{s.title}</CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                    <CardDescription className="leading-6">{s.description}</CardDescription>
-                                </CardContent>
-                            </Card>
+                            <div className="border-t-2 border-primary/70 pt-6">
+                                <span className="text-5xl font-black text-foreground/15">0{i + 1}</span>
+                                <h3 className="mt-4 text-base font-extrabold tracking-tight text-foreground uppercase">
+                                    {s.title}
+                                </h3>
+                                <p className="mt-2 text-sm font-normal leading-relaxed text-muted-foreground">
+                                    {s.description}
+                                </p>
+                            </div>
                         </Reveal>
                     ))}
                 </div>
             </section>
 
-            <section className="mx-auto w-full max-w-5xl px-4 py-16">
+            {/* CTA — flat panel */}
+            <section className="mx-auto w-full max-w-6xl px-4 py-20 sm:py-28">
                 <Reveal>
-                    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary via-primary to-fuchsia-700 px-6 py-14 text-center text-primary-foreground sm:px-12">
-                        <div className="pointer-events-none absolute -top-24 -right-24 h-64 w-64 rounded-full bg-white/10 blur-3xl" aria-hidden />
-                        <h2 className="text-2xl font-bold tracking-tight sm:text-4xl">Your next score is one tryout away.</h2>
-                        <p className="mx-auto mt-4 max-w-lg text-sm leading-6 text-primary-foreground/80 sm:text-base">
-                            Join the ones who show up before exam day. Start free, no card required.
+                    <div className="relative border-2 border-primary/70 bg-card p-8 text-center sm:p-16">
+                        <RegMark className="left-3 top-3" />
+                        <RegMark className="right-3 top-3" />
+                        <RegMark className="bottom-3 left-3" />
+                        <RegMark className="right-3 bottom-3" />
+                        <h2 className="text-3xl font-black tracking-tight text-foreground uppercase sm:text-5xl">
+                            Lulus ujianmu satu tryout lagi.
+                        </h2>
+                        <p className="mx-auto mt-5 max-w-md text-sm font-medium leading-relaxed text-muted-foreground sm:text-base">
+                            Gabung dengan mereka yang masuk PTN, lolos CPNS, dan dapet kerja di BUMN 
+                            karena latihan sebelum hari H. Mulai gratis, tanpa kartu kredit.
                         </p>
-                        <Button size="lg" variant="secondary" asChild className="mt-8 gap-2 px-8 text-base">
-                            <Link href={primaryHref}>
-                                {primaryLabel}
-                                <PiArrowRight className="h-4 w-4" />
-                            </Link>
-                        </Button>
+                        <Link href={primaryHref} className={`${cta()} mt-9`}>
+                            {primaryLabel}
+                            <PiArrowRight className="h-4 w-4" />
+                        </Link>
                     </div>
                 </Reveal>
             </section>

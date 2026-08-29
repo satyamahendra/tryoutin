@@ -1,4 +1,5 @@
 import PageHeader from "@/components/custom/page-header/page-header"
+import type {Metadata} from "next"
 import {PiPackage} from "react-icons/pi"
 import {hasPermissions} from "@/utils/helpers/has-ability-server"
 import {redirect} from "next/navigation"
@@ -9,6 +10,11 @@ import SearchParams from "@/components/custom/search-params"
 import ProductList from "./components/product-list"
 import ProductDetailDrawer from "./components/product-detail-drawer"
 import CreateProductButton from "./components/create-product-button"
+
+export const metadata: Metadata = {
+    title: "Products",
+    description: "Manage tryout products and pricing.",
+}
 
 type PageProps = {
     searchParams: Promise<{

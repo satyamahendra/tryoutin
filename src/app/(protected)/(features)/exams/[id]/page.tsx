@@ -1,4 +1,5 @@
 ﻿import PageHeader from "@/components/custom/page-header/page-header"
+import type {Metadata} from "next"
 import {PiTicket} from "react-icons/pi"
 import {hasPermissions} from "@/utils/helpers/has-ability-server"
 import {redirect, notFound} from "next/navigation"
@@ -10,6 +11,13 @@ import {getExam} from "./services/get-exam"
 
 type PageProps = {
     params: Promise<{id: string}>
+}
+
+export async function generateMetadata({params}: PageProps): Promise<Metadata> {
+    const {id} = await params
+    return {
+        title: id === "new" ? "New Exam" : "Exam Detail",
+    }
 }
 
 const Page = async ({params}: PageProps) => {

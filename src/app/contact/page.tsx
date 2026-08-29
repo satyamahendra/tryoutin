@@ -3,7 +3,7 @@ import {PiEnvelope, PiPaperPlane, PiClock} from "react-icons/pi"
 import LegalShell from "@/components/custom/legal-shell/legal-shell"
 
 export const metadata: Metadata = {
-    title: "Contact — Svtyv",
+    title: {absolute: "Contact — Svtyv"},
     description: "Get in touch with the Svtyv team.",
 }
 

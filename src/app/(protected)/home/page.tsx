@@ -1,4 +1,5 @@
 import Link from "next/link"
+import type {Metadata} from "next"
 import {format, startOfDay, subDays} from "date-fns"
 import {Badge} from "@/components/ui/badge"
 import {Button} from "@/components/ui/button"
@@ -38,6 +39,11 @@ const SectionHeader = ({title, href, cta}: {title: string; href: string; cta: st
     </div>
 )
 
+export const metadata: Metadata = {
+    title: "Dashboard",
+    description: "Your tryoutin dashboard — streak, recent results, and what to tackle next.",
+}
+
 const Page = async () => {
     const session = await authServer()
 
@@ -65,11 +71,12 @@ const Page = async () => {
 
     const firstName = session?.user?.name?.split(" ")[0] ?? "there"
 
+    // ponytail: hint row dropped — labels already carry the meaning; one less line per card
     const stats = [
-        {icon: PiListChecks, label: "Questions answered", value: questionsAnswered, hint: `${completed.length} attempts`, href: "/my-sessions"},
-        {icon: PiPlayCircle, label: "In progress", value: inProgress.length, hint: "keep it going", href: "/my-sessions"},
-        {icon: PiCalendarCheck, label: "Done this week", value: doneThisWeek, hint: "last 7 days", href: "/my-sessions"},
-        {icon: PiTrophy, label: "Best score", value: bestScore ?? "—", hint: "personal best", href: "/my-sessions"},
+        {icon: PiListChecks, label: "Questions answered", value: questionsAnswered, href: "/my-sessions"},
+        {icon: PiPlayCircle, label: "In progress", value: inProgress.length, href: "/my-sessions"},
+        {icon: PiCalendarCheck, label: "Done this week", value: doneThisWeek, href: "/my-sessions"},
+        {icon: PiTrophy, label: "Best score", value: bestScore ?? "—", href: "/my-sessions"},
     ]
 
     return (
@@ -120,17 +127,15 @@ const Page = async () => {
                     <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                         {stats.map((s) => (
                             <Link key={s.label} href={s.href} className="group">
-                                <Card className="relative overflow-hidden transition-all hover:-translate-y-0.5 hover:shadow-md hover:shadow-primary/5">
-                                    <div className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-primary/0 via-primary/70 to-primary/0 opacity-0 transition-opacity group-hover:opacity-100" />
-                                    <CardContent className="flex items-center gap-3 py-4">
-                                        <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-                                            <s.icon className="h-5 w-5" />
-                                        </span>
-                                        <div className="flex min-w-0 flex-col">
+                                <Card size="sm" className="group relative overflow-hidden transition-all hover:-translate-y-0.5 hover:shadow-md hover:shadow-primary/5">
+                                    <CardContent className="flex flex-col">
+                                        <div className="flex items-start justify-between gap-2">
                                             <span className="text-2xl font-bold tabular-nums leading-none">{s.value}</span>
-                                            <span className="mt-1 text-xs text-muted-foreground">{s.label}</span>
-                                            <span className="mt-0.5 truncate text-[10px] text-muted-foreground/70">{s.hint}</span>
+                                            <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                                                <s.icon className="h-4 w-4" />
+                                            </span>
                                         </div>
+                                        <span className="mt-2 text-xs text-muted-foreground">{s.label}</span>
                                     </CardContent>
                                 </Card>
                             </Link>
@@ -139,7 +144,7 @@ const Page = async () => {
 
             {insight && (
                 <Card className="border-primary/20 bg-primary/5">
-                    <CardContent className="flex items-center gap-3 py-4">
+                    <CardContent className="flex items-center gap-3">
                         <PiTrendUp className="h-5 w-5 shrink-0 text-primary" />
                         <p className="text-sm">
                             {insight.delta > 0
@@ -180,8 +185,8 @@ const Page = async () => {
                             return (
                                 <Link key={s.id} href={`/review-session/${s.id}`} className="group">
                                     <Card className="transition-all hover:-translate-y-0.5 hover:shadow-md hover:shadow-primary/5">
-                                        <CardContent className="flex items-center gap-4 py-3.5">
-                                            <div className="flex size-12 shrink-0 flex-col items-center justify-center rounded-xl bg-primary/10 text-primary">
+                                        <CardContent className="flex items-center gap-4">
+                                            <div className="flex size-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-xl bg-primary/10 text-primary">
                                                 <span className="text-lg font-bold tabular-nums leading-none">{s.mc_score ?? 0}</span>
                                                 <span className="mt-0.5 text-[9px] uppercase tracking-wide text-primary/70">/100</span>
                                             </div>
@@ -190,15 +195,15 @@ const Page = async () => {
                                                     <span className="truncate font-medium">{s.exam.title}</span>
                                                     {s.exam.category && <Badge variant="secondary">{s.exam.category}</Badge>}
                                                 </div>
-                                                <span className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
-                                                    <PiClock className="h-3 w-3" />
-                                                    {format(new Date(s.submitted_at ?? s.started_at ?? new Date()), "MMM d, h:mm a")}
-                                                </span>
-                                                <div className="mt-2 flex items-center gap-2">
-                                                    <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
-                                                        <div className="h-full rounded-full bg-primary transition-all" style={{width: `${sAccuracy}%`}} />
-                                                    </div>
-                                                    <span className="w-9 text-right text-xs font-medium tabular-nums text-muted-foreground">{sAccuracy}%</span>
+                                                <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-muted-foreground">
+                                                    <span className="flex items-center gap-1">
+                                                        <PiClock className="h-3 w-3" />
+                                                        {format(new Date(s.submitted_at ?? s.started_at ?? new Date()), "MMM d, h:mm a")}
+                                                    </span>
+                                                    <span className="font-medium tabular-nums">{sAccuracy}% correct</span>
+                                                </div>
+                                                <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-muted">
+                                                    <div className="h-full rounded-full bg-primary transition-all" style={{width: `${sAccuracy}%`}} />
                                                 </div>
                                             </div>
                                             <PiArrowRight className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />

@@ -1,8 +1,14 @@
 ﻿import {Suspense} from "react"
+import type {Metadata} from "next"
 import PageHeader from "@/components/custom/page-header/page-header"
 import {PiClock} from "react-icons/pi"
 import AnimDiv from "@/components/custom/anim-div"
 import MySessionList from "./components/my-session-list"
+
+export const metadata: Metadata = {
+    title: "My Sessions",
+    description: "View and continue your tryout sessions.",
+}
 
 const Page = async () => {
     return (

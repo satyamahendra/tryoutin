@@ -1,4 +1,5 @@
 ﻿import AnimDiv from "@/components/custom/anim-div"
+import type {Metadata} from "next"
 import {Suspense} from "react"
 import {Loader2} from "lucide-react"
 import {PiNotebook, PiSquaresFour, PiTag} from "react-icons/pi"
@@ -8,6 +9,11 @@ import MyTryoutList from "./components/my-tryout-list"
 import MyTryoutDetailModal from "./components/my-tryout-detail-modal"
 import {getMyTryoutCategories} from "./services/get-my-tryout-categories"
 import {getMyTryoutTags} from "./services/get-my-tryout-tags"
+
+export const metadata: Metadata = {
+    title: "My Tryouts",
+    description: "Browse and manage all the tryouts you own.",
+}
 
 type PageProps = {
     searchParams: Promise<{

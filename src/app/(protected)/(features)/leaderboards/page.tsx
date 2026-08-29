@@ -1,4 +1,5 @@
 import AnimDiv from "@/components/custom/anim-div"
+import type {Metadata} from "next"
 import {Suspense} from "react"
 import {Loader2} from "lucide-react"
 import {PiSquaresFour, PiTag, PiTrophy} from "react-icons/pi"
@@ -7,6 +8,11 @@ import FilterSidebar from "@/components/custom/filter-sidebar/filter-sidebar"
 import LeaderboardGrid from "./components/leaderboard-grid"
 import LeaderboardModal from "./components/leaderboard-modal"
 import {getLeaderboardFilters} from "./services/get-leaderboard-filters"
+
+export const metadata: Metadata = {
+    title: "Leaderboards",
+    description: "See who tops each tryout across the platform.",
+}
 
 type PageProps = {
     searchParams: Promise<{

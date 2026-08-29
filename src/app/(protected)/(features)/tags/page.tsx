@@ -1,10 +1,16 @@
 ﻿import PageHeader from "@/components/custom/page-header/page-header"
+import type {Metadata} from "next"
 import {PiTag} from "react-icons/pi"
 import {hasPermissions} from "@/utils/helpers/has-ability-server"
 import {redirect} from "next/navigation"
 import AnimDiv from "@/components/custom/anim-div"
 import {getTags} from "./services/get-tags"
 import TagList from "./components/tag-list"
+
+export const metadata: Metadata = {
+    title: "Tags",
+    description: "Manage exam tags.",
+}
 
 const Page = async () => {
     const hasPerm = await hasPermissions(["read tags", "manage tags"])

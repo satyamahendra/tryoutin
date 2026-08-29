@@ -1,4 +1,5 @@
 import PageHeader from "@/components/custom/page-header/page-header"
+import type {Metadata} from "next"
 import {Suspense} from "react"
 import {PiKey} from "react-icons/pi"
 import {PermissionsTable} from "./components/permissions-table"
@@ -8,6 +9,11 @@ import {redirect} from "next/navigation"
 import AnimDiv from "@/components/custom/anim-div"
 import SearchParams from "@/components/custom/search-params"
 import PermissionDetailModal from "./components/permission-detail-modal"
+
+export const metadata: Metadata = {
+    title: "Permissions",
+    description: "Manage permissions across roles.",
+}
 
 type PageProps = {
     searchParams: Promise<{
