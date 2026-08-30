@@ -1,6 +1,7 @@
 "use client"
 
 import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "@/components/ui/accordion"
+import {ScrollArea} from "@/components/ui/scroll-area"
 import {Drawer, DrawerContent, DrawerDescription, DrawerTitle} from "@/components/ui/drawer"
 import {Button} from "@/components/ui/button"
 import {cn} from "@/lib/utils"
@@ -38,9 +39,11 @@ const DesktopSidebar = (props: NavigationSidebarProps) => {
     const {parts, questionsByPart, currentPartId, currentQuestionId, answeredQuestions, flaggedQuestions, correctQuestions, mode, lockedParts, onNavigate, submitPartLabel, onSubmitPart} = props
 
     return (
-        <div className="w-64 shrink-0 border-l border-border/60 h-full overflow-y-auto p-3 hidden md:block">
+        <div className="w-64 shrink-0 border-l border-border/60 h-full hidden md:block">
+            <ScrollArea className="h-full p-3">
             <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3 px-1">Questions</h3>
-            <Accordion type="multiple" defaultValue={[currentPartId]}>
+            {/* ponytail: key remounts on part change so accordion collapses previous and opens current */}
+            <Accordion type="multiple" key={currentPartId} defaultValue={[currentPartId]}>
                 {parts.map((part) => {
                     const isLocked = mode === "simulation" && lockedParts.has(part.id)
                     const questions = questionsByPart[part.id] || []
@@ -107,6 +110,7 @@ const DesktopSidebar = (props: NavigationSidebarProps) => {
                     )
                 })}
             </Accordion>
+            </ScrollArea>
         </div>
     )
 }
@@ -136,8 +140,9 @@ const MobileDrawer = (props: NavigationSidebarProps) => {
                                 {answeredQuestions.size} of {Object.values(questionsByPart).flat().length} answered
                             </DrawerDescription>
                         </div>
-                        <div className="flex-1 overflow-y-auto p-3">
-                            <Accordion type="multiple" defaultValue={[currentPartId]}>
+                        <ScrollArea className="flex-1 p-3">
+                            {/* ponytail: key remounts on part change so accordion collapses previous and opens current */}
+                            <Accordion type="multiple" key={currentPartId} defaultValue={[currentPartId]}>
                                 {parts.map((part) => {
                                     const isLocked = mode === "simulation" && lockedParts.has(part.id)
                                     const questions = questionsByPart[part.id] || []
@@ -200,7 +205,7 @@ const MobileDrawer = (props: NavigationSidebarProps) => {
                                     )
                                 })}
                             </Accordion>
-                        </div>
+                        </ScrollArea>
                     </div>
                 </DrawerContent>
             </Drawer>

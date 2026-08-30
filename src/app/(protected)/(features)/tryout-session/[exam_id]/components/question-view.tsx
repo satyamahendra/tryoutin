@@ -139,9 +139,6 @@ const QuestionView = ({question, questionNumber, totalQuestions, selectedOptionI
                                         <img src={option.option_image} alt="Option" className="mt-2 max-w-full max-h-32 object-contain rounded" />
                                     </>
                                 )}
-                                {question.type === "scaled_choice" && (
-                                    <span className="block text-[10px] text-muted-foreground mt-1">Score: {option.score}</span>
-                                )}
                                 {showResult && isCorrect && (
                                     <span className="block text-[10px] font-medium text-green-600 dark:text-green-400 mt-1">Correct answer</span>
                                 )}
