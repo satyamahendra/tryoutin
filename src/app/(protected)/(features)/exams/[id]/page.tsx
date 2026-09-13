@@ -16,7 +16,7 @@ type PageProps = {
 export async function generateMetadata({params}: PageProps): Promise<Metadata> {
     const {id} = await params
     return {
-        title: id === "new" ? "New Exam" : "Exam Detail",
+        title: id === "new" ? "Ujian Baru" : "Detail Ujian",
     }
 }
 
@@ -37,8 +37,8 @@ const Page = async ({params}: PageProps) => {
     return (
         <AnimDiv className="flex flex-col h-full gap-4">
             <PageHeader
-                title="Exam detail"
-                description="Manage exam detail"
+                title="Detail ujian"
+                description="Kelola detail ujian"
                 icon={<PiTicket />}
                 subComponent={!isNew ? <ExamActions id={id} isActive={isActive} /> : undefined}
             />

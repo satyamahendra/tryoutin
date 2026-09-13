@@ -28,25 +28,25 @@ function classifyPrisma(error: Prisma.PrismaClientKnownRequestError): {
                 : ["field"]
 
             return {
-                message: `A record with this ${fields.join(", ")} already exists.`,
-                errors: Object.fromEntries(fields.map((f) => [f, ["Already taken."]])),
+                message: `Data dengan ${fields.join(", ")} sudah ada.`,
+                errors: Object.fromEntries(fields.map((f) => [f, ["Sudah digunakan."]])),
             }
         }
         case "P2025":
-            return {message: "Record not found."}
+            return {message: "Data tidak ditemukan."}
         case "P2003": {
             const field = (error.meta?.field_name as string) ?? "relation"
             return {
-                message: "Related record not found.",
-                errors: {[field]: ["Does not exist."]},
+                message: "Data terkait tidak ditemukan.",
+                errors: {[field]: ["Tidak ada."]},
             }
         }
         case "P2014":
-            return {message: "The change violates a required relation."}
+            return {message: "Perubahan melanggar relasi yang wajib ada."}
         case "P2016":
-            return {message: "Query interpretation error."}
+            return {message: "Kesalahan interpretasi kueri."}
         default:
-            return {message: `Database error. (${error.code})`}
+            return {message: `Kesalahan database. (${error.code})`}
     }
 }
 
@@ -87,7 +87,7 @@ export function classifyError(error: unknown): ClassifiedError {
             const key = issue.path.join(".") || "_root"
             ;(errors[key] ??= []).push(issue.message)
         }
-        return {message: "Validation failed.", status: 422, errors}
+        return {message: "Validasi gagal.", status: 422, errors}
     }
 
     // Prisma — known
@@ -98,12 +98,12 @@ export function classifyError(error: unknown): ClassifiedError {
 
     // Prisma — validation
     if (error instanceof Prisma.PrismaClientValidationError) {
-        return {message: "Invalid data provided.", status: 400}
+        return {message: "Data yang diberikan tidak valid.", status: 400}
     }
 
     // Prisma — connection
     if (error instanceof Prisma.PrismaClientInitializationError) {
-        return {message: "Database connection failed.", status: 503}
+        return {message: "Koneksi database gagal.", status: 503}
     }
 
     // Midtrans
@@ -123,7 +123,7 @@ export function classifyError(error: unknown): ClassifiedError {
         return {message: error.message, status: 500}
     }
 
-    return {message: "An unexpected error occurred.", status: 500}
+    return {message: "Terjadi kesalahan tak terduga.", status: 500}
 }
 
 // ─── ServerResult handler ───────────────────────────────────────────────────

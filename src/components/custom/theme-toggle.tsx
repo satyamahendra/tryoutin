@@ -23,7 +23,7 @@ export default function ThemeToggle() {
             size="icon"
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
             className="h-8 w-8 cursor-pointer rounded-lg text-muted-foreground hover:text-foreground"
-            aria-label="Toggle theme"
+            aria-label="Ganti tema"
         >
             {theme === "dark" ? <PiSun className="h-4 w-4" /> : <PiMoon className="h-4 w-4" />}
         </Button>

@@ -2,8 +2,8 @@
 import ReviewSessionPage from "./review-session"
 
 export const metadata: Metadata = {
-    title: "Review Results",
-    description: "Go through your tryout answers, flagged questions, and score breakdown.",
+    title: "Hasil Tinjauan",
+    description: "Periksa jawaban tryoutmu, soal yang ditandai, dan rincian skor.",
 }
 
 const Page = () => <ReviewSessionPage />

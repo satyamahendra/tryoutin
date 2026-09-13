@@ -53,16 +53,16 @@ const DeleteButton = ({permission}: DeleteButtonProps) => {
                         <div className="w-10 h-10 rounded-sm bg-muted flex items-center justify-center">
                             <PiTrash className="text-muted-foreground text-xl" />
                         </div>
-                        Are you absolutely sure?
+                        Kamu yakin?
                     </AlertDialogTitle>
                     <AlertDialogDescription className="text-center">
-                        This action cannot be undone. This will permanently delete this permission from our servers.
+                        Nggak bisa dibatalkan lagi, lho. Izin ini bakal kehapus permanen dari server.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter className="flex justify-center gap-2">
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel>Batal</AlertDialogCancel>
                     <AlertDialogAction disabled={isPending} onClick={() => mutate(permission.name!)}>
-                        {isPending ? "Deleting..." : "Delete"}
+                        {isPending ? "Menghapus..." : "Hapus"}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

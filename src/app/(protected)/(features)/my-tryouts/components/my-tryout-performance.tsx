@@ -67,15 +67,15 @@ const MyTryoutPerformance = ({sessions}: {sessions: PerformanceSession[]}) => {
     }))
 
     const chartConfig = {
-        score: {label: "Score /100", color: "var(--chart-1)"},
+        score: {label: "Skor /100", color: "var(--chart-1)"},
     } satisfies ChartConfig
 
     return (
         <div className="flex flex-col gap-3">
             <Tabs value={mode} onValueChange={(v) => setMode(v as typeof mode)}>
                 <TabsList>
-                    <TabsTrigger value="simulation">Simulation</TabsTrigger>
-                    <TabsTrigger value="practice">Practice</TabsTrigger>
+                    <TabsTrigger value="simulation">Simulasi</TabsTrigger>
+                    <TabsTrigger value="practice">Latihan</TabsTrigger>
                 </TabsList>
             </Tabs>
             <AnimDiv key={mode} className="flex flex-col gap-3">
@@ -83,17 +83,17 @@ const MyTryoutPerformance = ({sessions}: {sessions: PerformanceSession[]}) => {
                     <div className="rounded-xl border border-dashed border-border py-8 text-center">
                         <p className="text-sm text-muted-foreground">
                             {sessions.length === 0
-                                ? "No attempts yet. Take this tryout to see your stats."
-                                : `No ${mode} attempts yet.`}
+                                ? "Belum ada percobaan. Kerjakan tryout ini buat lihat statistikmu."
+                                : `Belum ada percobaan ${mode}.`}
                         </p>
                     </div>
                 ) : (
                     <>
                         <div className="grid grid-cols-3 gap-2">
                             {[
-                                {label: "Attempts", value: filtered.length},
-                                {label: hasObjective ? "Best" : "Best TKP", value: best},
-                                {label: hasObjective ? "Average" : "Avg TKP", value: average},
+                                {label: "Percobaan", value: filtered.length},
+                                {label: hasObjective ? "Terbaik" : "TKP Terbaik", value: best},
+                                {label: hasObjective ? "Rata-rata" : "Rata-rata TKP", value: average},
                             ].map((stat) => (
                                  <div key={stat.label} className="rounded-xl border bg-card p-3 text-center">
                                      <span className="block text-lg font-bold text-primary tabular-nums">{stat.value}</span>
@@ -113,7 +113,7 @@ const MyTryoutPerformance = ({sessions}: {sessions: PerformanceSession[]}) => {
                                               const items = []
                                               if (data.mcScore !== null) {
                                                   items.push({
-                                                      name: "Overall Score",
+                                                      name: "Skor Keseluruhan",
                                                       value: `${data.mcScore} /100`,
                                                       color: "var(--color-score)",
                                                       graphicalItemId: "score",
@@ -121,7 +121,7 @@ const MyTryoutPerformance = ({sessions}: {sessions: PerformanceSession[]}) => {
                                               }
                                               if (data.scaledScore !== null && data.scaledMax > 0) {
                                                   items.push({
-                                                      name: "TKP Score",
+                                                      name: "Skor TKP",
                                                       value: `${data.scaledScore} / ${data.scaledMax}`,
                                                       color: "hsl(var(--primary))",
                                                       graphicalItemId: "scaledScore",
@@ -135,7 +135,7 @@ const MyTryoutPerformance = ({sessions}: {sessions: PerformanceSession[]}) => {
                                                   >
                                                       {data.parts && data.parts.length > 0 && (
                                                           <div className="mt-2 text-xs text-muted-foreground border-t pt-2 space-y-1">
-                                                              <p className="font-semibold mb-1">Part Scores:</p>
+                                                              <p className="font-semibold mb-1">Skor Bagian:</p>
                                                               {data.parts.map((part: PartScore) => (
                                                                   <div key={part.partId} className="flex justify-between items-center text-xs">
                                                                       <span className="font-medium">{part.partName || part.partId}:</span>
@@ -166,14 +166,14 @@ const MyTryoutPerformance = ({sessions}: {sessions: PerformanceSession[]}) => {
                          </ChartContainer>
                          <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
                              <PiChartLineUp className="w-3.5 h-3.5" />
-                             {mode} score per completed attempt
+                             {mode} skor per percobaan selesai
                          </span>
 
                          <Accordion type="single" collapsible className="w-full">
                             {chartData.map((data, index) => (
                                 <AccordionItem value={`item-${index}`} key={index}>
                                     <AccordionTrigger className="flex justify-between items-center text-sm font-medium py-2 px-3 hover:no-underline">
-                                        <span>Attempt {data.attempt} Details</span>
+                                        <span>Detail Percobaan {data.attempt}</span>
                                         <div className="flex items-center gap-2">
                                             {data.mcScore !== null && (
                                                 <span className="text-xs font-semibold text-primary">{data.mcScore}/100</span>
@@ -208,19 +208,19 @@ const MyTryoutPerformance = ({sessions}: {sessions: PerformanceSession[]}) => {
                                                             <div className="space-y-1.5 text-[11px] text-muted-foreground">
                                                                 {part.scMax > 0 && (
                                                                     <div className="flex justify-between gap-4">
-                                                                        <span>Single Choice</span>
+                                                                        <span>Pilihan Tunggal</span>
                                                                         <span className="font-medium text-foreground">{part.scEarned}/{part.scMax}</span>
                                                                     </div>
                                                                 )}
                                                                 {part.mcMax > 0 && (
                                                                     <div className="flex justify-between gap-4">
-                                                                        <span>Multiple Choice</span>
+                                                                        <span>Pilihan Ganda</span>
                                                                         <span className="font-medium text-foreground">{part.mcEarned}/{part.mcMax}</span>
                                                                     </div>
                                                                 )}
                                                                 {part.scaledMax > 0 && (
                                                                     <div className="flex justify-between gap-4">
-                                                                        <span>Scaled Score</span>
+                                                                        <span>Skor Berskala</span>
                                                                         <span className="font-medium text-foreground">{part.scaledEarned}/{part.scaledMax}</span>
                                                                     </div>
                                                                 )}
@@ -230,7 +230,7 @@ const MyTryoutPerformance = ({sessions}: {sessions: PerformanceSession[]}) => {
                                                 </div>
                                             </ScrollArea>
                                         ) : (
-                                            <p className="text-sm text-muted-foreground">No part details available for this attempt.</p>
+                                            <p className="text-sm text-muted-foreground">Belum ada detail bagian untuk percobaan ini.</p>
                                         )}
                                     </AccordionContent>
                                 </AccordionItem>

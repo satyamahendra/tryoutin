@@ -5,7 +5,7 @@ import {Button} from "@/components/ui/button"
 import {PiPencil} from "react-icons/pi"
 import {User} from "../services/get-users"
 import {Badge} from "@/components/ui/badge"
-import {format} from "date-fns"
+import {format} from "@/utils/helpers/format-date"
 import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/ui/tooltip"
 import {useQueryParams} from "@/utils/hooks/useQueryParams"
 
@@ -45,7 +45,7 @@ const UserItem = ({user}: Props) => {
                                 <Tooltip>
                                     <TooltipTrigger asChild>
                                         <Badge variant={"outline"} className="text-muted-foreground">
-                                            +{restRoles.length} more
+                                            +{restRoles.length} lainnya
                                         </Badge>
                                     </TooltipTrigger>
                                     <TooltipContent>

@@ -28,7 +28,7 @@ const LeaderboardSpotlight = async () => {
                             </div>
                             <span className="flex items-center gap-1 text-xs text-muted-foreground">
                                 <PiUsers className="w-3 h-3" />
-                                {exam.participantCount} {exam.participantCount === 1 ? "participant" : "participants"}
+                                {exam.participantCount} {exam.participantCount === 1 ? "peserta" : "peserta"}
                             </span>
                         </div>
                         {top ? (
@@ -46,7 +46,7 @@ const LeaderboardSpotlight = async () => {
                                 </div>
                             </div>
                         ) : (
-                            <span className="shrink-0 text-xs text-muted-foreground">No scores</span>
+                            <span className="shrink-0 text-xs text-muted-foreground">Belum ada skor</span>
                         )}
                     </Link>
                 )

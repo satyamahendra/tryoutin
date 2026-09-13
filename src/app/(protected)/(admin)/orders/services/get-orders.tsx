@@ -66,7 +66,7 @@ export async function getOrders(page: number = 1, search = ""): Promise<ServerRe
 
         return {
             success: true,
-            message: "Order fetched successfully",
+            message: "Pesanan berhasil diambil",
             data: {
                 orders,
                 pagination: {

@@ -6,8 +6,8 @@ import AnimDiv from "@/components/custom/anim-div"
 import MySessionList from "./components/my-session-list"
 
 export const metadata: Metadata = {
-    title: "My Sessions",
-    description: "View and continue your tryout sessions.",
+    title: "Sesi Saya",
+    description: "Lihat dan lanjutkan sesi tryoutmu.",
 }
 
 const Page = async () => {
@@ -15,8 +15,8 @@ const Page = async () => {
         <AnimDiv className="flex flex-col gap-4 h-full min-h-0">
             <PageHeader
                 icon={<PiClock />}
-                title="My Sessions"
-                description="View and continue your tryout sessions."
+                title="Sesi Saya"
+                description="Lihat dan lanjutkan sesi tryoutmu."
             />
             <Suspense fallback={null}>
                 <MySessionList />

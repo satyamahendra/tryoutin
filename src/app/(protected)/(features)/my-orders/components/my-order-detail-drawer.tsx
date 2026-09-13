@@ -9,7 +9,7 @@ import {useQuery, useQueryClient} from "@tanstack/react-query"
 import {getMyOrder} from "../services/get-my-order"
 import {Loader2} from "lucide-react"
 import {Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle} from "@/components/ui/empty"
-import {format} from "date-fns"
+import {format} from "@/utils/helpers/format-date"
 import AnimDiv from "@/components/custom/anim-div"
 import axios from "axios"
 import {Button} from "@/components/ui/button"
@@ -40,15 +40,15 @@ const MyOrderDetailDrawer = () => {
 
     const handleCheckOrderStatus = async () => {
         const res = await refetchOrder()
-        if (!res?.isSuccess) return toast.error("Failed to fetch order status")
+        if (!res?.isSuccess) return toast.error("Gagal ambil status pesanan")
         queryClient.invalidateQueries({queryKey: ["my-order"]})
         router.refresh()
-        return toast.success("Order status updated successfully")
+        return toast.success("Status pesanan berhasil diperbarui")
     }
 
     const handleCopy = (value: string) => {
         navigator.clipboard.writeText(value)
-        toast.success("Copied to clipboard")
+        toast.success("Disalin ke clipboard")
     }
 
     const handleOpenUrl = (url: string) => {
@@ -56,32 +56,32 @@ const MyOrderDetailDrawer = () => {
     }
 
     const handleOpenMidtransSnap = (token: string) => {
-        if (!window.snap) return toast.error("Token is not available.")
+        if (!window.snap) return toast.error("Token tidak tersedia.")
         window.snap.pay(token, {
-            onSuccess: () => toast.success("Payment successful!"),
-            onError: () => toast.error("Something went wrong."),
+            onSuccess: () => toast.success("Pembayaran berhasil!"),
+            onError: () => toast.error("Terjadi kesalahan."),
         })
     }
 
     const displayData = [
-        {label: "Order ID", value: order?.midtrans_order_id, icon: <PiTicket />, handleFn: () => handleCopy(order?.midtrans_order_id ?? "")},
+        {label: "ID Pesanan", value: order?.midtrans_order_id, icon: <PiTicket />, handleFn: () => handleCopy(order?.midtrans_order_id ?? "")},
         {label: "Status", value: order?.status, icon: <PiCheckCircle />},
-        {label: "Order Created Date", value: order?.created_at ? format(order?.created_at, "dd MMM yyyy HH:mm") : "-", icon: <PiCalendarDots />},
-        {label: "Order Paid Date", value: order?.paid_at ? format(order?.paid_at, "dd MMM yyyy HH:mm") : "-", icon: <PiHandshake />},
+        {label: "Tanggal Pesanan Dibuat", value: order?.created_at ? format(order?.created_at, "dd MMM yyyy HH:mm") : "-", icon: <PiCalendarDots />},
+        {label: "Tanggal Pesanan Dibayar", value: order?.paid_at ? format(order?.paid_at, "dd MMM yyyy HH:mm") : "-", icon: <PiHandshake />},
         {
-            label: "Payment Link",
+            label: "Tautan Pembayaran",
             value: order?.midtrans_redirect ? (
                 <div className="flex items-center gap-2">
-                    Open payment <PiArrowSquareOut />
+                    Buka pembayaran <PiArrowSquareOut />
                 </div>
             ) : (
-                "No payment link available"
+                "Tidak ada tautan pembayaran"
             ),
             icon: <PiLink />,
             handleFn: () => handleOpenUrl(order?.midtrans_redirect ?? ""),
         },
         {label: "Token", value: order?.midtrans_token || "-", icon: <PiCoin />, handleFn: () => handleOpenMidtransSnap(order?.midtrans_token ?? "")},
-        {label: "Gross Amount", value: order?.gross_amount ? `Rp. ${order.gross_amount.toLocaleString("id-ID")}` : "-", icon: <PiMoney />},
+        {label: "Jumlah Kotor", value: order?.gross_amount ? `Rp. ${order.gross_amount.toLocaleString("id-ID")}` : "-", icon: <PiMoney />},
     ]
 
     return (
@@ -90,9 +90,9 @@ const MyOrderDetailDrawer = () => {
                 <DrawerHeader className="flex flex-col items-center justify-center">
                     <DrawerTitle className="flex items-center gap-2">
                         <PiReceipt />
-                        Order Details
+                        Detail Pesanan
                     </DrawerTitle>
-                    <DrawerDescription>View your order information and payment details.</DrawerDescription>
+                    <DrawerDescription>Lihat informasi pesanan dan detail pembayaranmu.</DrawerDescription>
                 </DrawerHeader>
 
                 <div className="px-6 overflow-y-auto flex-1">
@@ -106,8 +106,8 @@ const MyOrderDetailDrawer = () => {
                                 <EmptyMedia variant="icon">
                                     <PiX />
                                 </EmptyMedia>
-                                <EmptyTitle>Failed to fetch order</EmptyTitle>
-                                <EmptyDescription>Failed to fetch order. Please try again.</EmptyDescription>
+                                <EmptyTitle>Gagal ambil pesanan</EmptyTitle>
+                                <EmptyDescription>Gagal ambil pesanan. Coba lagi, ya.</EmptyDescription>
                             </EmptyHeader>
                         </Empty>
                     ) : (
@@ -115,7 +115,7 @@ const MyOrderDetailDrawer = () => {
                             <div className="flex flex-col items-center justify-center mb-4">
                                 {order?.entitlements && order.entitlements.length > 0 && (
                                     <div className="text-center">
-                                        <div className="text-sm font-medium text-muted-foreground mb-1">Items Purchased</div>
+                                        <div className="text-sm font-medium text-muted-foreground mb-1">Item yang Dibeli</div>
                                         <ul className="space-y-1">
                                             {order.entitlements.map((e) => (
                                                 <li key={e.id} className="text-sm">
@@ -129,11 +129,11 @@ const MyOrderDetailDrawer = () => {
                                     {isChecking ? (
                                         <>
                                             <Loader2 className="animate-spin" />
-                                            Checking...
+                                            Memeriksa...
                                         </>
                                     ) : (
                                         <>
-                                            <PiArrowsClockwise /> Check Status
+                                            <PiArrowsClockwise /> Periksa Status
                                         </>
                                     )}
                                 </Button>

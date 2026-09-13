@@ -10,7 +10,7 @@ const CreateProductButton = () => {
     return (
         <Button onClick={() => setParams({view: "create"})}>
             <PiPlus />
-            Create Product
+            Buat Produk
         </Button>
     )
 }

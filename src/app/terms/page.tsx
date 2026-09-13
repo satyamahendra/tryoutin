@@ -3,66 +3,64 @@ import Link from "next/link"
 import LegalShell from "@/components/custom/legal-shell/legal-shell"
 
 export const metadata: Metadata = {
-    title: {absolute: "Terms of Service — Svtyv"},
-    description: "The terms that govern your use of Svtyv.",
+    title: {absolute: "Ketentuan Layanan — tryoutin"},
+    description: "Ketentuan yang berlaku buat kamu kalau pakai tryoutin.",
 }
 
 const TermsPage = () => {
     return (
-        <LegalShell title="Terms of Service" description="Last updated: January 1, 2026. The agreement between you and Svtyv.">
+        <LegalShell title="Ketentuan Layanan" description="Terakhir diperbarui: 1 Januari 2026. Perjanjian antara kamu dan tryoutin.">
             <section className="space-y-2">
-                <h2 className="text-base font-semibold text-foreground">Acceptance of terms</h2>
+                <h2 className="text-base font-semibold text-foreground">Penerimaan ketentuan</h2>
                 <p>
-                    By creating an account or using Svtyv, you agree to these Terms. If you do not agree, do not use the service.
+                    Kalau kamu bikin akun atau pakai tryoutin, berarti kamu setuju sama Ketentuan ini. Nggak setuju? Nggak masalah, tapi jangan pakai layanan ini ya.
                 </p>
             </section>
 
             <section className="space-y-2">
-                <h2 className="text-base font-semibold text-foreground">Accounts</h2>
+                <h2 className="text-base font-semibold text-foreground">Akun</h2>
                 <p>
-                    You are responsible for keeping your account credentials secure and for all activity under your account. You must provide accurate
-                    information and be at least the minimum age required in your jurisdiction to use Svtyv.
+                    Kamu yang jagain keamanan akun kamu sendiri. Semua aktivitas yang terjadi di akun itu tanggung jawab kamu juga. Pastiin data yang kamu isi itu bener, dan umur kamu udah sesuai batas minimum yang berlaku buat pakai tryoutin.
                 </p>
             </section>
 
             <section className="space-y-2">
-                <h2 className="text-base font-semibold text-foreground">Acceptable use</h2>
+                <h2 className="text-base font-semibold text-foreground">Penggunaan yang diperbolehkan</h2>
                 <ul className="list-disc space-y-1 pl-5">
-                    <li>Do not share, resell, or redistribute purchased tryout content.</li>
-                    <li>Do not attempt to cheat, scrape, or disrupt the service or other users.</li>
-                    <li>Do not use Svtyv for any unlawful purpose.</li>
+                    <li>Jangan bagikan, jual lagi, atau sebarin konten tryout yang udah kamu beli.</li>
+                    <li>Jangan curang, jangan scraping, atau ganggu layanan dan pengguna lain.</li>
+                    <li>Jangan pakai tryoutin buat hal yang melanggar hukum.</li>
                 </ul>
             </section>
 
             <section className="space-y-2">
-                <h2 className="text-base font-semibold text-foreground">Subscriptions &amp; payments</h2>
+                <h2 className="text-base font-semibold text-foreground">Langganan &amp; pembayaran</h2>
                 <p>
-                    Paid products are processed through Midtrans. Prices are shown at checkout. Except where required by law, payments are generally
-                    non-refundable; refund requests are reviewed case by case — reach out via our <Link href="/contact" className="text-primary hover:underline">contact page</Link>.
+                    Produk berbayar diproses lewat Midtrans. Harga udah keliatan di checkout. Kecuali diwajibkan hukum, bayaran umumnya nggak bisa dikembalikan. Kalau butuh, hubungi kita lewat{" "}
+                    <Link href="/contact" className="text-primary hover:underline">halaman kontak</Link>.
                 </p>
             </section>
 
             <section className="space-y-2">
-                <h2 className="text-base font-semibold text-foreground">Intellectual property</h2>
-                <p>All tryout content, questions, and explanations are owned by Svtyv or its licensors. You receive a personal, limited license to use them for study.</p>
+                <h2 className="text-base font-semibold text-foreground">Kekayaan intelektual</h2>
+                <p>Semua konten tryout, soal, dan pembahasan itu milik tryoutin atau pihak yang ngasih lisensi. Kamu dapat lisensi pribadi yang terbatas buat dipake belajar aja ya.</p>
             </section>
 
             <section className="space-y-2">
-                <h2 className="text-base font-semibold text-foreground">Disclaimers &amp; liability</h2>
+                <h2 className="text-base font-semibold text-foreground">Penyangkalan &amp; tanggung jawab</h2>
                 <p>
-                    Svtyv is provided &quot;as is&quot; for practice purposes. We do not guarantee any exam outcome. To the maximum extent permitted by law,
-                    Svtyv is not liable for indirect or consequential damages arising from your use of the service.
+                    tryoutin disediain &quot;apa adanya&quot; buat keperluan latihan. Kita nggak njamin kamu bakal lulus ujian. Sejauh diizinkan hukum, tryoutin nggak bertanggung jawab atas kerugian nggak langsung atau konsekuensial dari penggunaan layanan ini.
                 </p>
             </section>
 
             <section className="space-y-2">
-                <h2 className="text-base font-semibold text-foreground">Termination</h2>
-                <p>We may suspend or terminate accounts that violate these Terms. You can stop using Svtyv and request deletion of your data at any time.</p>
+                <h2 className="text-base font-semibold text-foreground">Penghentian</h2>
+                <p>Kita bisa nangguhin atau ngehentikan akun yang ngelanggar Ketentuan ini. Kamu juga bisa berhenti pakai tryoutin dan minta hapus data kamu kapan aja.</p>
             </section>
 
             <section className="space-y-2">
-                <h2 className="text-base font-semibold text-foreground">Changes &amp; governing law</h2>
-                <p>We may update these Terms; continued use after changes means you accept them. These Terms are governed by the laws of your jurisdiction.</p>
+                <h2 className="text-base font-semibold text-foreground">Perubahan &amp; hukum yang berlaku</h2>
+                <p>Kita bisa update Ketentuan ini sewaktu-waktu. Kalau kamu tetap pakai setelahnya, berarti kamu udah oke ya. Ketentuan ini diatur hukum yang berlaku di wilayah kamu.</p>
             </section>
         </LegalShell>
     )

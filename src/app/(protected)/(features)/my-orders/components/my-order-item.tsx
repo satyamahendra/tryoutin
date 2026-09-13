@@ -2,7 +2,7 @@
 
 import {GetMyOrder} from "../services/get-my-orders"
 import {useQueryParams} from "@/utils/hooks/useQueryParams"
-import {format} from "date-fns"
+import {format} from "@/utils/helpers/format-date"
 import {Badge} from "@/components/ui/badge"
 import {normalizeString} from "@/utils/helpers/normalize-string"
 import {Separator} from "@/components/ui/separator"
@@ -28,7 +28,7 @@ const MyOrderItem = ({order}: MyOrderItemProps) => {
             <div className="flex items-center gap-3">
                 <div className="flex-1 min-w-0">
                     <div className="text-sm font-medium truncate">
-                        {order.entitlements.length > 0 ? order.entitlements.map((e) => e.product.name).join(", ") : "Order"}
+                        {order.entitlements.length > 0 ? order.entitlements.map((e) => e.product.name).join(", ") : "Pesanan"}
                     </div>
                     <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground mt-0.5">
                         <span className="font-semibold">Rp. {order.gross_amount.toLocaleString("id-ID")}</span>

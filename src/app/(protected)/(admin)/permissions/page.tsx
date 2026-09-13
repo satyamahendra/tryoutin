@@ -11,8 +11,8 @@ import SearchParams from "@/components/custom/search-params"
 import PermissionDetailModal from "./components/permission-detail-modal"
 
 export const metadata: Metadata = {
-    title: "Permissions",
-    description: "Manage permissions across roles.",
+    title: "Izin Akses",
+    description: "Kelola izin akses untuk setiap peran.",
 }
 
 type PageProps = {
@@ -31,7 +31,7 @@ const Page = async ({searchParams}: PageProps) => {
 
     return (
         <AnimDiv className="flex flex-col gap-4 pb-4">
-            <PageHeader title="Permissions" description="Manage permissions" icon={<PiKey />} subComponent={<PermissionDetailModal />} />
+            <PageHeader title="Izin Akses" description="Kelola izin akses" icon={<PiKey />} subComponent={<PermissionDetailModal />} />
             <SearchParams className="w-48 self-end" />
             <Suspense
                 key={`${page}-${search}`}

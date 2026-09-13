@@ -27,14 +27,14 @@ const ExamItem = ({exam}: ExamItemProps) => {
                             <Badge variant="default" className="p-0 aspect-square">
                                 <PiCircle className="rotate-45" />
                             </Badge>
-                            {exam.parts.length} {exam.parts.length === 1 ? "Part" : "Parts"}
+                            {exam.parts.length} Bagian
                         </div>
                         {totalDuration > 0 && (
                             <div className="flex items-center gap-2">
                                 <Badge variant="outline" className="p-0 aspect-square">
                                     <PiClock />
                                 </Badge>
-                                {totalDuration} min
+                                {totalDuration} mnt
                             </div>
                         )}
                         {exam.product?.name && (

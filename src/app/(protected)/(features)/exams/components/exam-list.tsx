@@ -21,8 +21,8 @@ const ExamList = async ({search}: ExamListProps) => {
                         <EmptyMedia variant="icon">
                             <PiFileText />
                         </EmptyMedia>
-                        <EmptyTitle>No Exams Found</EmptyTitle>
-                        <EmptyDescription>There are no exams found</EmptyDescription>
+                        <EmptyTitle>Ujian Tidak Ditemukan</EmptyTitle>
+                        <EmptyDescription>Tidak ada ujian yang ditemukan</EmptyDescription>
                     </EmptyHeader>
                 </Empty>
             </div>
@@ -31,7 +31,7 @@ const ExamList = async ({search}: ExamListProps) => {
 
     const grouped = data.exams.reduce(
         (acc, exam) => {
-            const key = exam.category || "Other"
+            const key = exam.category || "Lainnya"
             if (!acc[key]) acc[key] = []
             acc[key].push(exam)
             return acc

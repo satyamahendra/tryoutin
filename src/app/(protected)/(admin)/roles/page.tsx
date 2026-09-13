@@ -11,8 +11,8 @@ import SearchParams from "@/components/custom/search-params"
 import RoleDetailModal from "./components/role-detail-modal"
 
 export const metadata: Metadata = {
-    title: "Roles",
-    description: "Manage roles and the permissions they carry.",
+    title: "Peran",
+    description: "Kelola peran beserta izin akses yang dimilikinya.",
 }
 
 type PageProps = {
@@ -31,7 +31,7 @@ const Page = async ({searchParams}: PageProps) => {
 
     return (
         <AnimDiv className="flex flex-col gap-4 pb-4">
-            <PageHeader title="Roles" description="Manage roles" icon={<PiCardholder />} subComponent={<RoleDetailModal />} />
+            <PageHeader title="Peran" description="Kelola peran" icon={<PiCardholder />} subComponent={<RoleDetailModal />} />
             <SearchParams className="w-48 self-end" />
             <Suspense
                 key={`${pageNum}-${search}`}

@@ -114,7 +114,7 @@ const TagList = ({tags}: TagListProps) => {
                     <div className="relative w-full sm:max-w-xs">
                         <PiMagnifyingGlass className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
                         <Input
-                            placeholder="Search tags..."
+                            placeholder="Cari tag..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             className="pl-8"
@@ -122,7 +122,7 @@ const TagList = ({tags}: TagListProps) => {
                     </div>
                     <div className="flex items-center gap-2">
                         <Input
-                            placeholder="New tag name..."
+                            placeholder="Nama tag baru..."
                             value={createValue}
                             onChange={(e) => setCreateValue(e.target.value)}
                             onKeyDown={(e) => e.key === "Enter" && handleCreate()}
@@ -131,27 +131,27 @@ const TagList = ({tags}: TagListProps) => {
                         />
                         <Button size="sm" onClick={handleCreate} disabled={isCreating || !createValue.trim()}>
                             {isCreating ? <Loader2 className="animate-spin" /> : <PiPlus />}
-                            Add
+                            Tambah
                         </Button>
                     </div>
                 </div>
 
                 <div className="flex flex-wrap gap-2">
-                    <Stat icon={<PiTag className="size-4" />} value={stats.total} label="tags" />
-                    <Stat icon={<PiTag className="size-4 text-primary" />} value={stats.used} label="in use" />
-                    <Stat icon={<PiX className="size-4 text-muted-foreground" />} value={stats.unused} label="unused" />
+                    <Stat icon={<PiTag className="size-4" />} value={stats.total} label="tag" />
+                    <Stat icon={<PiTag className="size-4 text-primary" />} value={stats.used} label="dipakai" />
+                    <Stat icon={<PiX className="size-4 text-muted-foreground" />} value={stats.unused} label="tidak dipakai" />
                 </div>
 
                 {visible.length === 0 ? (
                     <div className="flex flex-col items-center justify-center gap-1 rounded-xl border border-dashed border-border py-12 text-center">
                         <PiTag className="size-7 text-muted-foreground/60" />
                         <p className="text-sm font-medium">
-                            {tags.length === 0 ? "No tags yet" : "No tags match your search"}
+                            {tags.length === 0 ? "Belum ada tag" : "Tidak ada tag yang cocok dengan pencarianmu"}
                         </p>
                         <p className="text-xs text-muted-foreground">
                             {tags.length === 0
-                                ? "Create your first tag using the field above."
-                                : "Try a different keyword."}
+                                ? "Buat tag pertamamu pakai kolom di atas."
+                                : "Coba kata kunci yang lain."}
                         </p>
                     </div>
                 ) : (
@@ -205,7 +205,7 @@ const TagList = ({tags}: TagListProps) => {
                                     <span className="hidden items-center gap-0.5 group-hover/tag:flex">
                                         <button
                                             type="button"
-                                            aria-label="Edit tag"
+                                            aria-label="Ubah tag"
                                             onClick={(e) => {
                                                 e.stopPropagation()
                                                 startEdit(tag)
@@ -215,7 +215,7 @@ const TagList = ({tags}: TagListProps) => {
                                         </button>
                                         <button
                                             type="button"
-                                            aria-label="Delete tag"
+                                            aria-label="Hapus tag"
                                             onClick={(e) => {
                                                 e.stopPropagation()
                                                 setDeletingTag(tag)
@@ -234,25 +234,24 @@ const TagList = ({tags}: TagListProps) => {
             <AlertDialog open={!!deletingTag} onOpenChange={(open) => !open && setDeletingTag(null)}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        <AlertDialogTitle>Delete Tag</AlertDialogTitle>
+                        <AlertDialogTitle>Hapus Tag</AlertDialogTitle>
                         <AlertDialogDescription>
-                            Are you sure you want to delete <strong>{deletingTag?.name}</strong>?
+                            Yakin mau hapus <strong>{deletingTag?.name}</strong>?
                             {deletingTag && deletingTag._count.exams > 0 && (
                                 <span className="mt-1 block text-destructive">
-                                    This tag is used by {deletingTag._count.exams} exam(s). It will be removed from
-                                    all exams.
+                                    Tag ini dipakai di {deletingTag._count.exams} ujian. Kalau dihapus, tag ikutan kehapus dari semua ujian, lho.
                                 </span>
                             )}
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+                        <AlertDialogCancel disabled={isDeleting}>Batal</AlertDialogCancel>
                         <AlertDialogAction
                             disabled={isDeleting}
                             onClick={() => deletingTag && mutateDelete(deletingTag.id)}
                             className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
                             {isDeleting ? <Loader2 className="animate-spin" /> : <PiTrash />}
-                            Delete
+                            Hapus
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>

@@ -28,8 +28,8 @@ const MyOrderList = async ({page, search}: MyOrderListProps) => {
                             <EmptyMedia variant="icon">
                                 <PiReceipt />
                             </EmptyMedia>
-                            <EmptyTitle>No Orders Found</EmptyTitle>
-                            <EmptyDescription>You haven&apos;t made any orders yet.</EmptyDescription>
+                            <EmptyTitle>Tidak Ada Pesanan</EmptyTitle>
+                            <EmptyDescription>Kamu belum membuat pesanan.</EmptyDescription>
                         </EmptyHeader>
                     </Empty>
                 </div>

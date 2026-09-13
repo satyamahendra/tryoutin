@@ -10,8 +10,8 @@ import LeaderboardModal from "./components/leaderboard-modal"
 import {getLeaderboardFilters} from "./services/get-leaderboard-filters"
 
 export const metadata: Metadata = {
-    title: "Leaderboards",
-    description: "See who tops each tryout across the platform.",
+    title: "Papan Peringkat",
+    description: "Lihat siapa yang memimpin setiap tryout di seluruh platform.",
 }
 
 type PageProps = {
@@ -30,23 +30,23 @@ const Page = async ({searchParams}: PageProps) => {
         <AnimDiv className="flex flex-col gap-4 h-full min-h-0 overflow-hidden">
             <PageHeader
                 icon={<PiTrophy />}
-                title="Leaderboards"
-                description="See who tops each tryout across the platform."
+                title="Papan Peringkat"
+                description="Lihat siapa yang memimpin setiap tryout di seluruh platform."
                 subComponent={
                     <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
                         <span className="flex items-center gap-1">
                             <PiSquaresFour className="w-3.5 h-3.5" />
-                            {categories.length} Categories
+                            {categories.length} Kategori
                         </span>
                         <span className="flex items-center gap-1">
                             <PiTag className="w-3.5 h-3.5" />
-                            {allTags.length} Tags
+                            {allTags.length} Tag
                         </span>
                     </div>
                 }
             />
 
-            <FilterSidebar searchPlaceholder="Search tryouts..." categories={categories} tags={allTags} />
+            <FilterSidebar searchPlaceholder="Cari tryout..." categories={categories} tags={allTags} />
 
             <div className="flex flex-col flex-1 min-h-0">
                 <Suspense

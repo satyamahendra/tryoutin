@@ -1,7 +1,7 @@
 "use client"
 
 import {useQueryParams} from "@/utils/hooks/useQueryParams"
-import {format} from "date-fns"
+import {format} from "@/utils/helpers/format-date"
 import {Badge} from "@/components/ui/badge"
 import {normalizeString} from "@/utils/helpers/normalize-string"
 import {Separator} from "@/components/ui/separator"
@@ -37,7 +37,7 @@ const ReportItem = ({report}: ReportItemProps) => {
                             <Separator orientation="vertical" />
                             <span className="flex items-center gap-1">
                                 <PiChatCentered className="text-sm" />
-                                {report._count.messages} Messages
+                                {report._count.messages} Pesan
                             </span>
                         </span>
                         <span className="flex items-center gap-1">

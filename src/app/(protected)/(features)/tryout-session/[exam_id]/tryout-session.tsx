@@ -49,7 +49,7 @@ const TryoutSessionPage = () => {
 
     const saveAnswerMut = useMutation({
         mutationFn: saveAnswer,
-        onError: () => toast.error("Failed to save answer"),
+        onError: () => toast.error("Gagal menyimpan jawaban"),
     })
 
     const submitPartMut = useMutation({
@@ -92,7 +92,7 @@ const TryoutSessionPage = () => {
                 toast.error(result.message)
             }
         },
-        onError: () => toast.error("Failed to submit part"),
+        onError: () => toast.error("Gagal mengumpulkan bagian"),
     })
 
     const examData = useMemo(() => sessionQuery.data?.data?.exam, [sessionQuery.data])
@@ -143,7 +143,7 @@ const TryoutSessionPage = () => {
 
     const isLastQuestion = useMemo(() => currentQuestionIndex === questions.length - 1, [currentQuestionIndex, questions.length])
 
-    const submitPartLabel = isLastPart ? "Complete Test" : isLastQuestion ? "Finish Part" : "Submit Part"
+    const submitPartLabel = isLastPart ? "Selesaikan Tes" : isLastQuestion ? "Selesaikan Bagian" : "Kumpulkan Bagian"
 
     const lockedParts = useMemo(() => {
         if (mode !== "simulation") return new Set<string>()
@@ -214,7 +214,7 @@ const TryoutSessionPage = () => {
                                 `/tryout-session/${examId}?session=${result.data.id}&part=${activePart.part.id}&question=${firstQ.id}&mode=${mode}`,
                             )
                         } else {
-                            setErrorMsg("Failed to initialize session")
+                            setErrorMsg("Gagal memulai sesi")
                             setPageState("error")
                         }
                     } else {
@@ -222,7 +222,7 @@ const TryoutSessionPage = () => {
                         setPageState("error")
                     }
                 } catch {
-                    setErrorMsg("An unexpected error occurred")
+                    setErrorMsg("Terjadi kesalahan tak terduga")
                     setPageState("error")
                 }
             }
@@ -311,7 +311,7 @@ const TryoutSessionPage = () => {
         return (
             <div className="flex flex-col items-center justify-center h-full gap-3">
                 <Loader2 className="animate-spin w-8 h-8 text-primary" />
-                <p className="text-sm text-muted-foreground">Preparing your tryout...</p>
+                <p className="text-sm text-muted-foreground">Menyiapkan tryoutmu...</p>
             </div>
         )
     }
@@ -322,10 +322,10 @@ const TryoutSessionPage = () => {
                 <div className="rounded-full bg-destructive/10 p-4">
                     <X className="w-8 h-8 text-destructive" />
                 </div>
-                <h2 className="text-lg font-semibold">Something Went Wrong</h2>
+                <h2 className="text-lg font-semibold">Terjadi Kesalahan</h2>
                 <p className="text-sm text-muted-foreground text-center max-w-md">{errorMsg}</p>
                 <Button variant="outline" onClick={() => router.push("/my-tryouts")}>
-                    Back to My Tryouts
+                    Kembali ke Tryout Saya
                 </Button>
             </div>
         )
@@ -342,7 +342,7 @@ const TryoutSessionPage = () => {
                     <CheckCircle className="w-10 h-10 text-primary" />
                 </div>
                 <div className="text-center">
-                    <h2 className="text-xl font-bold">Tryout Complete!</h2>
+                    <h2 className="text-xl font-bold">Tryout Selesai!</h2>
                     {score != null && (
                         <div className="mt-3 flex items-center justify-center gap-3">
                             <div>
@@ -361,10 +361,10 @@ const TryoutSessionPage = () => {
                         </div>
                     )}
                     <p className="text-sm text-muted-foreground mt-2">
-                        You answered {answeredQ} of {totalQ} questions.
+                        Kamu menjawab {answeredQ} dari {totalQ} soal.
                     </p>
                     <p className="text-sm text-muted-foreground mt-2">
-                        You answered {answeredQ} of {totalQ} questions.
+                        Kamu menjawab {answeredQ} dari {totalQ} soal.
                     </p>
                 </div>
                 <div className="flex gap-2 flex-wrap justify-center">
@@ -372,16 +372,16 @@ const TryoutSessionPage = () => {
                         <>
                             <Button variant="outline" onClick={() => router.push(`/review-session/${sessionId}`)}>
                                 <CheckCircle className="mr-1.5 w-4 h-4" />
-                                Review Results
+                                Tinjau Hasil
                             </Button>
                             <Button variant="outline" onClick={() => router.push("/my-tryouts")}>
-                                Back to My Tryouts
+                                Kembali ke Tryout Saya
                             </Button>
                         </>
                     )}
                     <Button onClick={() => router.push(`/tryout-session/${examId}?mode=${mode === "practice" ? "practice" : "practice"}`)}>
                         <PiPlay className="mr-1.5" />
-                        Practice Mode
+                        Mode Latihan
                     </Button>
                 </div>
             </div>
@@ -403,7 +403,7 @@ const TryoutSessionPage = () => {
                 </div>
                 {mode === "simulation" && <TimerDisplay endsAt={endsAt} onExpire={handleTimeUp} />}
                 <Badge variant="secondary" className="text-xs shrink-0">
-                    {mode === "simulation" ? "Simulation" : "Practice"}
+                    {mode === "simulation" ? "Simulasi" : "Latihan"}
                 </Badge>
             </header>
 
@@ -427,7 +427,7 @@ const TryoutSessionPage = () => {
                         )}
                         {!currentQuestion && (
                             <div className="flex items-center justify-center flex-1 text-sm text-muted-foreground">
-                                No questions in this part.
+                                Tidak ada soal di bagian ini.
                             </div>
                         )}
                         {currentQuestion && (
@@ -444,11 +444,11 @@ const TryoutSessionPage = () => {
                     <div className="flex items-center justify-end gap-2 px-4 md:px-6 py-3 border-t bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 shrink-0">
                         <Button size="sm" variant="outline" onClick={handlePrevQuestion} disabled={currentQuestionIndex <= 0}>
                             <PiCaretLeft className="w-4 h-4 mr-1" />
-                            Previous
+                            Sebelumnya
                         </Button>
                         {isLastQuestion ? (
                             <Button size="sm" onClick={handleRequestSubmit}>
-                                {isLastPart ? "Finish Tryout" : "Submit & Continue"}
+                                {isLastPart ? "Selesaikan Tryout" : "Kumpulkan & Lanjutkan"}
                             </Button>
                         ) : (
                             <Button
@@ -456,7 +456,7 @@ const TryoutSessionPage = () => {
                                 variant="outline"
                                 onClick={handleNextQuestion}
                                 disabled={currentQuestionIndex >= questions.length - 1}>
-                                Next
+                                Selanjutnya
                                 <PiCaretRight className="w-4 h-4 ml-1" />
                             </Button>
                         )}

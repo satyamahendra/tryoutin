@@ -58,16 +58,16 @@ const totalDuration = tryout.parts.reduce((sum, p) => sum + (p.duration_minutes 
                 <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm text-muted-foreground">
                     <span className="flex items-center gap-1.5">
                         <PiStack className="w-4 h-4" />
-                        {tryout._count.parts} {tryout._count.parts === 1 ? "Part" : "Parts"}
+                        {tryout._count.parts} {tryout._count.parts === 1 ? "Bagian" : "Bagian"}
                     </span>
                     <span className="flex items-center gap-1.5">
                         <PiListChecks className="w-4 h-4" />
-                        {totalQuestions} {totalQuestions === 1 ? "Question" : "Questions"}
+                        {totalQuestions} {totalQuestions === 1 ? "Soal" : "Soal"}
                     </span>
                     {totalDuration > 0 && (
                         <span className="flex items-center gap-1.5">
                             <PiClock className="w-4 h-4" />
-                            {totalDuration} min
+                            {totalDuration} menit
                         </span>
                     )}
                 </div>
@@ -77,7 +77,7 @@ const totalDuration = tryout.parts.reduce((sum, p) => sum + (p.duration_minutes 
                         {tryout.parts.map((part) => (
                             <Badge key={part.id} className="text-xs font-normal bg-muted text-muted-foreground">
                                 {part.name}
-                                {part.duration_minutes ? ` (${part.duration_minutes}m)` : ""}
+                                {part.duration_minutes ? ` (${part.duration_minutes} menit)` : ""}
                             </Badge>
                         ))}
                     </div>
@@ -86,11 +86,11 @@ const totalDuration = tryout.parts.reduce((sum, p) => sum + (p.duration_minutes 
                 <div className="flex items-center justify-end gap-2 pt-4 border-t flex-wrap mt-auto">
                     <Button size="sm" variant="secondary" className="flex-1" onClick={handlePracticeMode}>
                         <PiGameController className="mr-1.5" />
-                        Practice
+                        Latihan
                     </Button>
                     <Button size="sm" className="flex-1" onClick={handleStartTryout}>
                         <PiPlay className="mr-1.5" />
-                        Start Tryout
+                        Mulai Tryout
                     </Button>
                 </div>
             </CardContent>

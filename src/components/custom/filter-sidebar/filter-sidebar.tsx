@@ -61,10 +61,10 @@ const FilterSidebar = ({searchPlaceholder, categories, tags}: FilterSidebarProps
             <Select value={activeCategory || "all"} onValueChange={handleCategory}>
                 <SelectTrigger className="w-full md:w-[190px]">
                     <PiSquaresFour className="!size-4 text-muted-foreground" />
-                    <SelectValue placeholder="All Categories" />
+                    <SelectValue placeholder="Semua Kategori" />
                 </SelectTrigger>
                 <SelectContent>
-                    <SelectItem value="all">All Categories ({categories.reduce((sum, c) => sum + c.count, 0)})</SelectItem>
+                    <SelectItem value="all">Semua Kategori ({categories.reduce((sum, c) => sum + c.count, 0)})</SelectItem>
                     {categories.map((cat) => (
                         <SelectItem key={cat.value} value={cat.value}>
                             {cat.label} ({cat.count})
@@ -77,7 +77,7 @@ const FilterSidebar = ({searchPlaceholder, categories, tags}: FilterSidebarProps
                 <PopoverTrigger asChild>
                     <Button variant={activeTags.length > 0 ? "default" : "outline"} className="justify-start w-full md:w-auto">
                         <PiTag className="!size-4" />
-                        Tags
+                        Tag
                         {activeTags.length > 0 && (
                             <Badge variant="secondary" className="ml-0.5 text-[10px] px-1.5">
                                 {activeTags.length}
@@ -87,7 +87,7 @@ const FilterSidebar = ({searchPlaceholder, categories, tags}: FilterSidebarProps
                 </PopoverTrigger>
                 <PopoverContent align="end" className="w-64">
                     <div className="flex items-center justify-between px-1 pt-1">
-                        <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Tags</span>
+                        <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Tag</span>
                         {activeTags.length > 0 && (
                             <button
                                 onClick={clearAll}
@@ -121,7 +121,7 @@ const FilterSidebar = ({searchPlaceholder, categories, tags}: FilterSidebarProps
             {hasFilters && (
                 <Button variant="ghost" size="sm" onClick={clearAll} className="text-muted-foreground">
                     <PiX className="!size-3.5" />
-                    Clear
+                    Hapus filter
                 </Button>
             )}
         </aside>

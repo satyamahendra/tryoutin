@@ -58,7 +58,7 @@ const totalDuration = tryout?.parts.reduce((sum, p) => sum + (p.duration_minutes
                         <Loader2 className="animate-spin w-6 h-6 text-muted-foreground" />
                     </div>
                 ) : !tryout ? (
-                    <div className="flex items-center justify-center h-full text-sm text-muted-foreground">Tryout not found.</div>
+                    <div className="flex items-center justify-center h-full text-sm text-muted-foreground">Tryout tidak ditemukan.</div>
                 ) : (
                     <>
                         <div className="relative bg-gradient-to-br from-primary/90 via-primary to-primary/70 text-primary-foreground px-6 py-8">
@@ -97,7 +97,7 @@ const totalDuration = tryout?.parts.reduce((sum, p) => sum + (p.duration_minutes
                                             <PiListChecks />
                                         </Badge>
                                         <span>
-                                            {tryout._count.parts} {tryout._count.parts === 1 ? "Part" : "Parts"}
+                                            {tryout._count.parts} {tryout._count.parts === 1 ? "Bagian" : "Bagian"}
                                         </span>
                                     </div>
                                     <div className="flex items-center gap-1.5">
@@ -105,7 +105,7 @@ const totalDuration = tryout?.parts.reduce((sum, p) => sum + (p.duration_minutes
                                             <PiListChecks />
                                         </Badge>
                                         <span>
-                                            {totalQuestions} {totalQuestions === 1 ? "Question" : "Questions"}
+                                            {totalQuestions} {totalQuestions === 1 ? "Soal" : "Soal"}
                                         </span>
                                     </div>
                                     {totalDuration > 0 && (
@@ -113,7 +113,7 @@ const totalDuration = tryout?.parts.reduce((sum, p) => sum + (p.duration_minutes
                                             <Badge variant="outline" className="p-0 aspect-square bg-white/15 border-white/25">
                                                 <PiClock />
                                             </Badge>
-                                            <span>{totalDuration} min</span>
+                                            <span>{totalDuration} menit</span>
                                         </div>
                                     )}
                                 </div>
@@ -123,18 +123,18 @@ const totalDuration = tryout?.parts.reduce((sum, p) => sum + (p.duration_minutes
                         <div className="flex flex-col gap-5 px-6 py-6 overflow-y-auto flex-1">
                             <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
                                 <TabsList>
-                                    <TabsTrigger value="stats">Stats</TabsTrigger>
-                                    <TabsTrigger value="details">Details</TabsTrigger>
+                                    <TabsTrigger value="stats">Statistik</TabsTrigger>
+                                    <TabsTrigger value="details">Detail</TabsTrigger>
                                 </TabsList>
                                 <TabsContent value="stats" className="flex flex-col gap-3 mt-4">
                                     <AnimDiv key={activeTab} className="flex flex-col gap-3">
-                                        <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Your Performance</h3>
+                                        <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Performa Kamu</h3>
                                         <MyTryoutPerformance sessions={tryout.sessions} />
                                     </AnimDiv>
                                 </TabsContent>
                                 <TabsContent value="details" className="flex flex-col gap-3 mt-4">
                                     <AnimDiv key={activeTab} className="flex flex-col gap-3">
-                                        <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">What you will get</h3>
+                                        <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Yang akan kamu dapatkan</h3>
                                         <div className="flex flex-col gap-2.5">
                                             {tryout.parts.map((part, i) => (
                                                 <div key={part.id} className="flex items-start gap-3 rounded-xl border bg-card p-4 transition-colors hover:bg-muted/50">
@@ -146,18 +146,18 @@ const totalDuration = tryout?.parts.reduce((sum, p) => sum + (p.duration_minutes
                                                         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
                                                             <span className="flex items-center gap-1">
                                                                 <PiListChecks className="w-3 h-3" />
-                                                                {part._count.questions} {part._count.questions === 1 ? "question" : "questions"}
+                                                                {part._count.questions} {part._count.questions === 1 ? "soal" : "soal"}
                                                             </span>
                                                             {part.duration_minutes && (
                                                                 <span className="flex items-center gap-1">
                                                                     <PiClock className="w-3 h-3" />
-                                                                    {part.duration_minutes} min
+                                                                    {part.duration_minutes} menit
                                                                 </span>
                                                             )}
                                                             {part.passing_score != null && part.passing_score > 0 && (
                                                                 <span className="flex items-center gap-1">
                                                                     <PiTrophy className="w-3 h-3" />
-                                                                    Pass: {part.passing_score}
+                                                                    Lulus: {part.passing_score}
                                                                 </span>
                                                             )}
                                                         </div>
@@ -175,11 +175,11 @@ const totalDuration = tryout?.parts.reduce((sum, p) => sum + (p.duration_minutes
                             <div className="flex flex-col gap-4">
                                 <Button className="w-full" onClick={handleStartTryout}>
                                     <PiPlay className="mr-1.5" />
-                                    Start Tryout
+                                    Mulai Tryout
                                 </Button>
                                 <Button variant="secondary" className="w-full" onClick={handlePracticeMode}>
                                     <PiGameController className="mr-1.5" />
-                                    Practice
+                                    Latihan
                                 </Button>
                             </div>
                         </DrawerFooter>

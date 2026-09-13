@@ -30,24 +30,24 @@ const NewTryouts = async () => {
                             <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-sm text-muted-foreground">
                                 <span className="flex items-center gap-1.5">
                                     <PiStack className="w-4 h-4" />
-                                    {tryout._count.parts} {tryout._count.parts === 1 ? "Part" : "Parts"}
+                                    {tryout._count.parts} {tryout._count.parts === 1 ? "Bagian" : "Bagian"}
                                 </span>
                                 <span className="flex items-center gap-1.5">
                                     <PiListChecks className="w-4 h-4" />
-                                    {totalQuestions} Q
+                                    {totalQuestions} Soal
                                 </span>
                             </div>
                             <div className="flex items-end justify-between pt-1 border-t mt-auto">
-                                <span className="text-lg font-semibold">{price > 0 ? formatPrice(price) : "Free"}</span>
+                                <span className="text-lg font-semibold">{price > 0 ? formatPrice(price) : "Gratis"}</span>
                                 {tryout.owned ? (
                                     <Badge variant="default" className="gap-1 px-3 py-1.5">
-                                        <PiCheck /> Owned
+                                        <PiCheck /> Dimiliki
                                     </Badge>
                                 ) : (
                                     <Button asChild size="sm" variant="outline">
                                         <Link href="/tryouts">
                                             <PiClock className="mr-1" />
-                                            Start
+                                            Mulai
                                         </Link>
                                     </Button>
                                 )}

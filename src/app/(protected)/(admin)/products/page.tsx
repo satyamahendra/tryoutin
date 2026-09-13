@@ -12,8 +12,8 @@ import ProductDetailDrawer from "./components/product-detail-drawer"
 import CreateProductButton from "./components/create-product-button"
 
 export const metadata: Metadata = {
-    title: "Products",
-    description: "Manage tryout products and pricing.",
+    title: "Produk",
+    description: "Kelola produk tryout dan harga.",
 }
 
 type PageProps = {
@@ -33,7 +33,7 @@ const Page = async ({searchParams}: PageProps) => {
 
     return (
         <AnimDiv className="flex flex-col gap-4 pb-4">
-            <PageHeader title="Products" description="Manage products" icon={<PiPackage />} subComponent={<CreateProductButton />} />
+            <PageHeader title="Produk" description="Kelola produk" icon={<PiPackage />} subComponent={<CreateProductButton />} />
             <ProductDetailDrawer />
             <SearchParams className="w-48 self-end" />
             <Suspense

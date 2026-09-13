@@ -1,6 +1,7 @@
 import Link from "next/link"
 import type {Metadata} from "next"
-import {format, startOfDay, subDays} from "date-fns"
+import {startOfDay, subDays} from "date-fns"
+import {format} from "@/utils/helpers/format-date"
 import {Badge} from "@/components/ui/badge"
 import {Button} from "@/components/ui/button"
 import {Card, CardContent} from "@/components/ui/card"
@@ -40,8 +41,8 @@ const SectionHeader = ({title, href, cta}: {title: string; href: string; cta: st
 )
 
 export const metadata: Metadata = {
-    title: "Dashboard",
-    description: "Your tryoutin dashboard — streak, recent results, and what to tackle next.",
+    title: "Dasbor",
+    description: "Dasbor tryoutinmu — streak, hasil terbaru, dan apa yang perlu dikerjakan selanjutnya.",
 }
 
 const Page = async () => {
@@ -73,10 +74,10 @@ const Page = async () => {
 
     // ponytail: hint row dropped — labels already carry the meaning; one less line per card
     const stats = [
-        {icon: PiListChecks, label: "Questions answered", value: questionsAnswered, href: "/my-sessions"},
-        {icon: PiPlayCircle, label: "In progress", value: inProgress.length, href: "/my-sessions"},
-        {icon: PiCalendarCheck, label: "Done this week", value: doneThisWeek, href: "/my-sessions"},
-        {icon: PiTrophy, label: "Best score", value: bestScore ?? "—", href: "/my-sessions"},
+        {icon: PiListChecks, label: "Soal terjawab", value: questionsAnswered, href: "/my-sessions"},
+        {icon: PiPlayCircle, label: "Sedang berjalan", value: inProgress.length, href: "/my-sessions"},
+        {icon: PiCalendarCheck, label: "Selesai minggu ini", value: doneThisWeek, href: "/my-sessions"},
+        {icon: PiTrophy, label: "Skor terbaik", value: bestScore ?? "—", href: "/my-sessions"},
     ]
 
     return (
@@ -88,35 +89,35 @@ const Page = async () => {
                         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(255,255,255,0.08),transparent_40%)]" />
                         <div className="relative flex flex-col gap-3">
                             <div className="flex items-center gap-2">
-                                <h1 className="text-xl font-bold tracking-tight md:text-2xl">Welcome back, {firstName}.</h1>
+                                <h1 className="text-xl font-bold tracking-tight md:text-2xl">Wih, balik lagi nih, {firstName}!</h1>
                                 {streak > 1 && (
                                     <Badge variant="secondary" className="gap-1 bg-white/20 text-primary-foreground border-white/30">
                                         <PiFire className="w-3.5 h-3.5" />
-                                        {streak}-day streak
+                                        Streak {streak} hari
                                     </Badge>
                                 )}
                             </div>
                             <p className="text-sm text-primary-foreground/85">
                                 {inProgress.length > 0
-                                    ? `${inProgress.length} tryout${inProgress.length > 1 ? "s" : ""} in progress. Momentum is a thing — don't lose it.`
+                                    ? `${inProgress.length} tryout sedang berjalan. Momentum itu penting — jangan sampai hilang.`
                                     : streak > 1
-                                      ? `${streak}-day streak. Keep the run going.`
+                                      ? `Streak ${streak} hari. Pertahankan terus.`
                                       : accuracy !== null
-                                        ? `You're averaging ${accuracy}% accuracy. A few more reps and that number climbs.`
-                                        : "Pick a tryout and start your first rep."}
+                                        ? `Rata-rata akurasimu ${accuracy}%. Sekali lagi beberapa latihan, angkanya ikut naik.`
+                                        : "Pilih tryout dan mulai percobaan pertamamu."}
                             </p>
                             <div className="flex flex-wrap gap-2 pt-1">
                                 <Button asChild size="sm" variant="secondary" className="font-semibold">
                                     <Link href="/tryouts">
                                         <PiStorefront className="mr-1.5" />
-                                        Browse tryouts
+                                        Jelajahi tryout
                                     </Link>
                                 </Button>
                                 {inProgress.length > 0 && (
                                     <Button asChild size="sm" variant="outline" className="border-white/30 bg-white/10 text-primary-foreground hover:bg-white/20 hover:text-primary-foreground">
                                         <Link href={`/tryout-session/${inProgress[0].exam.id}?mode=${inProgress[0].type}`}>
                                             <PiPlay className="mr-1.5" />
-                                            Continue
+                                            Lanjutkan
                                         </Link>
                                     </Button>
                                 )}
@@ -148,10 +149,10 @@ const Page = async () => {
                         <PiTrendUp className="h-5 w-5 shrink-0 text-primary" />
                         <p className="text-sm">
                             {insight.delta > 0
-                                ? `Your ${insight.category} accuracy is up ${insight.delta}% this week.`
+                                ? `Akurasi ${insight.category}mu naik ${insight.delta}% minggu ini.`
                                 : insight.delta < 0
-                                  ? `Your ${insight.category} accuracy dipped ${Math.abs(insight.delta)}% this week — one more rep closes the gap.`
-                                  : `You're holding steady in ${insight.category}. Consistency wins.`}
+                                  ? `Akurasi ${insight.category}mu turun ${Math.abs(insight.delta)}% minggu ini — sekali lagi latihan, jaraknya menutup.`
+                                  : `Akurasi ${insight.category}mu stabil. Konsisten itu kuncinya.`}
                         </p>
                     </CardContent>
                 </Card>
@@ -159,24 +160,24 @@ const Page = async () => {
 
             {ownedTryouts.length > 0 && (
                 <section>
-                    <SectionHeader title="Your tryouts" href="/my-tryouts" cta="View all" />
+                    <SectionHeader title="Tryout kamu" href="/my-tryouts" cta="Lihat semua" />
                     <YourTryouts tryouts={ownedTryouts} sessions={sessions} />
                 </section>
             )}
 
             <section>
-                <SectionHeader title="Leaderboards" href="/leaderboards" cta="See all" />
+                <SectionHeader title="Papan Peringkat" href="/leaderboards" cta="Lihat semua" />
                 {/* ponytail: server component fetches its own data; no Suspense needed, page is dynamic */}
                 <LeaderboardSpotlight />
             </section>
 
             <section>
-                <SectionHeader title="New on the marketplace" href="/tryouts" cta="Browse" />
+                <SectionHeader title="Baru di marketplace" href="/tryouts" cta="Jelajahi" />
                 <NewTryouts />
             </section>
 
             <section>
-                <SectionHeader title="Recent results" href="/my-sessions" cta="View all" />
+                <SectionHeader title="Hasil terbaru" href="/my-sessions" cta="Lihat semua" />
                 {recent.length > 0 ? (
                     <div className="flex flex-col gap-3">
                         {recent.map((s) => {
@@ -198,9 +199,9 @@ const Page = async () => {
                                                 <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-muted-foreground">
                                                     <span className="flex items-center gap-1">
                                                         <PiClock className="h-3 w-3" />
-                                                        {format(new Date(s.submitted_at ?? s.started_at ?? new Date()), "MMM d, h:mm a")}
+                                                        {format(new Date(s.submitted_at ?? s.started_at ?? new Date()), "d MMM yyyy, HH.mm")}
                                                     </span>
-                                                    <span className="font-medium tabular-nums">{sAccuracy}% correct</span>
+                                                    <span className="font-medium tabular-nums">{sAccuracy}% benar</span>
                                                 </div>
                                                 <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-muted">
                                                     <div className="h-full rounded-full bg-primary transition-all" style={{width: `${sAccuracy}%`}} />
@@ -217,11 +218,11 @@ const Page = async () => {
                     <Card>
                         <CardContent className="flex flex-col items-center gap-3 py-10 text-center">
                             <PiCheckCircle className="h-8 w-8 text-muted-foreground" />
-                            <p className="text-sm text-muted-foreground">No results yet. Your first score starts with one attempt.</p>
+                            <p className="text-sm text-muted-foreground">Belum ada hasil. Skor pertamamu dimulai dari satu percobaan.</p>
                             <Button size="sm" asChild>
                                 <Link href="/my-tryouts">
                                     <PiPlay className="mr-1.5" />
-                                    Take a tryout
+                                    Ambil tryout
                                 </Link>
                             </Button>
                         </CardContent>

@@ -22,8 +22,8 @@ export async function PermissionsTable({page, search}: Props) {
                             <EmptyMedia variant="icon">
                                 <PiKey />
                             </EmptyMedia>
-                            <EmptyTitle>No permissions found</EmptyTitle>
-                            <EmptyDescription>There are currently no permissions available.</EmptyDescription>
+                            <EmptyTitle>Tidak ada izin ditemukan</EmptyTitle>
+                            <EmptyDescription>Saat ini belum ada izin yang tersedia.</EmptyDescription>
                         </EmptyHeader>
                     </Empty>
                 </div>

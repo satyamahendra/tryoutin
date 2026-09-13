@@ -24,7 +24,7 @@ const categoryOptions = [
     {value: "UTBK", label: "UTBK"},
     {value: "SBMPTN", label: "SBMPTN"},
     {value: "MANDIRI", label: "Mandiri"},
-    {value: "OTHER", label: "Other"},
+    {value: "OTHER", label: "Lainnya"},
 ]
 
 const ExamGeneralForm = ({form}: ExamGeneralFormProps) => {
@@ -44,9 +44,9 @@ const ExamGeneralForm = ({form}: ExamGeneralFormProps) => {
                     render={({field, fieldState}) => (
                         <Field data-invalid={fieldState.invalid}>
                             <FieldLabel htmlFor="title" className="flex items-center gap-1.5">
-                                <PiTextAa className="w-4 h-4" /> Title
+                                <PiTextAa className="w-4 h-4" /> Judul
                             </FieldLabel>
-                            <Input {...field} id="title" aria-invalid={fieldState.invalid} placeholder="Exam title" value={field.value ?? ""} />
+                            <Input {...field} id="title" aria-invalid={fieldState.invalid} placeholder="Judul ujian" value={field.value ?? ""} />
                             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                         </Field>
                     )}
@@ -56,8 +56,8 @@ const ExamGeneralForm = ({form}: ExamGeneralFormProps) => {
                     control={form.control}
                     render={({field, fieldState}) => (
                         <Field data-invalid={fieldState.invalid}>
-                            <FieldLabel htmlFor="description">Description</FieldLabel>
-                            <Textarea {...field} id="description" aria-invalid={fieldState.invalid} placeholder="Exam description" value={field.value ?? ""} />
+                            <FieldLabel htmlFor="description">Deskripsi</FieldLabel>
+                            <Textarea {...field} id="description" aria-invalid={fieldState.invalid} placeholder="Deskripsi ujian" value={field.value ?? ""} />
                             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                         </Field>
                     )}
@@ -69,12 +69,12 @@ const ExamGeneralForm = ({form}: ExamGeneralFormProps) => {
                         render={({field, fieldState}) => (
                             <Field data-invalid={fieldState.invalid} className="flex-1">
                                 <FieldLabel className="flex items-center gap-1.5">
-                                    <PiTag className="w-4 h-4" /> Category
+                                    <PiTag className="w-4 h-4" /> Kategori
                                 </FieldLabel>
                                 <InfiniteCombobox
                                     value={field.value ? {value: field.value, label: field.value} : null}
                                     onChange={(opt) => field.onChange(opt?.value ?? "")}
-                                    placeholder="Select category"
+                                    placeholder="Pilih kategori"
                                     options={categoryOptions}
                                     invalid={fieldState.invalid}
                                 />
@@ -89,12 +89,12 @@ const ExamGeneralForm = ({form}: ExamGeneralFormProps) => {
                     render={({field, fieldState}) => (
                         <Field data-invalid={fieldState.invalid}>
                             <FieldLabel className="flex items-center gap-1.5">
-                                <PiShoppingBag className="w-4 h-4" /> Product (optional)
+                                <PiShoppingBag className="w-4 h-4" /> Produk (opsional)
                             </FieldLabel>
                             <InfiniteCombobox
                                 value={field.value}
                                 onChange={field.onChange}
-                                placeholder="Link a product"
+                                placeholder="Hubungkan produk"
                                 invalid={fieldState.invalid}
                                 queryKey={["products"]}
                                 queryFn={(page, search) => getProducts(page, search)}
@@ -120,7 +120,7 @@ const ExamGeneralForm = ({form}: ExamGeneralFormProps) => {
                     render={({field}) => (
                         <Field>
                             <FieldLabel className="flex items-center gap-1.5">
-                                <PiTag className="w-4 h-4" /> Tags
+                                <PiTag className="w-4 h-4" /> Tag
                             </FieldLabel>
                             <TagPicker value={field.value ?? []} onChange={field.onChange} />
                         </Field>
@@ -132,13 +132,13 @@ const ExamGeneralForm = ({form}: ExamGeneralFormProps) => {
                 <div className="flex items-center justify-between">
                     <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground flex items-center gap-2">
                         <PiListNumbers className="w-4 h-4" />
-                        Exam Parts ({fields.length})
+                        Bagian Ujian ({fields.length})
                     </h3>
                     <Button type="button" variant="outline" size="sm" onClick={() => {
                         append(makeExamPart())
                         form.clearErrors("parts")
                     }}>
-                        <PiPlus className="w-4 h-4" /> Add Part
+                        <PiPlus className="w-4 h-4" /> Tambah Bagian
                     </Button>
                 </div>
 

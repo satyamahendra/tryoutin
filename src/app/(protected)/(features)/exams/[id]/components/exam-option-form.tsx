@@ -58,7 +58,7 @@ const ExamOptionForm = ({partIndex, questionIndex, optionIndex, form, remove}: E
                                         {...field}
                                         id={`${basePath}.option_text`}
                                         aria-invalid={fieldState.invalid}
-                                        placeholder="Enter option text"
+                                        placeholder="Masukkan teks opsi"
                                         value={field.value ?? ""}
                                     />
                                     {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -76,7 +76,7 @@ const ExamOptionForm = ({partIndex, questionIndex, optionIndex, form, remove}: E
                                             id={`${basePath}.score`}
                                             type="number"
                                             aria-invalid={fieldState.invalid}
-                                            placeholder="Score"
+                                            placeholder="Skor"
                                             value={field.value ?? ""}
                                             onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : 0)}
                                         />
@@ -110,7 +110,7 @@ const ExamOptionForm = ({partIndex, questionIndex, optionIndex, form, remove}: E
                     <div className="flex gap-2">
                         <Button onClick={handleSelectFile} variant={optionImage ? "default" : "outline"} type="button">
                             <PiImage />
-                            {optionImage ? "Change Image" : "Add Image"}
+                            {optionImage ? "Ganti Gambar" : "Tambah Gambar"}
                         </Button>
                         {optionImage && (
                             <Button

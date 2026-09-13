@@ -3,23 +3,23 @@ import {PiEnvelope, PiPaperPlane, PiClock} from "react-icons/pi"
 import LegalShell from "@/components/custom/legal-shell/legal-shell"
 
 export const metadata: Metadata = {
-    title: {absolute: "Contact — Svtyv"},
-    description: "Get in touch with the Svtyv team.",
+    title: {absolute: "Kontak — tryoutin"},
+    description: "Hubungi tim tryoutin.",
 }
 
 // ponytail: placeholder support address — replace with the real one (or NEXT_PUBLIC_SUPPORT_EMAIL)
-const SUPPORT_EMAIL = "hello@svtyv.com"
+const SUPPORT_EMAIL = "hello@tryoutin.com"
 
 const ContactPage = () => {
     return (
-        <LegalShell title="Contact" description="Questions, feedback, or account help? We're listening.">
+        <LegalShell title="Kontak" description="Ada pertanyaan, masukan, atau lagi butuh bantuan soal akun? Kita siap bantu.">
             <section className="space-y-4">
                 <div className="flex items-start gap-3 rounded-xl border bg-card p-4">
                     <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
                         <PiEnvelope className="h-5 w-5" />
                     </span>
                     <div className="flex flex-col">
-                        <span className="text-sm font-medium text-foreground">Email us</span>
+                        <span className="text-sm font-medium text-foreground">Email kami</span>
                         <a href={`mailto:${SUPPORT_EMAIL}`} className="text-sm text-primary hover:underline">
                             {SUPPORT_EMAIL}
                         </a>
@@ -31,8 +31,8 @@ const ContactPage = () => {
                         <PiClock className="h-5 w-5" />
                     </span>
                     <div className="flex flex-col">
-                        <span className="text-sm font-medium text-foreground">Response time</span>
-                        <span className="text-sm">We usually reply within 1–2 business days.</span>
+                        <span className="text-sm font-medium text-foreground">Waktu respons</span>
+                        <span className="text-sm">Kita biasanya bales dalam 1–2 hari kerja.</span>
                     </div>
                 </div>
 
@@ -41,15 +41,15 @@ const ContactPage = () => {
                         <PiPaperPlane className="h-5 w-5" />
                     </span>
                     <div className="flex flex-col">
-                        <span className="text-sm font-medium text-foreground">Before you write</span>
+                        <span className="text-sm font-medium text-foreground">Sebelum chat kita</span>
                         <span className="text-sm">
-                            Account or billing questions? Include the email on your account so we can help faster. For legal requests, see our{" "}
+                            Ada pertanyaan soal akun atau pembayaran? Sertain email akun kamu biar kita bisa bantu lebih cepet. Untuk permintaan hukum, cek kebijakan{" "}
                             <a href="/privacy" className="text-primary hover:underline">
-                                Privacy Policy
+                                Kebijakan Privasi
                             </a>{" "}
-                            and{" "}
+                            dan{" "}
                             <a href="/terms" className="text-primary hover:underline">
-                                Terms
+                                Ketentuan
                             </a>
                             .
                         </span>

@@ -7,7 +7,7 @@ import {PiCalendarDots, PiCircleDashed, PiMoon, PiSignOut, PiSun} from "react-ic
 import {useState, useEffect} from "react" // 1. Import useEffect
 import {toast} from "sonner"
 import {redirect} from "next/navigation"
-import {format} from "date-fns"
+import {format} from "@/utils/helpers/format-date"
 import {useScreenSize} from "@/utils/hooks/useScreenSize"
 
 const Topbar = () => {
@@ -24,7 +24,7 @@ const Topbar = () => {
         setIsLoading(true)
         const res = await authClient.signOut()
         if (!res?.data?.success) {
-            toast.error("Failed to log out")
+            toast.error("Gagal keluar")
             setIsLoading(false)
         }
         redirect("/auth")
@@ -35,7 +35,7 @@ const Topbar = () => {
             {mounted && !isMobile && (
                 <div className="flex gap-2 items-center text-sm font-light text-muted-foreground">
                     <PiCalendarDots size={18} />
-                    {format(new Date(), "EEEE, MMMM d, yyyy")}
+                    {format(new Date(), "EEEE, d MMMM yyyy")}
                 </div>
             )}
             <ul className="flex gap-2 ml-auto">

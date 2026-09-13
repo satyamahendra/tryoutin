@@ -77,14 +77,14 @@ const PermissionDetailModal = () => {
             <DrawerTrigger
                 render={
                     <Button>
-                        <PiPlus /> Create Permission
+                        <PiPlus /> Buat Izin
                     </Button>
                 }></DrawerTrigger>
             <DrawerContent aria-describedby="permission-form" className={cn(isMobile ? "h-[80vh]" : "")}>
                 <DrawerHeader className="flex flex-col items-center justify-center">
-                    <DrawerTitle className="flex items-center gap-4">{view !== "create" ? "Edit" : "Create"} Permission</DrawerTitle>
+                    <DrawerTitle className="flex items-center gap-4">{view !== "create" ? "Ubah" : "Buat"} Izin</DrawerTitle>
                     <DrawerDescription className="flex items-center gap-4">
-                        {view !== "create" ? "Edit" : "Create"} a custom permission for your organization.
+                        {view !== "create" ? "Ubah" : "Buat"} izin khusus untuk organisasimu.
                     </DrawerDescription>
                 </DrawerHeader>
 
@@ -99,8 +99,8 @@ const PermissionDetailModal = () => {
                                 <EmptyMedia variant="icon">
                                     <PiKey />
                                 </EmptyMedia>
-                                <EmptyTitle>Failed to fetch permission</EmptyTitle>
-                                <EmptyDescription>Failed to fetch permission. Please try again.</EmptyDescription>
+                                <EmptyTitle>Gagal ambil izin</EmptyTitle>
+                                <EmptyDescription>Gagal ambil izin. Coba lagi, ya.</EmptyDescription>
                             </EmptyHeader>
                         </Empty>
                     ) : (
@@ -112,8 +112,8 @@ const PermissionDetailModal = () => {
                                         control={form.control}
                                         render={({field, fieldState}) => (
                                             <Field data-invalid={fieldState.invalid}>
-                                                <FieldLabel htmlFor={field.name}>Permission Name</FieldLabel>
-                                                <Input {...field} id={field.name} aria-invalid={fieldState.invalid} placeholder="read users" autoComplete="off" />
+                                                <FieldLabel htmlFor={field.name}>Nama Izin</FieldLabel>
+                                                <Input {...field} id={field.name} aria-invalid={fieldState.invalid} placeholder="baca pengguna" autoComplete="off" />
                                                 {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                             </Field>
                                         )}
@@ -124,8 +124,8 @@ const PermissionDetailModal = () => {
                                         control={form.control}
                                         render={({field, fieldState}) => (
                                             <FieldSet>
-                                                <FieldLegend variant="label">Roles</FieldLegend>
-                                                <FieldDescription>Define the roles for this permission.</FieldDescription>
+                                                <FieldLegend variant="label">Peran</FieldLegend>
+                                                <FieldDescription>Pilih peran buat izin ini.</FieldDescription>
                                                 <FieldGroup data-slot="checkbox-group">
                                                     {rolesData?.success &&
                                                         rolesData.data.map((role) => (
@@ -159,7 +159,7 @@ const PermissionDetailModal = () => {
                                         control={form.control}
                                         render={({field}) => (
                                             <Field>
-                                                <FieldLabel htmlFor="is_active">is active?</FieldLabel>
+                                                <FieldLabel htmlFor="is_active">Aktif?</FieldLabel>
                                                 <Switch id="is_active" checked={field.value} onCheckedChange={field.onChange} />
                                             </Field>
                                         )}
@@ -174,11 +174,11 @@ const PermissionDetailModal = () => {
                     <DrawerClose
                         render={
                             <Button variant="outline" className="w-full">
-                                Cancel
+                                Batal
                             </Button>
                         }></DrawerClose>
                     <Button disabled={isPending} type="submit" form="permission-form">
-                        {isPending ? <Loader2 className="animate-spin" /> : "Submit"}
+                        {isPending ? <Loader2 className="animate-spin" /> : "Simpan"}
                     </Button>
                 </DrawerFooter>
             </DrawerContent>

@@ -39,9 +39,9 @@ export async function getOrder(id: string): Promise<ServerResult<GetOrder>> {
             },
         })
 
-        if (!order) throw new Error("Order not found")
+        if (!order) throw new Error("Pesanan tidak ditemukan")
 
-        return {success: true, data: order, message: "Order fetched successfully"}
+        return {success: true, data: order, message: "Pesanan berhasil diambil"}
     } catch (error) {
         return handleServerError(error)
     }

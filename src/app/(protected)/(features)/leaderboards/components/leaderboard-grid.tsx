@@ -15,9 +15,9 @@ const LeaderboardGrid = async ({search, category, tags}: {search?: string; categ
                 <Empty>
                     <EmptyHeader>
                         <EmptyMedia variant="icon">{hasFilters ? <PiMagnifyingGlass /> : <PiTrophy />}</EmptyMedia>
-                        <EmptyTitle>{hasFilters ? "No matching tryouts" : "No leaderboards yet"}</EmptyTitle>
+                        <EmptyTitle>{hasFilters ? "Tidak ada tryout yang cocok" : "Belum ada papan peringkat"}</EmptyTitle>
                         <EmptyDescription>
-                            {hasFilters ? "Try adjusting your filters to find what you're looking for." : "Tryouts will appear here once they go live."}
+                            {hasFilters ? "Coba ubah filter untuk menemukan yang kamu cari." : "Tryout akan muncul di sini setelah tayang."}
                         </EmptyDescription>
                     </EmptyHeader>
                 </Empty>

@@ -13,7 +13,7 @@ type LegalShellProps = {
 const LegalShell = async ({title, description, children}: LegalShellProps) => {
     const session = await authServer()
     const primaryHref = session ? "/home" : "/auth"
-    const primaryLabel = session ? "Go to dashboard" : "Sign in"
+    const primaryLabel = session ? "Ke dashboard" : "Masuk"
 
     return (
         <div className="flex min-h-screen flex-col font-sans">
@@ -23,7 +23,7 @@ const LegalShell = async ({title, description, children}: LegalShellProps) => {
                         <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-fuchsia-600 text-primary-foreground">
                             <PiLightning className="h-4 w-4" />
                         </span>
-                        <span className="text-lg font-bold tracking-tight">Svtyv</span>
+                        <span className="text-lg font-bold tracking-tight">tryoutin</span>
                     </Link>
                     <Button asChild>
                         <Link href={primaryHref}>{primaryLabel}</Link>

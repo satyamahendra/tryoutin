@@ -20,8 +20,8 @@ const ProductList = async ({page, search}: ProductListProps) => {
                     <EmptyMedia variant="icon">
                         <PiPackage />
                     </EmptyMedia>
-                    <EmptyTitle>Something Went Wrong</EmptyTitle>
-                    <EmptyDescription>{data?.message}, Please try again later.</EmptyDescription>
+                    <EmptyTitle>Terjadi Kesalahan</EmptyTitle>
+                    <EmptyDescription>{data?.message}, Coba lagi nanti.</EmptyDescription>
                 </EmptyHeader>
             </Empty>
         )
@@ -42,8 +42,8 @@ const ProductList = async ({page, search}: ProductListProps) => {
                             <EmptyMedia variant="icon">
                                 <PiPackage />
                             </EmptyMedia>
-                            <EmptyTitle>No Products Found</EmptyTitle>
-                            <EmptyDescription>There are no products found</EmptyDescription>
+                            <EmptyTitle>Tidak Ada Produk</EmptyTitle>
+                            <EmptyDescription>Tidak ada produk yang ditemukan</EmptyDescription>
                         </EmptyHeader>
                     </Empty>
                 </div>

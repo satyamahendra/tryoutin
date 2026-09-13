@@ -2,8 +2,8 @@
 import TryoutSessionPage from "./tryout-session"
 
 export const metadata: Metadata = {
-    title: "Tryout Session",
-    description: "Take a timed simulation or practice your way through a tryout with instant feedback.",
+    title: "Sesi Tryout",
+    description: "Ikuti simulasi berbatas waktu atau berlatih mengerjakan tryout dengan umpan balik instan.",
 }
 
 const Page = () => <TryoutSessionPage />

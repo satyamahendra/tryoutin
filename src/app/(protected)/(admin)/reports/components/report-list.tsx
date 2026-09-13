@@ -20,8 +20,8 @@ const ReportList = async ({page, search}: ReportListProps) => {
                     <EmptyMedia variant="icon">
                         <PiFlag />
                     </EmptyMedia>
-                    <EmptyTitle>Something Went Wrong</EmptyTitle>
-                    <EmptyDescription>{data?.message}, Please try again later.</EmptyDescription>
+                    <EmptyTitle>Terjadi Kesalahan</EmptyTitle>
+                    <EmptyDescription>{data?.message}, Coba lagi nanti.</EmptyDescription>
                 </EmptyHeader>
             </Empty>
         )
@@ -42,8 +42,8 @@ const ReportList = async ({page, search}: ReportListProps) => {
                             <EmptyMedia variant="icon">
                                 <PiFlag />
                             </EmptyMedia>
-                            <EmptyTitle>No Reports Found</EmptyTitle>
-                            <EmptyDescription>There are no reports found</EmptyDescription>
+                            <EmptyTitle>Tidak Ada Laporan</EmptyTitle>
+                            <EmptyDescription>Tidak ada laporan yang ditemukan</EmptyDescription>
                         </EmptyHeader>
                     </Empty>
                 </div>

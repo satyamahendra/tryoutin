@@ -123,7 +123,7 @@ const ExamForm = ({id}: ExamFormTypes) => {
     const onInvalid = () => {
         setShowErrors(true)
         const messages = collectErrors(formErrors)
-        if (messages.length) toast.error(`Please fix ${messages.length} issue${messages.length === 1 ? "" : "s"} before saving.`)
+        if (messages.length) toast.error(`Perbaiki ${messages.length} masalah sebelum menyimpan.`)
     }
 
     if (!isNew && isLoading) {
@@ -141,8 +141,8 @@ const ExamForm = ({id}: ExamFormTypes) => {
                     <EmptyMedia variant="icon">
                         <PiX />
                     </EmptyMedia>
-                    <EmptyTitle>Failed to fetch exam</EmptyTitle>
-                    <EmptyDescription>{error.message || "Please try again."}</EmptyDescription>
+                    <EmptyTitle>Gagal ambil ujian</EmptyTitle>
+                    <EmptyDescription>{error.message || "Coba lagi, ya."}</EmptyDescription>
                 </EmptyHeader>
             </Empty>
         )
@@ -152,7 +152,7 @@ const ExamForm = ({id}: ExamFormTypes) => {
         <form id="exam-form" onSubmit={form.handleSubmit(onSubmit, onInvalid)} className="flex flex-col gap-6 pb-8">
             {showErrors && formErrors && Object.keys(formErrors).length > 0 && (
                 <div role="alert" className="rounded-lg border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
-                    <p className="font-medium mb-1">Cannot save yet &mdash; please fix:</p>
+                    <p className="font-medium mb-1">Belum dapat disimpan &mdash; perbaiki:</p>
                     <ul className="list-disc pl-5 space-y-0.5">
                         {collectErrors(formErrors).map((m, i) => (
                             <li key={i}>{m}</li>
@@ -166,10 +166,10 @@ const ExamForm = ({id}: ExamFormTypes) => {
                     {isMutating || isPending ? (
                         <>
                             <Loader2 className="animate-spin" />
-                            Saving...
+                            Menyimpan...
                         </>
                     ) : (
-                        "Save Exam"
+                        "Simpan Ujian"
                     )}
                 </Button>
             </div>

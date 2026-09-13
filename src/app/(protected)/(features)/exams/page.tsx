@@ -12,8 +12,8 @@ import ImportExamButton from "./components/import-exam-button"
 import ExamList from "./components/exam-list"
 
 export const metadata: Metadata = {
-    title: "Exams",
-    description: "Create, import, and manage exams.",
+    title: "Ujian",
+    description: "Buat, impor, dan kelola ujian.",
 }
 
 type PageProps = {
@@ -30,7 +30,7 @@ const Page = async ({searchParams}: PageProps) => {
 
     return (
         <AnimDiv className="flex flex-col gap-4">
-            <PageHeader title="Exams" description="Manage exams" icon={<PiFileText />} subComponent={<div className="flex items-center gap-2"><ImportExamButton /><CreateExamButton /></div>} />
+            <PageHeader title="Ujian" description="Kelola ujian" icon={<PiFileText />} subComponent={<div className="flex items-center gap-2"><ImportExamButton /><CreateExamButton /></div>} />
             <SearchParams className="w-48 self-end" />
             <Suspense
                 key={`$${search}`}

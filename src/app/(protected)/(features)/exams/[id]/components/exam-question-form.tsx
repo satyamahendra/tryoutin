@@ -30,9 +30,9 @@ type ExamQuestionFormProps = {
 }
 
 const questionTypes = [
-    {value: "multiple_choice", label: "Multiple Choice"},
-    {value: "single_choice", label: "Single Choice"},
-    {value: "scaled_choice", label: "Scaled Choice"},
+    {value: "multiple_choice", label: "Pilihan Ganda"},
+    {value: "single_choice", label: "Pilihan Tunggal"},
+    {value: "scaled_choice", label: "Pilihan Berskala"},
 ]
 
 const typeBadgeColors: Record<string, string> = {
@@ -63,8 +63,8 @@ const ExamQuestionForm = ({partIndex, questionIndex, form, onRemove}: ExamQuesti
         name: [`${basePath}.options` as QuestionOptionsArrayPath, `${basePath}.question_image` as QuestionImagePath],
     })
 
-    const truncatedText = questionText ? (questionText.length > 60 ? questionText.substring(0, 60) + "..." : questionText) : "Untitled question"
-    const typeLabel = questionTypes.find((t) => t.value === questionType)?.label ?? "No type"
+    const truncatedText = questionText ? (questionText.length > 60 ? questionText.substring(0, 60) + "..." : questionText) : "Soal Tanpa Judul"
+    const typeLabel = questionTypes.find((t) => t.value === questionType)?.label ?? "Tanpa tipe"
 
     return (
         <div className="rounded-lg border bg-card">
@@ -91,10 +91,10 @@ const ExamQuestionForm = ({partIndex, questionIndex, form, onRemove}: ExamQuesti
                             control={form.control}
                             render={({field, fieldState}) => (
                                 <Field data-invalid={fieldState.invalid}>
-                                    <FieldLabel>Question Type</FieldLabel>
+                                    <FieldLabel>Tipe Soal</FieldLabel>
                                     <Select value={field.value ?? ""} onValueChange={field.onChange}>
                                         <SelectTrigger aria-invalid={fieldState.invalid}>
-                                            <SelectValue placeholder="Select type" />
+                                            <SelectValue placeholder="Pilih tipe" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {questionTypes.map((t) => (
@@ -113,12 +113,12 @@ const ExamQuestionForm = ({partIndex, questionIndex, form, onRemove}: ExamQuesti
                             control={form.control}
                             render={({field, fieldState}) => (
                                 <Field data-invalid={fieldState.invalid}>
-                                    <FieldLabel htmlFor={`${basePath}.question_text`}>Question Text</FieldLabel>
+                                    <FieldLabel htmlFor={`${basePath}.question_text`}>Teks Soal</FieldLabel>
                                     <Textarea
                                         {...field}
                                         id={`${basePath}.question_text`}
                                         aria-invalid={fieldState.invalid}
-                                        placeholder="Enter the question"
+                                        placeholder="Masukkan soal"
                                         value={field.value ?? ""}
                                     />
                                     {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -152,12 +152,12 @@ const ExamQuestionForm = ({partIndex, questionIndex, form, onRemove}: ExamQuesti
                                 control={form.control}
                                 render={({field, fieldState}) => (
                                     <Field data-invalid={fieldState.invalid} className="flex-1">
-                                        <FieldLabel htmlFor={`${basePath}.explanation`}>Explanation</FieldLabel>
+                                        <FieldLabel htmlFor={`${basePath}.explanation`}>Pembahasan</FieldLabel>
                                         <Textarea
                                             {...field}
                                             id={`${basePath}.explanation`}
                                             aria-invalid={fieldState.invalid}
-                                            placeholder="Explain the correct answer"
+                                            placeholder="Jelaskan jawaban yang benar"
                                             value={field.value ?? ""}
                                         />
                                         {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -191,7 +191,7 @@ const ExamQuestionForm = ({partIndex, questionIndex, form, onRemove}: ExamQuesti
                     <div className="flex items-center gap-2 mt-3 mb-3">
                         <Button type="button" variant={questionImage ? "default" : "outline"} className="h-8 gap-1.5" onClick={() => questionImageRef.current?.click()}>
                             <PiImage />
-                            {questionImage ? "Change Image" : "Add Image"}
+                            {questionImage ? "Ganti Gambar" : "Tambah Gambar"}
                         </Button>
                         {questionImage && (
                             <Button
@@ -214,13 +214,13 @@ const ExamQuestionForm = ({partIndex, questionIndex, form, onRemove}: ExamQuesti
                         <div className="flex items-center justify-between">
                             <h5 className="text-xs font-medium text-muted-foreground uppercase tracking-wide flex items-center gap-1.5">
                                 <PiListMagnifyingGlass className="w-3.5 h-3.5" />
-                                Options ({fields.length})
+                                Opsi ({fields.length})
                             </h5>
                             <Button type="button" variant="ghost" size="sm" className="h-7 text-xs" onClick={() => {
                                 append(makeExamOption())
                                 form.clearErrors(`${basePath}.options` as QuestionOptionsArrayPath)
                             }}>
-                                <PiPlus className="w-3 h-3" /> Add
+                                <PiPlus className="w-3 h-3" /> Tambah
                             </Button>
                         </div>
 

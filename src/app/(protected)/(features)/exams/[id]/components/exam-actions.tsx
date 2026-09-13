@@ -48,7 +48,7 @@ const ExamActions = ({id, isActive}: ExamActionsProps) => {
             a.download = `${res.data.title || "exam"}.json`
             a.click()
             URL.revokeObjectURL(url)
-            toast.success("Exam exported")
+            toast.success("Ujian berhasil diekspor")
         } catch (error) {
             toast.error(handleClientError(error))
         } finally {
@@ -91,7 +91,7 @@ const ExamActions = ({id, isActive}: ExamActionsProps) => {
     return (
         <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" onClick={handleExport} disabled={isLoading}>
-                {isExporting ? <Loader2 className="animate-spin" /> : <PiDownload />} Export
+                {isExporting ? <Loader2 className="animate-spin" /> : <PiDownload />} Ekspor
             </Button>
 
             <Button variant="outline" size="sm" onClick={() => toggleArchive()} disabled={isLoading}>
@@ -99,11 +99,11 @@ const ExamActions = ({id, isActive}: ExamActionsProps) => {
                     <Loader2 className="animate-spin" />
                 ) : isActive ? (
                     <>
-                        <PiArchive /> Archive
+                        <PiArchive /> Arsipkan
                     </>
                 ) : (
                     <>
-                        <PiArrowArcLeft /> Reactivate
+                        <PiArrowArcLeft /> Aktifkan Kembali
                     </>
                 )}
             </Button>
@@ -111,22 +111,22 @@ const ExamActions = ({id, isActive}: ExamActionsProps) => {
             <AlertDialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
                 <AlertDialogTrigger asChild>
                     <Button variant="destructive" size="sm" disabled={isLoading}>
-                        <PiTrash /> Delete
+                        <PiTrash /> Hapus
                     </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                        <AlertDialogTitle>Kamu yakin?</AlertDialogTitle>
                         <AlertDialogDescription>
-                            This action cannot be undone. This will permanently delete the exam and all its parts, questions, and options.
+                            Nggak bisa dibatalkan, lho. Ujian beserta semua bagian, soal, dan opsinya bakal kehapus permanen.
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter className="justify-center gap-2">
                         <AlertDialogCancel asChild>
-                            <Button variant="outline" disabled={isDeleting}>Cancel</Button>
+                            <Button variant="outline" disabled={isDeleting}>Batal</Button>
                         </AlertDialogCancel>
                         <Button variant="destructive" onClick={() => deleteMutate()} disabled={isDeleting}>
-                            {isDeleting ? <Loader2 className="animate-spin" /> : "Delete"}
+                            {isDeleting ? <Loader2 className="animate-spin" /> : "Hapus"}
                         </Button>
                     </AlertDialogFooter>
                 </AlertDialogContent>

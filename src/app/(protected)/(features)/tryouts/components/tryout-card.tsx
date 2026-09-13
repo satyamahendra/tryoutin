@@ -33,13 +33,13 @@ const TryoutCard = ({tryout, featured}: TryoutCardProps) => {
     const {mutate: claimFree, isPending: claiming} = useMutation({
         mutationFn: async (examId: string) => await axios.post("/api/tryouts/claim-free", {examId}),
         onSuccess: () => {
-            toast.success("Tryout claimed for free!")
+            toast.success("Tryout berhasil diklaim gratis!")
             queryClient.invalidateQueries({queryKey: ["tryouts"]})
             queryClient.invalidateQueries({queryKey: ["my-tryouts"]})
         },
         onError: (error) => {
             const message = error instanceof AxiosError ? error.response?.data?.message : error.message
-            toast.error(message || "Failed to claim tryout")
+            toast.error(message || "Gagal mengklaim tryout")
         },
     })
 
@@ -54,7 +54,7 @@ const TryoutCard = ({tryout, featured}: TryoutCardProps) => {
                         {featured && (
                             <Badge className="text-[10px] gap-1 bg-amber-500 text-white">
                                 <PiTrophy className="!size-3" />
-                                Popular
+                                Populer
                             </Badge>
                         )}
                         {tryout.category && (
@@ -70,11 +70,11 @@ const TryoutCard = ({tryout, featured}: TryoutCardProps) => {
                 <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm text-muted-foreground">
                     <span className="flex items-center gap-1.5">
                         <PiStack className="w-4 h-4" />
-                        {tryout._count.parts} {tryout._count.parts === 1 ? "Part" : "Parts"}
+                        {tryout._count.parts} {tryout._count.parts === 1 ? "Bagian" : "Bagian"}
                     </span>
                     <span className="flex items-center gap-1.5">
                         <PiListChecks className="w-4 h-4" />
-                        {totalQuestions} {totalQuestions === 1 ? "Question" : "Questions"}
+                        {totalQuestions} {totalQuestions === 1 ? "Soal" : "Soal"}
                     </span>
                     {totalDuration > 0 && (
                         <span className="flex items-center gap-1.5">
@@ -103,21 +103,21 @@ const TryoutCard = ({tryout, featured}: TryoutCardProps) => {
                             {hasDiscount && (
                                 <Badge variant="destructive" className="w-fit text-xs mt-0.5">
                                     <PiTag className="mr-1" />
-                                    {discount}% OFF
+                                    Diskon {discount}%
                                 </Badge>
                             )}
                         </div>
                         {tryout.owned ? (
                             <Badge variant="default" className="gap-1 px-3 py-1.5">
-                                <PiCheck /> Owned
+                                <PiCheck /> Dimiliki
                             </Badge>
                         ) : isFree ? (
                             <Button size="sm" variant="default" onClick={(e) => {
                                 e.stopPropagation()
                                 claimFree(tryout.id)
                             }} disabled={claiming}>
-                                {claiming ? "Claiming..." : <PiGift className="mr-1" />}
-                                Claim for Free
+                                {claiming ? "Mengklaim..." : <PiGift className="mr-1" />}
+                                Klaim Gratis
                             </Button>
                         ) : (
                             <Button size="sm" variant="outline" onClick={(e) => {
@@ -125,7 +125,7 @@ const TryoutCard = ({tryout, featured}: TryoutCardProps) => {
                                 setParams({view: product.id})
                             }}>
                                 <PiEye className="mr-1" />
-                                View Details
+                                Lihat Detail
                             </Button>
                         )}
                     </div>

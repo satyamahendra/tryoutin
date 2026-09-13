@@ -83,14 +83,14 @@ const RoleDetailModal = () => {
             <DrawerTrigger
                 render={
                     <Button>
-                        <PiPlus /> Create Role
+                        <PiPlus /> Buat Peran
                     </Button>
                 }></DrawerTrigger>
             <DrawerContent aria-describedby="role-form" className={cn(isMobile ? "h-[80vh]" : "")}>
                 <DrawerHeader className="flex flex-col items-center justify-center">
-                    <DrawerTitle className="flex items-center gap-4">{view !== "create" ? "Edit" : "Create"} Role</DrawerTitle>
+                    <DrawerTitle className="flex items-center gap-4">{view !== "create" ? "Ubah" : "Buat"} Peran</DrawerTitle>
                     <DrawerDescription className="flex items-center gap-4">
-                        {view !== "create" ? "Edit" : "Create"} a custom role for your organization.
+                        {view !== "create" ? "Ubah" : "Buat"} peran khusus untuk organisasimu.
                     </DrawerDescription>
                 </DrawerHeader>
 
@@ -105,8 +105,8 @@ const RoleDetailModal = () => {
                                 <EmptyMedia variant="icon">
                                     <PiCardholder />
                                 </EmptyMedia>
-                                <EmptyTitle>Failed to fetch role</EmptyTitle>
-                                <EmptyDescription>Failed to fetch role. Please try again.</EmptyDescription>
+                                <EmptyTitle>Gagal ambil peran</EmptyTitle>
+                                <EmptyDescription>Gagal ambil peran. Coba lagi, ya.</EmptyDescription>
                             </EmptyHeader>
                         </Empty>
                     ) : (
@@ -118,7 +118,7 @@ const RoleDetailModal = () => {
                                         control={form.control}
                                         render={({field, fieldState}) => (
                                             <Field data-invalid={fieldState.invalid}>
-                                                <FieldLabel htmlFor={field.name}>Role Name</FieldLabel>
+                                                <FieldLabel htmlFor={field.name}>Nama Peran</FieldLabel>
                                                 <Input {...field} id={field.name} aria-invalid={fieldState.invalid} placeholder="Admin" autoComplete="off" />
                                                 {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                             </Field>
@@ -130,8 +130,8 @@ const RoleDetailModal = () => {
                                         control={form.control}
                                         render={({field, fieldState}) => (
                                             <FieldSet>
-                                                <FieldLegend variant="label">Permissions</FieldLegend>
-                                                <FieldDescription>Define the permissions for this role.</FieldDescription>
+                                                <FieldLegend variant="label">Izin Akses</FieldLegend>
+                                                <FieldDescription>Pilih izin akses buat peran ini.</FieldDescription>
                                                 <FieldGroup data-slot="checkbox-group">
                                                     {permissionsData?.success &&
                                                         permissionsData.data.map((permission) => (
@@ -165,7 +165,7 @@ const RoleDetailModal = () => {
                                         control={form.control}
                                         render={({field}) => (
                                             <Field>
-                                                <FieldLabel htmlFor="is_active">is active?</FieldLabel>
+                                                <FieldLabel htmlFor="is_active">Aktif?</FieldLabel>
                                                 <Switch id="is_active" checked={field.value} onCheckedChange={field.onChange} />
                                             </Field>
                                         )}
@@ -180,11 +180,11 @@ const RoleDetailModal = () => {
                     <DrawerClose
                         render={
                             <Button variant="outline" className="w-full">
-                                Cancel
+                                Batal
                             </Button>
                         }></DrawerClose>
                     <Button disabled={isPending} type="submit" form="role-form">
-                        {isPending ? <Loader2 className="animate-spin" /> : "Submit"}
+                        {isPending ? <Loader2 className="animate-spin" /> : "Simpan"}
                     </Button>
                 </DrawerFooter>
             </DrawerContent>

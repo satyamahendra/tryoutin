@@ -18,7 +18,7 @@ const SearchParams = ({className}: SearchParamsProps) => {
 
     return (
         <InputGroup className={className}>
-            <InputGroupInput placeholder="Search" value={search || ""} onChange={handleChange} />
+            <InputGroupInput placeholder="Cari" value={search || ""} onChange={handleChange} />
             <InputGroupAddon>
                 <PiMagnifyingGlass />
             </InputGroupAddon>

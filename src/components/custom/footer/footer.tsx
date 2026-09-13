@@ -11,16 +11,16 @@ const Footer = () => {
                 </span>
                 <nav className="flex items-center gap-4">
                     <Link href="/privacy" className="transition-colors hover:text-foreground">
-                        Privacy
+                        Privasi
                     </Link>
                     <Link href="/terms" className="transition-colors hover:text-foreground">
-                        Terms
+                        Ketentuan
                     </Link>
                     <Link href="/contact" className="transition-colors hover:text-foreground">
-                        Contact
+                        Kontak
                     </Link>
                 </nav>
-                <span>© {year} tryoutin. All rights reserved.</span>
+                <span>© {year} tryoutin. Seluruh hak cipta dilindungi.</span>
             </div>
         </footer>
     )

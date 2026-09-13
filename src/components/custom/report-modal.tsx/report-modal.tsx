@@ -13,7 +13,6 @@ import {toast} from "sonner"
 import {Textarea} from "@/components/ui/textarea"
 import {InfiniteCombobox} from "../combobox"
 import {TYPE_VALUES} from "@/utils/types/report"
-import {normalizeString} from "@/utils/helpers/normalize-string"
 import {PiFlag} from "react-icons/pi"
 import {zodResolver} from "@hookform/resolvers/zod"
 import {useState} from "react"
@@ -21,6 +20,14 @@ import {ReportType} from "@/generated/index"
 
 type ReportModalProps = {
     order_id?: string
+}
+
+const reportTypeLabels: Record<(typeof TYPE_VALUES)[number], string> = {
+    bug: "Bug",
+    billing: "Penagihan",
+    content: "Konten",
+    account: "Akun",
+    other: "Lainnya",
 }
 
 const ReportModal = ({order_id}: ReportModalProps) => {
@@ -59,7 +66,7 @@ const ReportModal = ({order_id}: ReportModalProps) => {
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
                 <Button variant="outline">
-                    <PiFlag /> Report
+                    <PiFlag /> Laporkan
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-xl">
@@ -68,9 +75,9 @@ const ReportModal = ({order_id}: ReportModalProps) => {
                         <div className="w-8 h-8 rounded-md bg-muted flex items-center justify-center text-xl">
                             <PiFlag />
                         </div>
-                        <div>Sent a Report</div>
+                        <div>Kirim Laporan</div>
                     </DialogTitle>
-                    <DialogDescription className="text-center">Please fill in the form below to send a report</DialogDescription>
+                    <DialogDescription className="text-center">Isi form di bawah buat kirim laporan, ya</DialogDescription>
                 </DialogHeader>
                 <form id="create-report-form" onSubmit={form.handleSubmit(onSubmit)}>
                     <FieldGroup>
@@ -79,8 +86,8 @@ const ReportModal = ({order_id}: ReportModalProps) => {
                             control={form.control}
                             render={({field, fieldState}) => (
                                 <Field data-invalid={fieldState.invalid}>
-                                    <FieldLabel htmlFor={field.name}>Title</FieldLabel>
-                                    <Input {...field} id={field.name} aria-invalid={fieldState.invalid} placeholder="Title" autoComplete="off" />
+                                    <FieldLabel htmlFor={field.name}>Judul</FieldLabel>
+                                    <Input {...field} id={field.name} aria-invalid={fieldState.invalid} placeholder="Judul" autoComplete="off" />
                                     {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                 </Field>
                             )}
@@ -91,8 +98,8 @@ const ReportModal = ({order_id}: ReportModalProps) => {
                             control={form.control}
                             render={({field, fieldState}) => (
                                 <Field data-invalid={fieldState.invalid}>
-                                    <FieldLabel htmlFor={field.name}>Description</FieldLabel>
-                                    <Textarea {...field} id={field.name} aria-invalid={fieldState.invalid} placeholder="What happened?" className="h-40" />
+                                    <FieldLabel htmlFor={field.name}>Deskripsi</FieldLabel>
+                                    <Textarea {...field} id={field.name} aria-invalid={fieldState.invalid} placeholder="Apa yang terjadi?" className="h-40" />
                                     {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                 </Field>
                             )}
@@ -103,13 +110,13 @@ const ReportModal = ({order_id}: ReportModalProps) => {
                             control={form.control}
                             render={({field, fieldState}) => (
                                 <Field data-invalid={fieldState.invalid}>
-                                    <FieldLabel htmlFor="type">Type</FieldLabel>
+                                    <FieldLabel htmlFor="type">Tipe</FieldLabel>
                                     <InfiniteCombobox
                                         invalid={fieldState.invalid}
-                                        value={field.value ? {label: normalizeString(field.value), value: field.value} : null}
+                                        value={field.value ? {label: reportTypeLabels[field.value], value: field.value} : null}
                                         onChange={(opt) => field.onChange(opt?.value ?? null)}
-                                        placeholder="Select report type"
-                                        options={TYPE_VALUES.map((type) => ({label: normalizeString(type), value: type}))}
+                                        placeholder="Pilih tipe laporan"
+                                        options={TYPE_VALUES.map((type) => ({label: reportTypeLabels[type], value: type}))}
                                     />
                                     {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                 </Field>
@@ -120,10 +127,10 @@ const ReportModal = ({order_id}: ReportModalProps) => {
 
                 <DialogFooter>
                     <DialogClose asChild>
-                        <Button variant="outline">Cancel</Button>
+                        <Button variant="outline">Batal</Button>
                     </DialogClose>
                     <Button disabled={isPending} type="submit" form="create-report-form">
-                        Send Report
+                        Kirim Laporan
                     </Button>
                 </DialogFooter>
             </DialogContent>

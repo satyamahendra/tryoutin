@@ -27,33 +27,33 @@ const YourTryouts = ({tryouts, sessions}: {tryouts: GetMyTryout[]; sessions: Com
                             <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-sm text-muted-foreground">
                                 <span className="flex items-center gap-1.5">
                                     <PiStack className="w-4 h-4" />
-                                    {tryout._count.parts} {tryout._count.parts === 1 ? "Part" : "Parts"}
+                                    {tryout._count.parts} {tryout._count.parts === 1 ? "Bagian" : "Bagian"}
                                 </span>
                                 <span className="flex items-center gap-1.5">
                                     <PiListChecks className="w-4 h-4" />
-                                    {totalQuestions} Q
+                                    {totalQuestions} Soal
                                 </span>
                             </div>
 
                             <div className="grid grid-cols-3 gap-2 rounded-xl border bg-muted/30 p-2.5 text-center">
                                 <div className="flex flex-col">
                                     <span className="text-sm font-bold tabular-nums">{stats.attempts}</span>
-                                    <span className="text-[10px] uppercase tracking-wide text-muted-foreground">Attempts</span>
+                                    <span className="text-[10px] uppercase tracking-wide text-muted-foreground">Percobaan</span>
                                 </div>
                                 <div className="flex flex-col">
                                     <span className="text-sm font-bold tabular-nums text-primary">{stats.best}</span>
-                                    <span className="text-[10px] uppercase tracking-wide text-muted-foreground">Best</span>
+                                    <span className="text-[10px] uppercase tracking-wide text-muted-foreground">Terbaik</span>
                                 </div>
                                 <div className="flex flex-col">
                                     <span className="text-sm font-bold tabular-nums">{stats.accuracy ?? "—"}</span>
-                                    <span className="text-[10px] uppercase tracking-wide text-muted-foreground">Accuracy</span>
+                                    <span className="text-[10px] uppercase tracking-wide text-muted-foreground">Akurasi</span>
                                 </div>
                             </div>
 
                             <Button asChild size="sm" className="mt-auto w-full">
                                 <Link href={`/tryout-session/${tryout.id}?mode=simulation`}>
                                     {continuing ? <PiPlay className="mr-1.5" /> : <PiTarget className="mr-1.5" />}
-                                    {continuing ? "Continue" : "Start"}
+                                    {continuing ? "Lanjutkan" : "Mulai"}
                                 </Link>
                             </Button>
                         </CardContent>

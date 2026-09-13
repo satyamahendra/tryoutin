@@ -43,21 +43,21 @@ const CreateExamButton = () => {
         <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
             <AlertDialogTrigger asChild>
                 <Button color="primary">
-                    <PiPlus /> Create exam
+                    <PiPlus /> Buat ujian
                 </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                    <AlertDialogDescription>Are you sure you want to create a new exam?</AlertDialogDescription>
+                    <AlertDialogTitle>Kamu yakin?</AlertDialogTitle>
+                    <AlertDialogDescription>Yakin mau bikin ujian baru?</AlertDialogDescription>
                 </AlertDialogHeader>
 
                 <AlertDialogFooter className="justify-center gap-2">
                     <AlertDialogCancel asChild>
-                        <Button variant="outline">Cancel</Button>
+                        <Button variant="outline">Batal</Button>
                     </AlertDialogCancel>
                     <Button onClick={() => mutate()} disabled={isPending}>
-                        {isPending ? <Loader2 className="animate-spin" /> : "Create"}
+                        {isPending ? <Loader2 className="animate-spin" /> : "Buat"}
                     </Button>
                 </AlertDialogFooter>
             </AlertDialogContent>

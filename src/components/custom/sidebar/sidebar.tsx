@@ -67,8 +67,8 @@ const Sidebar = () => {
                         }></DrawerTrigger>
                     <DrawerContent aria-describedby="permission-form" className="h-fit max-w-[50vw]">
                         <DrawerHeader>
-                            <DrawerTitle className="flex items-center gap-4">Svtyv</DrawerTitle>
-                            <DrawerDescription className="flex items-center gap-4">Welcome to svtyv</DrawerDescription>
+                            <DrawerTitle className="flex items-center gap-4">tryoutin</DrawerTitle>
+                            <DrawerDescription className="flex items-center gap-4">Selamat datang di tryoutin</DrawerDescription>
                         </DrawerHeader>
                         <div className="flex-1 overflow-y-auto">
                             <ul className="flex flex-col gap-1 p-4">

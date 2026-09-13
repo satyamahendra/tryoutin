@@ -143,7 +143,7 @@ const ReviewSessionPage = () => {
         return (
             <div className="flex flex-col items-center justify-center h-full gap-3">
                 <Loader2 className="animate-spin w-8 h-8 text-primary" />
-                <p className="text-sm text-muted-foreground">Loading results...</p>
+                <p className="text-sm text-muted-foreground">Memuat hasil...</p>
             </div>
         )
     }
@@ -154,9 +154,9 @@ const ReviewSessionPage = () => {
                 <div className="rounded-full bg-destructive/10 p-4">
                     <X className="w-8 h-8 text-destructive" />
                 </div>
-                <h2 className="text-lg font-semibold">Failed to Load Results</h2>
+                <h2 className="text-lg font-semibold">Gagal Memuat Hasil</h2>
                 <Button variant="outline" onClick={() => router.push("/my-sessions")}>
-                    Back to My Sessions
+                    Kembali ke Sesi Saya
                 </Button>
             </div>
         )
@@ -168,10 +168,10 @@ const ReviewSessionPage = () => {
                 <div className="flex items-center gap-2 flex-1 min-w-0">
                     <Button size="sm" variant="ghost" className="shrink-0" onClick={() => router.push("/my-sessions")}>
                         <ArrowLeft className="w-4 h-4 mr-1" />
-                        Back
+                        Kembali
                     </Button>
                     <PiNotebook className="w-4 h-4 text-muted-foreground shrink-0" />
-                    <span className="text-sm font-medium truncate">{exam?.title || "Review"}</span>
+                    <span className="text-sm font-medium truncate">{exam?.title || "Tinjau"}</span>
                     {currentPart && (
                         <>
                             <Separator orientation="vertical" className="h-4" />
@@ -193,7 +193,7 @@ const ReviewSessionPage = () => {
                         </div>
                     )}
                     <Badge variant="secondary" className="text-xs shrink-0">
-                        Review
+                        Tinjau
                     </Badge>
                 </div>
             </header>
@@ -206,7 +206,7 @@ const ReviewSessionPage = () => {
                             <span
                                 key={p.partId}
                                 className="flex items-center gap-1.5 rounded-lg bg-background px-2 py-1 text-xs border">
-                                <span className="font-medium truncate max-w-28">{part?.name || p.partName || "Part"}</span>
+                                <span className="font-medium truncate max-w-28">{part?.name || p.partName || "Bagian"}</span>
                                 <span className="font-bold text-primary tabular-nums">{p.partScore ?? "-"}</span>
                                 <span className="text-[10px] text-muted-foreground">/100</span>
                                 {p.scMax > 0 && (
@@ -241,13 +241,13 @@ const ReviewSessionPage = () => {
                                 />
                             </AnimDiv>
                         )}
-                        {!currentQuestion && <div className="flex items-center justify-center h-full text-sm text-muted-foreground">No questions in this part.</div>}
+                        {!currentQuestion && <div className="flex items-center justify-center h-full text-sm text-muted-foreground">Tidak ada soal di bagian ini.</div>}
                     </div>
 
                     <div className="flex items-center justify-between gap-2 px-4 md:px-6 py-3 border-t bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 shrink-0">
                         <div className="flex items-center gap-2">
                             <span className="text-xs text-muted-foreground">
-                                {answeredQ}/{totalQ} answered
+                                {answeredQ}/{totalQ} terjawab
                             </span>
                         </div>
                         <div className="flex items-center gap-2">
@@ -259,7 +259,7 @@ const ReviewSessionPage = () => {
                                 }}
                                 disabled={currentIndex <= 0}>
                                 <PiCaretLeft className="w-4 h-4 mr-1" />
-                                Previous
+                                Sebelumnya
                             </Button>
                             <Button
                                 size="sm"
@@ -268,7 +268,7 @@ const ReviewSessionPage = () => {
                                     if (currentIndex < questions.length - 1) handleNavigate(currentPartId, questions[currentIndex + 1].id)
                                 }}
                                 disabled={currentIndex >= questions.length - 1}>
-                                Next
+                                Selanjutnya
                                 <PiCaretRight className="w-4 h-4 ml-1" />
                             </Button>
                         </div>

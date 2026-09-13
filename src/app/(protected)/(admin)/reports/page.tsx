@@ -11,8 +11,8 @@ import ReportList from "./components/report-list"
 import ReportDetailDrawer from "./components/report-detail-drawer"
 
 export const metadata: Metadata = {
-    title: "Reports",
-    description: "Manage reports submitted by users.",
+    title: "Laporan",
+    description: "Kelola laporan yang dikirim pengguna.",
 }
 
 type PageProps = {
@@ -31,7 +31,7 @@ const Page = async ({searchParams}: PageProps) => {
 
     return (
         <AnimDiv className="flex flex-col gap-4 pb-4">
-            <PageHeader title="Reports" description="Manage reports" icon={<PiFlag />} />
+            <PageHeader title="Laporan" description="Kelola laporan" icon={<PiFlag />} />
             <ReportDetailDrawer />
             <SearchParams className="w-48 self-end" />
             <Suspense

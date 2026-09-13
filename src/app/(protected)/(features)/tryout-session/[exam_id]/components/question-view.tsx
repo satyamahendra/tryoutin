@@ -37,9 +37,9 @@ type QuestionViewProps = {
 }
 
 const typeLabel: Record<string, {label: string; color: string}> = {
-    single_choice: {label: "Single Choice", color: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"},
-    scaled_choice: {label: "Scaled Choice", color: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400"},
-    multiple_choice: {label: "Multiple Choice", color: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"},
+    single_choice: {label: "Pilihan Tunggal", color: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"},
+    scaled_choice: {label: "Pilihan Berskala", color: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400"},
+    multiple_choice: {label: "Pilihan Ganda", color: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"},
 }
 
 const QuestionView = ({question, questionNumber, totalQuestions, selectedOptionIds, isFlagged, mode, showResult, onSelectOption, onToggleFlag}: QuestionViewProps) => {
@@ -55,13 +55,13 @@ const QuestionView = ({question, questionNumber, totalQuestions, selectedOptionI
                 <div className="flex flex-col gap-1.5 flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                         <span className="text-xs font-semibold text-muted-foreground">
-                            Question {questionNumber} of {totalQuestions}
+                            Soal {questionNumber} dari {totalQuestions}
                         </span>
                         <Badge className={cn("text-[10px] font-normal px-1.5 py-0", info.color)}>{info.label}</Badge>
                     </div>
                     <p className="text-base leading-relaxed">{question.question_text}</p>
                     {isMultiple && !showResult && (
-                        <span className="text-xs text-muted-foreground">Select all that apply.</span>
+                        <span className="text-xs text-muted-foreground">Pilih semua yang berlaku.</span>
                     )}
                 </div>
                 <div className="flex items-center gap-1 shrink-0">
@@ -72,7 +72,7 @@ const QuestionView = ({question, questionNumber, totalQuestions, selectedOptionI
                                 "p-1.5 rounded-md transition-colors",
                                 showHint ? "text-amber-500 bg-amber-50 dark:bg-amber-950/30" : "text-muted-foreground hover:text-amber-500 hover:bg-amber-50/50 dark:hover:bg-amber-950/20",
                             )}
-                            title={showHint ? "Hide hint" : "Show hint"}>
+                            title={showHint ? "Sembunyikan petunjuk" : "Lihat petunjuk"}>
                             <PiLightbulb className={cn("w-4 h-4", showHint && "fill-amber-500")} />
                         </button>
                     )}
@@ -82,7 +82,7 @@ const QuestionView = ({question, questionNumber, totalQuestions, selectedOptionI
                             "p-1.5 rounded-md transition-colors",
                             isFlagged ? "text-amber-500 hover:text-amber-600" : "text-muted-foreground hover:text-foreground",
                         )}
-                        title={isFlagged ? "Unflag" : "Flag for review"}>
+                        title={isFlagged ? "Hapus tanda" : "Tandai untuk ditinjau"}>
                         {isFlagged ? <PiFlagFill className="w-4 h-4" /> : <PiFlag className="w-4 h-4" />}
                     </button>
                 </div>
@@ -91,7 +91,7 @@ const QuestionView = ({question, questionNumber, totalQuestions, selectedOptionI
             {question.question_image && (
                 <div className="rounded-lg border bg-muted/30 p-3 flex items-center justify-center">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={question.question_image} alt="Question" className="max-w-full max-h-64 object-contain rounded" />
+                    <img src={question.question_image} alt="Soal" className="max-w-full max-h-64 object-contain rounded" />
                 </div>
             )}
 
@@ -136,14 +136,14 @@ const QuestionView = ({question, questionNumber, totalQuestions, selectedOptionI
                                 {option.option_image && (
                                     <>
                                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                                        <img src={option.option_image} alt="Option" className="mt-2 max-w-full max-h-32 object-contain rounded" />
+                                        <img src={option.option_image} alt="Opsi" className="mt-2 max-w-full max-h-32 object-contain rounded" />
                                     </>
                                 )}
                                 {showResult && isCorrect && (
-                                    <span className="block text-[10px] font-medium text-green-600 dark:text-green-400 mt-1">Correct answer</span>
+                                    <span className="block text-[10px] font-medium text-green-600 dark:text-green-400 mt-1">Jawaban benar</span>
                                 )}
                                 {showAsWrong && (
-                                    <span className="block text-[10px] font-medium text-red-600 dark:text-red-400 mt-1">Your answer</span>
+                                    <span className="block text-[10px] font-medium text-red-600 dark:text-red-400 mt-1">Jawabanmu</span>
                                 )}
                             </div>
                         </button>
@@ -155,7 +155,7 @@ const QuestionView = ({question, questionNumber, totalQuestions, selectedOptionI
                 <div className="rounded-xl border border-amber-200 bg-amber-50 dark:border-amber-900/50 dark:bg-amber-950/20 p-4">
                     <div className="flex items-center gap-2 text-xs font-semibold text-amber-700 dark:text-amber-400 mb-1">
                         <PiLightbulb className="w-3.5 h-3.5" />
-                        Explanation
+                        Pembahasan
                     </div>
                     <p className="text-sm text-muted-foreground leading-relaxed">{question.explanation}</p>
                 </div>

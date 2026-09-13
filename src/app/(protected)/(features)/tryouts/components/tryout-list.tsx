@@ -23,9 +23,9 @@ const TryoutList = async ({search, category, tags}: TryoutListProps) => {
                         <EmptyMedia variant="icon">
                             {hasFilters ? <PiMagnifyingGlass /> : <PiPackage />}
                         </EmptyMedia>
-                        <EmptyTitle>{hasFilters ? "No matching tryouts" : "No tryouts yet"}</EmptyTitle>
+                        <EmptyTitle>{hasFilters ? "Tidak ada tryout yang cocok" : "Belum ada tryout"}</EmptyTitle>
                         <EmptyDescription>
-                            {hasFilters ? "Try adjusting your filters to find what you're looking for." : "Check back later for new tryouts."}
+                            {hasFilters ? "Coba ubah filtermu untuk menemukan yang kamu cari." : "Nanti cek lagi untuk tryout baru."}
                         </EmptyDescription>
                     </EmptyHeader>
                 </Empty>
@@ -36,9 +36,9 @@ const TryoutList = async ({search, category, tags}: TryoutListProps) => {
     return (
         <AnimDiv id="tryout-list" className="flex flex-col gap-3 flex-1 min-h-0">
             <div className="flex items-center justify-between px-1">
-                <h2 className="text-lg font-semibold tracking-tight">Explore Tryouts</h2>
+                <h2 className="text-lg font-semibold tracking-tight">Jelajahi Tryout</h2>
                 <span className="text-sm text-muted-foreground">
-                    {data.tryouts.length} {data.tryouts.length === 1 ? "tryout" : "tryouts"} available
+                    {data.tryouts.length} {data.tryouts.length === 1 ? "tryout" : "tryout"} tersedia
                 </span>
             </div>
             <ScrollArea className="flex-1 min-h-0 pr-3">

@@ -5,7 +5,7 @@ import {Button} from "@/components/ui/button"
 import {Separator} from "@/components/ui/separator"
 import {PiClock, PiPlay, PiArrowRight, PiCheckCircle, PiTimer, PiWarningCircle, PiEye} from "react-icons/pi"
 import {useRouter} from "next/navigation"
-import {format} from "date-fns"
+import {format} from "@/utils/helpers/format-date"
 import {cn} from "@/lib/utils"
 import type {GetMySession} from "../services/get-my-sessions"
 
@@ -26,7 +26,7 @@ const MySessionCard = ({session}: MySessionCardProps) => {
     const isInProgress = session.status === "in_progress"
     const isPractice = session.type === "practice"
 
-    const statusLabel = isCompleted ? "Finished" : isExpired ? "Not Finished" : "In Progress"
+    const statusLabel = isCompleted ? "Selesai" : isExpired ? "Belum Selesai" : "Sedang Berjalan"
     const statusColor = isCompleted
         ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
         : isExpired
@@ -51,7 +51,7 @@ const MySessionCard = ({session}: MySessionCardProps) => {
                             {statusLabel}
                         </Badge>
                         <Badge variant="outline" className="shrink-0 text-[10px] px-1.5 py-0">
-                            {isPractice ? "Practice" : "Simulation"}
+                            {isPractice ? "Latihan" : "Simulasi"}
                         </Badge>
                     </div>
                     <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground mt-1">
@@ -60,9 +60,9 @@ const MySessionCard = ({session}: MySessionCardProps) => {
                             {format(session.started_at, "dd MMM yyyy")}
                         </span>
                         <Separator orientation="vertical" className="h-3" />
-                        <span>{completedParts}/{totalParts} parts</span>
+                        <span>{completedParts}/{totalParts} bagian</span>
                         <Separator orientation="vertical" className="h-3" />
-                        <span>{answeredCount}/{totalQuestions} questions</span>
+                        <span>{answeredCount}/{totalQuestions} soal</span>
                         {isCompleted && (
                             <>
                                 {session.mc_score != null && (
@@ -91,7 +91,7 @@ const MySessionCard = ({session}: MySessionCardProps) => {
                             router.push(`/review-session/${session.id}`)
                         }}>
                             <PiEye className="mr-1" />
-                            Review
+                            Tinjau
                         </Button>
                     )}
                     {isInProgress && (
@@ -100,7 +100,7 @@ const MySessionCard = ({session}: MySessionCardProps) => {
                             router.push(`/tryout-session/${exam.id}?session=${session.id}&mode=${isPractice ? "practice" : "simulation"}`)
                         }}>
                             <PiPlay className="mr-1" />
-                            Continue
+                            Lanjutkan
                         </Button>
                     )}
                     {isExpired && (
@@ -109,7 +109,7 @@ const MySessionCard = ({session}: MySessionCardProps) => {
                             router.push(`/tryout-session/${exam.id}?mode=simulation`)
                         }}>
                             <PiArrowRight className="mr-1" />
-                            Try Again
+                            Coba Lagi
                         </Button>
                     )}
                 </div>

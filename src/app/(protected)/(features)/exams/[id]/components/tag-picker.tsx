@@ -37,7 +37,7 @@ const TagPicker = ({value, onChange}: TagPickerProps) => {
     return (
         <div className="flex flex-col gap-2">
             <div className="flex flex-wrap gap-1.5 min-h-[32px]">
-                {value.length === 0 && <span className="text-xs text-muted-foreground">No tags selected</span>}
+                {value.length === 0 && <span className="text-xs text-muted-foreground">Belum ada tag dipilih</span>}
                 {value.map((v) => (
                     <Badge key={v.value} variant="secondary" className="gap-1 text-xs">
                         {v.label}
@@ -50,7 +50,7 @@ const TagPicker = ({value, onChange}: TagPickerProps) => {
             <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
                     <Button type="button" variant="outline" size="sm" className="w-fit gap-1.5">
-                        <PiPlus className="w-3 h-3" /> Add Tags
+                        <PiPlus className="w-3 h-3" /> Tambah Tag
                     </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-64 p-2" align="start">
@@ -59,7 +59,7 @@ const TagPicker = ({value, onChange}: TagPickerProps) => {
                             <Loader2 className="animate-spin w-4 h-4 text-muted-foreground" />
                         </div>
                     ) : tags.length === 0 ? (
-                        <p className="text-sm text-muted-foreground text-center py-4">No tags available. Create some in Admin &gt; Tags.</p>
+                        <p className="text-sm text-muted-foreground text-center py-4">Belum ada tag. Buat tag di Admin &gt; Tag.</p>
                     ) : (
                         <div className="flex flex-col gap-0.5 max-h-60 overflow-y-auto">
                             {tags.map((tag) => {

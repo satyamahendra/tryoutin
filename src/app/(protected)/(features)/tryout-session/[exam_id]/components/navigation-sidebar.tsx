@@ -41,7 +41,7 @@ const DesktopSidebar = (props: NavigationSidebarProps) => {
     return (
         <div className="w-64 shrink-0 border-l border-border/60 h-full hidden md:block">
             <ScrollArea className="h-full p-3">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3 px-1">Questions</h3>
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3 px-1">Soal</h3>
             {/* ponytail: key remounts on part change so accordion collapses previous and opens current */}
             <Accordion type="multiple" key={currentPartId} defaultValue={[currentPartId]}>
                 {parts.map((part) => {
@@ -135,9 +135,9 @@ const MobileDrawer = (props: NavigationSidebarProps) => {
                 <DrawerContent className="w-[280px]">
                     <div className="flex flex-col h-full">
                         <div className="px-4 py-4 border-b">
-                            <DrawerTitle className="text-sm font-semibold">Questions</DrawerTitle>
+                            <DrawerTitle className="text-sm font-semibold">Soal</DrawerTitle>
                             <DrawerDescription className="text-xs text-muted-foreground">
-                                {answeredQuestions.size} of {Object.values(questionsByPart).flat().length} answered
+                                {answeredQuestions.size} dari {Object.values(questionsByPart).flat().length} terjawab
                             </DrawerDescription>
                         </div>
                         <ScrollArea className="flex-1 p-3">

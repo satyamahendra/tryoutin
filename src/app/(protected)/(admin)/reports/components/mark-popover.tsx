@@ -20,7 +20,7 @@ const MarkPopover = ({report}: MarkPopoverProps) => {
         mutationFn: updateReport,
         onSuccess() {
             queryClient.invalidateQueries({queryKey: ["reports"]})
-            toast.success("Report updated successfully")
+            toast.success("Laporan berhasil diperbarui")
         },
         onError(err) {
             toast.error(err.message)
@@ -42,13 +42,13 @@ const MarkPopover = ({report}: MarkPopoverProps) => {
                 <PopoverHeader>
                     <div className="flex flex-col gap-y-2">
                         <Button size="sm" disabled={isPending} onClick={() => hanldeSubmit("resolved")}>
-                            Resolve
+                            Selesaikan
                         </Button>
                         <Button size="sm" variant="outline" disabled={isPending} onClick={() => hanldeSubmit("in_review")}>
-                            In Review
+                            Ditinjau
                         </Button>
                         <Button size="sm" variant="destructive" disabled={isPending} onClick={() => hanldeSubmit("rejected")}>
-                            Reject
+                            Tolak
                         </Button>
                     </div>
                 </PopoverHeader>

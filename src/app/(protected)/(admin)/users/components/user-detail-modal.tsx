@@ -83,7 +83,7 @@ const UserDetailModal = () => {
                             <p className="text-sm text-muted-foreground">{userData?.success && userData?.data?.email}</p>
                         </div>
                     </DrawerTitle>
-                    <DrawerDescription className="sr-only">User form modal</DrawerDescription>
+                    <DrawerDescription className="sr-only">Modal formulir pengguna</DrawerDescription>
                 </DrawerHeader>
 
                 <div className="p-6 flex-1 overflow-y-auto">
@@ -97,8 +97,8 @@ const UserDetailModal = () => {
                                 <EmptyMedia variant="icon">
                                     <PiUser />
                                 </EmptyMedia>
-                                <EmptyTitle>Failed to fetch user data</EmptyTitle>
-                                <EmptyDescription>Failed to fetch user data. Please try again.</EmptyDescription>
+                                <EmptyTitle>Gagal ambil data pengguna</EmptyTitle>
+                                <EmptyDescription>Gagal ambil data pengguna. Coba lagi, ya.</EmptyDescription>
                             </EmptyHeader>
                         </Empty>
                     ) : (
@@ -110,8 +110,8 @@ const UserDetailModal = () => {
                                         control={form.control}
                                         render={({field, fieldState}) => (
                                             <FieldSet>
-                                                <FieldLegend variant="label">Roles</FieldLegend>
-                                                <FieldDescription>Define the roles for this user.</FieldDescription>
+                                                <FieldLegend variant="label">Peran</FieldLegend>
+                                                <FieldDescription>Pilih peran buat pengguna ini.</FieldDescription>
                                                 <FieldGroup data-slot="checkbox-group">
                                                     {permissionsAndRoles?.success &&
                                                         permissionsAndRoles.data.roles.map((role) => (
@@ -145,8 +145,8 @@ const UserDetailModal = () => {
                                         control={form.control}
                                         render={({field, fieldState}) => (
                                             <FieldSet>
-                                                <FieldLegend variant="label">Permissions</FieldLegend>
-                                                <FieldDescription>Define the permissions for this user.</FieldDescription>
+                                                <FieldLegend variant="label">Izin Akses</FieldLegend>
+                                                <FieldDescription>Pilih izin akses buat pengguna ini.</FieldDescription>
                                                 <FieldGroup data-slot="checkbox-group">
                                                     {permissionsAndRoles?.success &&
                                                         permissionsAndRoles.data.permissions.map((permission) => (
@@ -184,11 +184,11 @@ const UserDetailModal = () => {
                     <DrawerClose
                         render={
                             <Button variant="outline" className="w-full">
-                                Cancel
+                                Batal
                             </Button>
                         }></DrawerClose>
                     <Button disabled={isPending} type="submit" form="user-form">
-                        {isPending ? <Loader2 className="animate-spin" /> : "Submit"}
+                        {isPending ? <Loader2 className="animate-spin" /> : "Simpan"}
                     </Button>
                 </DrawerFooter>
             </DrawerContent>

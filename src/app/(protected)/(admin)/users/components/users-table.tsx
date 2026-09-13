@@ -22,8 +22,8 @@ export async function UsersTable({page, search}: Props) {
                             <EmptyMedia variant="icon">
                                 <PiUser />
                             </EmptyMedia>
-                            <EmptyTitle>No users found</EmptyTitle>
-                            <EmptyDescription>There are currently no users available.</EmptyDescription>
+                            <EmptyTitle>Tidak ada pengguna</EmptyTitle>
+                            <EmptyDescription>Saat ini belum ada pengguna yang tersedia.</EmptyDescription>
                         </EmptyHeader>
                     </Empty>
                 </div>

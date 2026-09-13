@@ -15,9 +15,9 @@ import {ScrollArea} from "@/components/ui/scroll-area"
 type FilterType = "simulation" | "practice" | "all"
 
 const FILTERS: {value: FilterType; label: string; icon: React.ReactNode}[] = [
-    {value: "simulation", label: "Simulation", icon: <PiTimer className="w-3.5 h-3.5" />},
-    {value: "practice", label: "Practice", icon: <PiGameController className="w-3.5 h-3.5" />},
-    {value: "all", label: "All", icon: <PiNotebook className="w-3.5 h-3.5" />},
+    {value: "simulation", label: "Simulasi", icon: <PiTimer className="w-3.5 h-3.5" />},
+    {value: "practice", label: "Latihan", icon: <PiGameController className="w-3.5 h-3.5" />},
+    {value: "all", label: "Semua", icon: <PiNotebook className="w-3.5 h-3.5" />},
 ]
 
 const MySessionList = () => {
@@ -52,8 +52,8 @@ const MySessionList = () => {
                         <EmptyMedia variant="icon">
                             <PiWarning />
                         </EmptyMedia>
-                        <EmptyTitle>Something Went Wrong</EmptyTitle>
-                        <EmptyDescription>{data?.message ?? "An unexpected error occurred"}. Please try again later.</EmptyDescription>
+                        <EmptyTitle>Terjadi Kesalahan</EmptyTitle>
+                        <EmptyDescription>{data?.message ?? "Terjadi kesalahan tak terduga"}. Coba lagi nanti, ya.</EmptyDescription>
                     </EmptyHeader>
                 </Empty>
             </div>
@@ -68,9 +68,9 @@ const MySessionList = () => {
                         <EmptyMedia variant="icon">
                             <PiTimer />
                         </EmptyMedia>
-                        <EmptyTitle>No Sessions Yet</EmptyTitle>
+                        <EmptyTitle>Belum Ada Sesi</EmptyTitle>
                         <EmptyDescription>
-                            Start a tryout from your collection to see your sessions here.
+Mulai tryout dari koleksimu buat lihat sesi di sini.
                         </EmptyDescription>
                     </EmptyHeader>
                 </Empty>
@@ -106,13 +106,13 @@ const MySessionList = () => {
                                     <EmptyMedia variant="icon">
                                         <PiTimer />
                                     </EmptyMedia>
-                                    <EmptyTitle>No {filter === "simulation" ? "Simulation" : filter === "practice" ? "Practice" : ""} Sessions</EmptyTitle>
+                                    <EmptyTitle>Belum Ada Sesi {filter === "simulation" ? "Simulasi" : filter === "practice" ? "Latihan" : ""}</EmptyTitle>
                                     <EmptyDescription>
                                         {filter === "simulation"
-                                            ? "Start a tryout simulation from your collection."
+                                            ? "Mulai simulasi tryout dari koleksimu."
                                             : filter === "practice"
-                                              ? "Try a practice session from your collection."
-                                              : "Start a tryout from your collection to see your sessions here."}
+                                              ? "Coba sesi latihan dari koleksimu."
+                                              : "Mulai tryout dari koleksimu untuk melihat sesi di sini."}
                                     </EmptyDescription>
                                 </EmptyHeader>
                             </Empty>

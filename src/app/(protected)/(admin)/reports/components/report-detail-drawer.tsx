@@ -7,7 +7,7 @@ import {PiCalendarDots, PiChatCentered, PiFlag, PiX} from "react-icons/pi"
 import {getReport} from "../services/get-report"
 import {Badge} from "@/components/ui/badge"
 import {normalizeString} from "@/utils/helpers/normalize-string"
-import {format} from "date-fns"
+import {format} from "@/utils/helpers/format-date"
 import {ScrollArea} from "@/components/ui/scroll-area"
 import MessageForm from "./message-form"
 import MarkPopover from "./mark-popover"
@@ -38,16 +38,16 @@ const ReportDetailDrawer = () => {
     const thisType = reportTypeOptions.find((option) => option.value === report?.type)
 
     const displayData = [
-        {label: "Type", value: normalizeString(report?.type || "-"), icon: thisType?.icon},
+        {label: "Tipe", value: normalizeString(report?.type || "-"), icon: thisType?.icon},
         {label: "Status", value: normalizeString(report?.status || "-"), icon: thisStatus?.icon},
         {
-            label: "Created At",
-            value: report?.created_at ? `Created at ${format(report?.created_at, "dd MMM yyyy")}` : "-",
+            label: "Dibuat Pada",
+            value: report?.created_at ? `Dibuat pada ${format(report?.created_at, "dd MMM yyyy")}` : "-",
             icon: <PiCalendarDots />,
         },
         {
-            label: "Resolved At",
-            value: report?.resolved_at ? `Solved at ${format(report?.resolved_at, "dd MMM yyyy")}` : "-",
+            label: "Diselesaikan Pada",
+            value: report?.resolved_at ? `Diselesaikan pada ${format(report?.resolved_at, "dd MMM yyyy")}` : "-",
             icon: <PiCalendarDots />,
         },
     ]
@@ -58,9 +58,9 @@ const ReportDetailDrawer = () => {
                 <DrawerHeader className="flex flex-col items-center justify-center">
                     <DrawerTitle className="flex items-center gap-2">
                         <PiFlag />
-                        Report Details
+                        Detail Laporan
                     </DrawerTitle>
-                    <DrawerDescription>View and respond to the report.</DrawerDescription>
+                    <DrawerDescription>Lihat dan tanggapi laporan.</DrawerDescription>
                 </DrawerHeader>
 
                 <div className="p-6 flex-1 flex flex-col min-h-0 overflow-auto-y">
@@ -74,8 +74,8 @@ const ReportDetailDrawer = () => {
                                 <EmptyMedia variant="icon">
                                     <PiX />
                                 </EmptyMedia>
-                                <EmptyTitle>Failed to fetch report</EmptyTitle>
-                                <EmptyDescription>Failed to fetch report. Please try again.</EmptyDescription>
+                                <EmptyTitle>Gagal ambil laporan</EmptyTitle>
+                                <EmptyDescription>Gagal ambil laporan. Coba lagi, ya.</EmptyDescription>
                             </EmptyHeader>
                         </Empty>
                     ) : (
@@ -97,7 +97,7 @@ const ReportDetailDrawer = () => {
 
                                 <ul className="flex gap-2 mt-2 flex-wrap">
                                     {displayData.map((d, index) => {
-                                        const className = d.label === "Status" ? thisStatus?.className : d.label === "Type" ? thisType?.className : undefined
+                                        const className = d.label === "Status" ? thisStatus?.className : d.label === "Tipe" ? thisType?.className : undefined
 
                                         return (
                                             <li key={index}>
@@ -147,8 +147,8 @@ const ReportDetailDrawer = () => {
                                                     <EmptyMedia variant="icon">
                                                         <PiChatCentered />
                                                     </EmptyMedia>
-                                                    <EmptyTitle>Start a conversation</EmptyTitle>
-                                                    <EmptyDescription>Send a message to get started</EmptyDescription>
+                                                    <EmptyTitle>Mulai percakapan</EmptyTitle>
+                                                    <EmptyDescription>Kirim pesan buat mulai</EmptyDescription>
                                                 </EmptyHeader>
                                             </Empty>
                                         </AnimDiv>

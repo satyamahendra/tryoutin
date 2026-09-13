@@ -112,8 +112,8 @@ const ProductForm = () => {
         mutationFn: async (data: {id_product: string}) => await axios.post("/api/midtrans/token", data),
         onSuccess: (data) => {
             window.snap.pay(data.data.data.token, {
-                onSuccess: () => toast.success("Payment successful!"),
-                onError: () => toast.error("Something went wrong."),
+                onSuccess: () => toast.success("Pembayaran berhasil!"),
+                onError: () => toast.error("Terjadi kesalahan."),
             })
         },
         onError: (error) => {
@@ -131,9 +131,9 @@ const ProductForm = () => {
                 <DrawerHeader className="flex flex-col items-center justify-center">
                     <DrawerTitle className="flex items-center gap-2">
                         <PiPackage />
-                        Product
+                        Produk
                     </DrawerTitle>
-                    <DrawerDescription>View and manage product details.</DrawerDescription>
+                    <DrawerDescription>Lihat dan kelola detail produk.</DrawerDescription>
                     {product && product?.is_active && (
                         <Button
                             className="rounded-lg mt-2 space-x-2"
@@ -144,11 +144,11 @@ const ProductForm = () => {
                             {isBuying ? (
                                 <>
                                     <Loader2 className="animate-spin" />
-                                    Buying...
+                                    Membeli...
                                 </>
                             ) : (
                                 <>
-                                    <PiBasket /> Test Buy
+                                    <PiBasket /> Tes Beli
                                 </>
                             )}
                         </Button>
@@ -165,8 +165,8 @@ const ProductForm = () => {
                             <EmptyMedia variant="icon">
                                 <PiX />
                             </EmptyMedia>
-                            <EmptyTitle>Failed to fetch product</EmptyTitle>
-                            <EmptyDescription>Failed to fetch product. Please try again.</EmptyDescription>
+                            <EmptyTitle>Gagal ambil produk</EmptyTitle>
+                            <EmptyDescription>Gagal ambil produk. Coba lagi, ya.</EmptyDescription>
                         </EmptyHeader>
                     </Empty>
                 ) : (
@@ -179,8 +179,8 @@ const ProductForm = () => {
                                         control={form.control}
                                         render={({field, fieldState}) => (
                                             <Field data-invalid={fieldState.invalid}>
-                                                <FieldLabel htmlFor="name">Name</FieldLabel>
-                                                <Input {...field} id="name" aria-invalid={fieldState.invalid} placeholder="Product Name" />
+                                                <FieldLabel htmlFor="name">Nama</FieldLabel>
+                                                <Input {...field} id="name" aria-invalid={fieldState.invalid} placeholder="Nama Produk" />
                                                 {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                             </Field>
                                         )}
@@ -190,11 +190,11 @@ const ProductForm = () => {
                                         control={form.control}
                                         render={({field, fieldState}) => (
                                             <Field data-invalid={fieldState.invalid}>
-                                                <FieldLabel htmlFor="type">Type</FieldLabel>
+                                                <FieldLabel htmlFor="type">Tipe</FieldLabel>
                                                 <InfiniteCombobox
                                                     value={field.value ? {value: field.value, label: field.value === "single" ? "Single" : "Bundle"} : null}
                                                     onChange={(opt) => field.onChange(opt?.value ?? null)}
-                                                    placeholder="Select product type"
+                                                    placeholder="Pilih tipe produk"
                                                     options={[
                                                         {value: "single", label: "Single"},
                                                         {value: "bundle", label: "Bundle"},
@@ -211,13 +211,13 @@ const ProductForm = () => {
                                         control={form.control}
                                         render={({field, fieldState}) => (
                                             <Field data-invalid={fieldState.invalid}>
-                                                <FieldLabel htmlFor="price_actual">Price Actual</FieldLabel>
+                                                <FieldLabel htmlFor="price_actual">Harga Asli</FieldLabel>
                                                 <Input
                                                     {...field}
                                                     type="number"
                                                     id="price_actual"
                                                     aria-invalid={fieldState.invalid}
-                                                    placeholder="Price Actual"
+                                                    placeholder="Harga Asli"
                                                     onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : 0)}
                                                 />
                                                 {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -229,13 +229,13 @@ const ProductForm = () => {
                                         control={form.control}
                                         render={({field, fieldState}) => (
                                             <Field data-invalid={fieldState.invalid}>
-                                                <FieldLabel htmlFor="price_alternate">Price Alternate</FieldLabel>
+                                                <FieldLabel htmlFor="price_alternate">Harga Alternatif</FieldLabel>
                                                 <Input
                                                     {...field}
                                                     type="number"
                                                     id="price_alternate"
                                                     aria-invalid={fieldState.invalid}
-                                                    placeholder="Price Alternate"
+                                                    placeholder="Harga Alternatif"
                                                     onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : 0)}
                                                 />
                                                 {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -250,7 +250,7 @@ const ProductForm = () => {
                                         control={form.control}
                                         render={({field, fieldState}) => (
                                             <Field data-invalid={fieldState.invalid}>
-                                                <FieldLabel htmlFor="is_active">Is active?</FieldLabel>
+                                                <FieldLabel htmlFor="is_active">Aktif?</FieldLabel>
                                                 <Switch checked={field?.value} onCheckedChange={field.onChange} id="is_active" aria-invalid={fieldState.invalid} />
                                                 {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                             </Field>
@@ -260,7 +260,7 @@ const ProductForm = () => {
 
                                 <div className="flex flex-col gap-4">
                                     <div className="flex items-center gap-2">
-                                        <Label>Bundle Items</Label>
+                                        <Label>Item Bundle</Label>
                                         <Button size="icon-xs" type="button" onClick={() => append({product_id: {label: "", value: ""}})} variant="outline">
                                             <PiPlus />
                                         </Button>
@@ -278,7 +278,7 @@ const ProductForm = () => {
                                                                 <InfiniteCombobox
                                                                     value={field.value}
                                                                     onChange={field.onChange}
-                                                                    placeholder="Select a product"
+                                                                    placeholder="Pilih produk"
                                                                     queryKey={["products"]}
                                                                     invalid={fieldState.invalid}
                                                                     queryFn={(page, search) => getProducts(page, search)}
@@ -315,17 +315,17 @@ const ProductForm = () => {
                     <DrawerClose
                         render={
                             <Button variant="outline" className="w-full">
-                                Cancel
+                                Batal
                             </Button>
                         }></DrawerClose>
                     <div className="flex w-full gap-2">
                         {product && (
                             <Button disabled={isPending} onClick={() => mutateDelete(product.id)} variant={"destructive"} type="button" className="flex-1">
-                                <PiTrash /> {isPending ? <Loader2 className="animate-spin" /> : "Delete Product"}
+                                <PiTrash /> {isPending ? <Loader2 className="animate-spin" /> : "Hapus Produk"}
                             </Button>
                         )}
                         <Button disabled={isPending} type="submit" form="product-form" className="flex-1">
-                            {isPending ? <Loader2 className="animate-spin" /> : "Submit"}
+                            {isPending ? <Loader2 className="animate-spin" /> : "Simpan"}
                         </Button>
                     </div>
                 </DrawerFooter>

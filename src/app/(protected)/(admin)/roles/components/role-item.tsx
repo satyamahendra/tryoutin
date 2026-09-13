@@ -35,7 +35,7 @@ const RoleItem = ({role}: RoleItemProps) => {
                             <Tooltip>
                                 <TooltipTrigger asChild>
                                     <Badge variant={"outline"} className="text-muted-foreground">
-                                        +{restPermissions.length} more
+                                        +{restPermissions.length} lainnya
                                     </Badge>
                                 </TooltipTrigger>
                                 <TooltipContent>

@@ -11,8 +11,8 @@ import SearchParams from "@/components/custom/search-params"
 import UserDetailModal from "./components/user-detail-modal"
 
 export const metadata: Metadata = {
-    title: "Users",
-    description: "Manage users and their access.",
+    title: "Pengguna",
+    description: "Kelola pengguna beserta hak aksesnya.",
 }
 
 type PageProps = {
@@ -31,7 +31,7 @@ const Page = async ({searchParams}: PageProps) => {
 
     return (
         <AnimDiv className="flex flex-col gap-4 pb-4">
-            <PageHeader title="Users" description="Manage users" icon={<PiUser />} />
+            <PageHeader title="Pengguna" description="Kelola pengguna" icon={<PiUser />} />
             <UserDetailModal />
             <SearchParams className="w-48 self-end" />
             <Suspense

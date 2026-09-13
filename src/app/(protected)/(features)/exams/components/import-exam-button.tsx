@@ -47,7 +47,7 @@ const ImportExamButton = () => {
         if (!file) return
 
         if (!file.name.endsWith(".json")) {
-            toast.error("Please select a JSON file")
+            toast.error("Pilih berkas JSON terlebih dahulu")
             return
         }
 
@@ -63,7 +63,7 @@ const ImportExamButton = () => {
                 if (err instanceof Error) {
                     toast.error(err.message)
                 } else {
-                    toast.error("Invalid JSON format")
+                    toast.error("Format JSON tidak valid")
                 }
             }
         }
@@ -82,13 +82,13 @@ const ImportExamButton = () => {
             }}>
             <DialogTrigger asChild>
                 <Button variant="outline">
-                    <PiFileArrowUp /> Import
+                    <PiFileArrowUp /> Impor
                 </Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Import Exam</DialogTitle>
-                    <DialogDescription>Select a JSON file formatted like the upsert-exam schema.</DialogDescription>
+                    <DialogTitle>Impor Ujian</DialogTitle>
+                    <DialogDescription>Pilih berkas JSON dengan format seperti skema upsert-exam.</DialogDescription>
                 </DialogHeader>
 
                 <div className="flex flex-col gap-3">
@@ -100,7 +100,7 @@ const ImportExamButton = () => {
                         {fileName ? (
                             <span className="text-sm font-medium">{fileName}</span>
                         ) : (
-                            <span className="text-sm text-muted-foreground">Click to select a JSON file</span>
+                            <span className="text-sm text-muted-foreground">Klik buat pilih berkas JSON</span>
                         )}
                     </label>
                 </div>
@@ -108,7 +108,7 @@ const ImportExamButton = () => {
                 <DialogFooter>
                     {isPending && (
                         <span className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <Loader2 className="animate-spin size-4" /> Importing...
+                            <Loader2 className="animate-spin size-4" /> Mengimpor...
                         </span>
                     )}
                 </DialogFooter>

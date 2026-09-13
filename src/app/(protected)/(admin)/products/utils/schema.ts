@@ -1,13 +1,13 @@
 import {z} from "zod"
 
 const productOptionSchema = z.object({
-    label: z.string().min(1, "Please select a product"),
-    value: z.string().min(1, "Please select a product"),
+label: z.string().min(1, "Pilih produk dulu, ya"),
+        value: z.string().min(1, "Pilih produk dulu, ya"),
 })
 
 export const productSchema = z.object({
     id: z.string(),
-    name: z.string().min(1, "Product name is required"),
+    name: z.string().min(1, "Nama produk wajib diisi"),
     price_alternate: z.number().min(0),
     price_actual: z.number().min(0),
     type: z.enum(["single", "bundle"]),

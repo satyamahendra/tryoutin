@@ -36,9 +36,9 @@ const ExamPartForm = ({partIndex, form, onRemove}: ExamPartFormProps) => {
                             {partIndex + 1}
                         </span>
                         <div className="flex flex-col flex-1 min-w-0">
-                            <span className="text-sm font-medium truncate">{partName || "Untitled Part"}</span>
+                            <span className="text-sm font-medium truncate">{partName || "Bagian Tanpa Judul"}</span>
                             <span className="text-xs text-muted-foreground">
-                                {fields.length} question{fields.length !== 1 ? "s" : ""}
+                                {fields.length} soal
                             </span>
                         </div>
                         <Button type="button" variant="destructive" size="icon" onClick={onRemove}>
@@ -57,12 +57,12 @@ const ExamPartForm = ({partIndex, form, onRemove}: ExamPartFormProps) => {
                                     control={form.control}
                                     render={({field, fieldState}) => (
                                         <Field data-invalid={fieldState.invalid} className="flex-1">
-                                            <FieldLabel htmlFor={`parts.${partIndex}.name`}>Part Name</FieldLabel>
+                                            <FieldLabel htmlFor={`parts.${partIndex}.name`}>Nama Bagian</FieldLabel>
                                             <Input
                                                 {...field}
                                                 id={`parts.${partIndex}.name`}
                                                 aria-invalid={fieldState.invalid}
-                                                placeholder="e.g. Reading Comprehension"
+                                                placeholder="mis. Reading Comprehension"
                                                 value={field.value ?? ""}
                                             />
                                             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -74,7 +74,7 @@ const ExamPartForm = ({partIndex, form, onRemove}: ExamPartFormProps) => {
                                     control={form.control}
                                     render={({field, fieldState}) => (
                                         <Field data-invalid={fieldState.invalid} className="w-36">
-                                            <FieldLabel htmlFor={`parts.${partIndex}.passing_score`}>Passing Score</FieldLabel>
+                                            <FieldLabel htmlFor={`parts.${partIndex}.passing_score`}>Nilai Kelulusan</FieldLabel>
                                             <Input
                                                 {...field}
                                                 id={`parts.${partIndex}.passing_score`}
@@ -82,7 +82,7 @@ const ExamPartForm = ({partIndex, form, onRemove}: ExamPartFormProps) => {
                                                 min={0}
                                                 max={100}
                                                 aria-invalid={fieldState.invalid}
-                                                placeholder="e.g. 70"
+                                                placeholder="mis. 70"
                                                 value={field.value ?? ""}
                                                 onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : null)}
                                             />
@@ -96,7 +96,7 @@ const ExamPartForm = ({partIndex, form, onRemove}: ExamPartFormProps) => {
                                     render={({field, fieldState}) => (
                                         <Field data-invalid={fieldState.invalid} className="w-36">
                                             <FieldLabel htmlFor={`parts.${partIndex}.duration_minutes`} className="flex items-center gap-1">
-                                                <PiClock className="w-3 h-3" /> Duration (min)
+                                                <PiClock className="w-3 h-3" /> Durasi (menit)
                                             </FieldLabel>
                                             <Input
                                                 {...field}
@@ -104,7 +104,7 @@ const ExamPartForm = ({partIndex, form, onRemove}: ExamPartFormProps) => {
                                                 type="number"
                                                 min={1}
                                                 aria-invalid={fieldState.invalid}
-                                                placeholder="e.g. 30"
+                                                placeholder="mis. 30"
                                                 value={field.value ?? ""}
                                                 onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : null)}
                                             />
@@ -119,13 +119,13 @@ const ExamPartForm = ({partIndex, form, onRemove}: ExamPartFormProps) => {
                             <div className="flex items-center justify-between">
                                 <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wide flex items-center gap-1.5">
                                     <PiFileText className="w-3.5 h-3.5" />
-                                    Questions ({fields.length})
+                                    Soal ({fields.length})
                                 </h4>
                                 <Button type="button" variant="ghost" size="sm" className="h-7 text-xs" onClick={() => {
                                     append(makeExamQuestion())
                                     form.clearErrors(`parts.${partIndex}.questions` as PartQuestionsArrayPath)
                                 }}>
-                                    <PiPlus className="w-3 h-3" /> Add
+                                    <PiPlus className="w-3 h-3" /> Tambah
                                 </Button>
                             </div>
 

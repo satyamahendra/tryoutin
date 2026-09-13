@@ -21,7 +21,7 @@ export function hasAccess(item: MenuItem, userPermissions: string[], userRoles: 
 
 export const menuItems = [
     {
-        label: "Home",
+        label: "Beranda",
         href: "/home",
         icon: <PiHouse />,
         permissions: ["read home", "manage home"],
@@ -30,7 +30,7 @@ export const menuItems = [
     },
 
     {
-        label: "Tryouts",
+        label: "Tryout",
         href: "/tryouts",
         icon: <PiStorefront />,
         permissions: ["read exams", "manage exams"],
@@ -39,7 +39,7 @@ export const menuItems = [
     },
 
     {
-        label: "My Tryouts",
+        label: "Tryout Saya",
         href: "/my-tryouts",
         icon: <PiNotebook />,
         permissions: ["read exams", "manage exams"],
@@ -48,7 +48,7 @@ export const menuItems = [
     },
 
     {
-        label: "Leaderboards",
+        label: "Papan Peringkat",
         href: "/leaderboards",
         icon: <PiTrophy />,
         permissions: ["read exams", "manage exams"],
@@ -57,7 +57,7 @@ export const menuItems = [
     },
 
     {
-        label: "My Orders",
+        label: "Pesanan Saya",
         href: "/my-orders",
         icon: <PiReceipt />,
         permissions: [],
@@ -66,7 +66,7 @@ export const menuItems = [
     },
 
     {
-        label: "My Sessions",
+        label: "Sesi Saya",
         href: "/my-sessions",
         icon: <PiClock />,
         permissions: ["read exams", "manage exams"],
@@ -75,14 +75,14 @@ export const menuItems = [
     },
 
     {
-        label: "Settings",
+        label: "Pengaturan",
         href: "",
         icon: <PiGear />,
         permissions: [],
         roles: [],
         children: [
             {
-                label: "Exams",
+                label: "Ujian",
                 href: "/exams",
                 icon: <PiFileText />,
                 permissions: ["read exams", "manage exams"],
@@ -90,7 +90,7 @@ export const menuItems = [
                 children: [],
             },
             {
-                label: "Tags",
+                label: "Tag",
                 href: "/tags",
                 icon: <PiTag />,
                 permissions: ["read tags", "manage tags"],
@@ -107,7 +107,7 @@ export const menuItems = [
         roles: [],
         children: [
             {
-                label: "Permissions",
+                label: "Izin Akses",
                 href: "/permissions",
                 icon: <PiKey />,
                 permissions: ["read permissions", "manage permissions"],
@@ -115,7 +115,7 @@ export const menuItems = [
                 children: [],
             },
             {
-                label: "Roles",
+                label: "Peran",
                 href: "/roles",
                 icon: <PiCardholder />,
                 permissions: ["read roles", "manage roles"],
@@ -123,7 +123,7 @@ export const menuItems = [
                 children: [],
             },
             {
-                label: "Users",
+                label: "Pengguna",
                 href: "/users",
                 icon: <PiUser />,
                 permissions: ["read users", "manage users"],
@@ -131,7 +131,7 @@ export const menuItems = [
                 children: [],
             },
             {
-                label: "Orders",
+                label: "Pesanan",
                 href: "/orders",
                 icon: <PiTicket />,
                 permissions: ["read orders", "manage orders"],
@@ -139,7 +139,7 @@ export const menuItems = [
                 children: [],
             },
             {
-                label: "Products",
+                label: "Produk",
                 href: "/products",
                 icon: <PiPackage />,
                 permissions: ["read products", "manage products"],
@@ -148,7 +148,7 @@ export const menuItems = [
             },
 
             {
-                label: "Reports",
+                label: "Laporan",
                 href: "/reports",
                 icon: <PiFlag />,
                 permissions: ["read reports", "manage reports"],

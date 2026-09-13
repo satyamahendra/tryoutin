@@ -34,7 +34,7 @@ type InfiniteComboboxProps<TPage> = {
     invalid?: boolean
 } & (StaticProps | DynamicProps<TPage>)
 
-export function InfiniteCombobox<TPage>({value, onChange, placeholder = "Select...", ...props}: InfiniteComboboxProps<TPage>) {
+export function InfiniteCombobox<TPage>({value, onChange, placeholder = "Pilih...", ...props}: InfiniteComboboxProps<TPage>) {
     const [search, setSearch] = useState("")
     const debouncedSearch = useDebounce(search, 300)
     const sentinelRef = useRef<HTMLDivElement>(null)
@@ -98,7 +98,7 @@ export function InfiniteCombobox<TPage>({value, onChange, placeholder = "Select.
             <ComboboxContent 
                 onWheel={(e) => e.stopPropagation()}
                 className="p-0 pointer-events-auto">
-                <ComboboxEmpty>{isFetchingNextPage ? "Loading..." : "No results found."}</ComboboxEmpty>
+                <ComboboxEmpty>{isFetchingNextPage ? "Memuat..." : "Tidak ada hasil ditemukan."}</ComboboxEmpty>
                 <ComboboxList>
                     {(option) => (
                         <ComboboxItem key={option.value} value={option}>
@@ -108,7 +108,7 @@ export function InfiniteCombobox<TPage>({value, onChange, placeholder = "Select.
                 </ComboboxList>
                 {!isStatic && (
                     <div ref={sentinelRef} className="py-2 text-center text-xs text-muted-foreground">
-                        {isFetchingNextPage && "Loading more..."}
+                        {isFetchingNextPage && "Memuat lebih banyak..."}
                     </div>
                 )}
             </ComboboxContent>

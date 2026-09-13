@@ -53,7 +53,7 @@ const MessageForm = ({report}: MessageFormProps) => {
                             control={form.control}
                             render={({field, fieldState}) => (
                                 <Field data-invalid={fieldState.invalid}>
-                                    <Input {...field} id={field.name} aria-invalid={fieldState.invalid} placeholder="Your message here..." autoComplete="off" />
+                                    <Input {...field} id={field.name} aria-invalid={fieldState.invalid} placeholder="Tulis pesanmu di sini..." autoComplete="off" />
                                     {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                 </Field>
                             )}

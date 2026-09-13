@@ -27,12 +27,12 @@ const LeaderboardCard = ({exam}: {exam: LeaderboardExam}) => {
                 </div>
                 <div className="flex items-center gap-1.5 text-xs text-muted-foreground pt-0.5">
                     <PiUsers className="w-3.5 h-3.5" />
-                    {exam.participantCount} {exam.participantCount === 1 ? "participant" : "participants"}
+                    {exam.participantCount} peserta
                 </div>
             </CardHeader>
             <CardContent className="flex flex-col gap-2 flex-1">
                 {exam.topUsers.length === 0 ? (
-                    <p className="text-sm text-muted-foreground py-4 text-center">No scores yet. Be the first!</p>
+                    <p className="text-sm text-muted-foreground py-4 text-center">Belum ada skor. Jadilah yang pertama!</p>
                 ) : (
                     <ul className="flex flex-col gap-1.5">
                         {exam.topUsers.map((u) => (
@@ -58,7 +58,7 @@ const LeaderboardCard = ({exam}: {exam: LeaderboardExam}) => {
                     }}
                     className="mt-auto flex items-center justify-center gap-1.5 text-xs font-medium text-primary hover:underline pt-2">
                     <PiTrophy className="w-3.5 h-3.5" />
-                    View full leaderboard
+                    Lihat papan peringkat lengkap
                 </button>
             </CardContent>
         </Card>

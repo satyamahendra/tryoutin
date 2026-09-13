@@ -34,7 +34,7 @@ export async function updateUser(data: UserFormSchema): Promise<ServerResult<Use
         })
 
         revalidatePath("/")
-        return {success: true, data: updated, message: "User updated successfully"}
+        return {success: true, data: updated, message: "Pengguna berhasil diperbarui"}
     } catch (error) {
         return handleServerError(error)
     }

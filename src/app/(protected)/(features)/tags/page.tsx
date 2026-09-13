@@ -8,8 +8,8 @@ import {getTags} from "./services/get-tags"
 import TagList from "./components/tag-list"
 
 export const metadata: Metadata = {
-    title: "Tags",
-    description: "Manage exam tags.",
+    title: "Tag",
+    description: "Kelola tag ujian.",
 }
 
 const Page = async () => {
@@ -21,7 +21,7 @@ const Page = async () => {
 
     return (
         <AnimDiv className="flex flex-col gap-4">
-            <PageHeader title="Tags" description="Manage exam tags" icon={<PiTag />} />
+            <PageHeader title="Tag" description="Kelola tag ujian" icon={<PiTag />} />
             <TagList tags={tags} />
         </AnimDiv>
     )

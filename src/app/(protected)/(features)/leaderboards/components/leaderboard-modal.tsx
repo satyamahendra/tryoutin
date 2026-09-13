@@ -39,7 +39,7 @@ const LeaderboardModal = () => {
                         <Loader2 className="animate-spin w-6 h-6 text-muted-foreground" />
                     </div>
                 ) : !data?.success || !data.data ? (
-                    <div className="flex items-center justify-center h-full text-sm text-muted-foreground">Leaderboard not found.</div>
+                    <div className="flex items-center justify-center h-full text-sm text-muted-foreground">Papan peringkat tidak ditemukan.</div>
                 ) : (
                     <>
                         <div className="relative bg-gradient-to-br from-primary/90 via-primary to-primary/70 text-primary-foreground px-6 py-7">
@@ -57,14 +57,14 @@ const LeaderboardModal = () => {
                                     )}
                                 </div>
                                 <DrawerDescription className="text-primary-foreground/80 text-sm">
-                                    {users.length} {users.length === 1 ? "participant" : "participants"} ranked
+                                    {users.length} peserta berperingkat
                                 </DrawerDescription>
                             </DrawerHeader>
                         </div>
 
                         <div className="flex flex-col gap-3 px-6 py-5 overflow-y-auto flex-1">
                             <InputGroup className="bg-background border-border/50">
-                                <InputGroupInput placeholder="Search participants..." value={search} onChange={(e) => setSearch(e.target.value)} />
+                                <InputGroupInput placeholder="Cari peserta..." value={search} onChange={(e) => setSearch(e.target.value)} />
                                 <InputGroupAddon>
                                     <PiMagnifyingGlass />
                                 </InputGroupAddon>
@@ -72,7 +72,7 @@ const LeaderboardModal = () => {
 
                             {filtered.length === 0 ? (
                                 <div className="rounded-xl border border-dashed border-border py-10 text-center text-sm text-muted-foreground">
-                                    {users.length === 0 ? "No scores yet." : "No participants match your search."}
+                                    {users.length === 0 ? "Belum ada skor." : "Tidak ada peserta yang cocok dengan pencarianmu."}
                                 </div>
                             ) : (
                                 <ul className="flex flex-col gap-1">

@@ -11,8 +11,8 @@ import OrderList from "./components/order-list"
 import OrderDetailDrawer from "./components/order-detail-drawer"
 
 export const metadata: Metadata = {
-    title: "Orders",
-    description: "Manage orders and payments.",
+    title: "Pesanan",
+    description: "Kelola pesanan dan pembayaran.",
 }
 
 type PageProps = {
@@ -31,7 +31,7 @@ const Page = async ({searchParams}: PageProps) => {
 
     return (
         <AnimDiv className="flex flex-col gap-4">
-            <PageHeader title="Orders" description="Manage orders" icon={<PiTicket />} />
+            <PageHeader title="Pesanan" description="Kelola pesanan" icon={<PiTicket />} />
             <OrderDetailDrawer />
             <SearchParams className="w-48 self-end" />
             <Suspense

@@ -17,7 +17,7 @@ const GoogleItem = () => {
             callbackURL: "/home",
         })
         if (error) {
-            toast.error(error.message ?? "Failed to sign in.")
+            toast.error(error.message ?? "Gagal masuk.")
             setIsLoading(false)
         }
     }
@@ -28,7 +28,7 @@ const GoogleItem = () => {
                 {isLoading ? <PiCircleDashed className="animate-spin text-base" /> : <FcGoogle className="text-2xl" />}
             </ItemMedia>
             <ItemContent>
-                <ItemTitle className="text-muted-foreground">{isLoading ? "Loading..." : "Sign in with Google"}</ItemTitle>
+                <ItemTitle className="text-muted-foreground">{isLoading ? "Memuat..." : "Masuk dengan Google"}</ItemTitle>
             </ItemContent>
         </Item>
     )

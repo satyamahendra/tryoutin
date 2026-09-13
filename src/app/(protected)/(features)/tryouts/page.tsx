@@ -12,8 +12,8 @@ import {getTryoutHero} from "./services/get-tryout-hero"
 import {PiArrowDown, PiFlask, PiListChecks, PiStorefront, PiUsers} from "react-icons/pi"
 
 export const metadata: Metadata = {
-    title: "Tryouts",
-    description: "Browse exam simulation tryouts. Drill a section in practice mode or run the full exam under timed conditions.",
+    title: "Tryout",
+    description: "Jelajahi tryout simulasi ujian. Latih satu bagian di mode latihan atau kerjakan ujian penuh dalam kondisi berbatas waktu.",
 }
 
 type PageProps = {
@@ -42,26 +42,26 @@ const Page = async ({searchParams}: PageProps) => {
                             <PiStorefront className="w-3.5 h-3.5" />
                             {categories.slice(0, 3).map((c) => c.label).join(" · ")}
                         </div>
-                        <h1 className="text-lg font-bold md:text-xl tracking-tight">Practice Smarter. Pass With Confidence.</h1>
+                        <h1 className="text-lg font-bold md:text-xl tracking-tight">Latihan Lebih Cerdas. Lulus dengan Percaya Diri.</h1>
                     </div>
                     <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
                         <div className="flex flex-wrap gap-x-5 gap-y-1 text-xs text-primary-foreground/90">
                             <div className="flex items-center gap-1.5">
                                 <PiFlask className="w-3.5 h-3.5 text-primary-foreground" />
-                                <span><strong className="font-semibold">{formatNumber(hero.tryoutCount)}</strong> Tryouts</span>
+                                <span><strong className="font-semibold">{formatNumber(hero.tryoutCount)}</strong> Tryout</span>
                             </div>
                             <div className="flex items-center gap-1.5">
                                 <PiListChecks className="w-3.5 h-3.5 text-primary-foreground" />
-                                <span><strong className="font-semibold">{formatNumber(hero.questionCount)}</strong> Questions</span>
+                                <span><strong className="font-semibold">{formatNumber(hero.questionCount)}</strong> Soal</span>
                             </div>
                             <div className="flex items-center gap-1.5">
                                 <PiUsers className="w-3.5 h-3.5 text-primary-foreground" />
-                                <span><strong className="font-semibold">{formatNumber(hero.learnerCount)}</strong> Learners</span>
+                                <span><strong className="font-semibold">{formatNumber(hero.learnerCount)}</strong> Pengguna</span>
                             </div>
                         </div>
                         <Button asChild size="sm" variant="secondary" className="font-semibold">
                             <a href="#tryout-list">
-                                Browse Tryouts
+                                Jelajahi Tryout
                                 <PiArrowDown className="!size-3.5" />
                             </a>
                         </Button>
@@ -69,7 +69,7 @@ const Page = async ({searchParams}: PageProps) => {
                 </div>
             </div>
 
-            <FilterSidebar searchPlaceholder="Search tryouts..." categories={categories} tags={allTags} />
+            <FilterSidebar searchPlaceholder="Cari tryout..." categories={categories} tags={allTags} />
 
             <div className="flex flex-col flex-1 min-h-0">
                 <Suspense

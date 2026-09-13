@@ -35,10 +35,10 @@ const tryout = tryoutData?.data
                 onSuccess: async (result) => {
                     // ponytail: result.order_id is the midtrans order id; hits /api/midtrans/status to finalize order + entitlements
                     await axios.get(`/api/midtrans/status?order_id=${(result as {order_id: string}).order_id}`)
-                    toast.success("Payment successful!")
+                    toast.success("Pembayaran berhasil!")
                     setParams({view: ""})
                 },
-                onError: () => toast.error("Payment was unsuccessful."),
+                onError: () => toast.error("Pembayaran tidak berhasil."),
             })
         },
         onError: (error) => {
@@ -52,7 +52,7 @@ const tryout = tryoutData?.data
     const {mutate: claimFree, isPending: claiming} = useMutation({
         mutationFn: async (examId: string) => await axios.post("/api/tryouts/claim-free", {examId}),
         onSuccess: () => {
-            toast.success("Tryout claimed for free!")
+            toast.success("Tryout berhasil diklaim gratis!")
             queryClient.invalidateQueries({queryKey: ["tryouts"]})
             queryClient.invalidateQueries({queryKey: ["my-tryouts"]})
             queryClient.invalidateQueries({queryKey: ["tryout-detail", view]})
@@ -60,7 +60,7 @@ const tryout = tryoutData?.data
         },
         onError: (error) => {
             const message = error instanceof AxiosError ? error.response?.data?.message : error.message
-            toast.error(message || "Failed to claim tryout")
+            toast.error(message || "Gagal mengklaim tryout")
         },
     })
 
@@ -82,7 +82,7 @@ const tryout = tryoutData?.data
                         <Loader2 className="animate-spin w-6 h-6 text-muted-foreground" />
                     </div>
                 ) : !tryout ? (
-                    <div className="flex items-center justify-center h-full text-sm text-muted-foreground">Tryout not found.</div>
+                    <div className="flex items-center justify-center h-full text-sm text-muted-foreground">Tryout tidak ditemukan.</div>
                 ) : (
                     <>
                         <div className="relative bg-gradient-to-br from-primary/90 via-primary to-primary/70 text-primary-foreground px-6 py-8">
@@ -121,7 +121,7 @@ const tryout = tryoutData?.data
                                             <PiListChecks />
                                         </Badge>
                                         <span>
-                                            {tryout._count.parts} {tryout._count.parts === 1 ? "Part" : "Parts"}
+                                            {tryout._count.parts} {tryout._count.parts === 1 ? "Bagian" : "Bagian"}
                                         </span>
                                     </div>
                                     <div className="flex items-center gap-1.5">
@@ -129,7 +129,7 @@ const tryout = tryoutData?.data
                                             <PiListChecks />
                                         </Badge>
                                         <span>
-                                            {totalQuestions} {totalQuestions === 1 ? "Question" : "Questions"}
+                                            {totalQuestions} {totalQuestions === 1 ? "Soal" : "Soal"}
                                         </span>
                                     </div>
                                     {totalDuration > 0 && (
@@ -146,7 +146,7 @@ const tryout = tryoutData?.data
 
                         <div className="flex flex-col gap-5 px-6 py-6 overflow-y-auto flex-1">
                             <div className="flex flex-col gap-3">
-                                <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">What you will get</h3>
+                                <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Yang akan kamu dapatkan</h3>
                                 <div className="flex flex-col gap-2.5">
                                     {tryout.parts.map((part, i) => (
                                         <div key={part.id} className="flex items-start gap-3 rounded-xl border bg-card p-4 transition-colors hover:bg-muted/50">
@@ -158,7 +158,7 @@ const tryout = tryoutData?.data
                                                 <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
                                                     <span className="flex items-center gap-1">
                                                         <PiListChecks className="w-3 h-3" />
-                                                        {part._count.questions} {part._count.questions === 1 ? "question" : "questions"}
+                                                        {part._count.questions} {part._count.questions === 1 ? "soal" : "soal"}
                                                     </span>
                                                     {part.duration_minutes && (
                                                         <span className="flex items-center gap-1">
@@ -169,7 +169,7 @@ const tryout = tryoutData?.data
                                                     {part.passing_score != null && part.passing_score > 0 && (
                                                         <span className="flex items-center gap-1">
                                                             <PiTrophy className="w-3 h-3" />
-                                                            Pass: {part.passing_score}
+                                                            Lulus: {part.passing_score}
                                                         </span>
                                                     )}
                                                 </div>
@@ -186,22 +186,22 @@ const tryout = tryoutData?.data
                                 {tryout.owned ? (
                                     <div className="flex items-center gap-3">
                                         <div className="flex-1 flex flex-col">
-                                            <span className="text-xs text-muted-foreground">Price</span>
+                                            <span className="text-xs text-muted-foreground">Harga</span>
                                             <span className="text-xl font-bold">{formatPrice(product.price_actual)}</span>
                                         </div>
                                         <Badge variant="default" className="gap-1.5 px-5 py-2.5 text-sm">
-                                            <PiCheck /> You own this
+                                            <PiCheck /> Kamu memiliki ini
                                         </Badge>
                                     </div>
                                 ) : isFree ? (
                                     <div className="w-full">
                                         <div className="flex flex-col text-center mb-4">
-                                            <span className="text-lg font-bold text-green-600">FREE</span>
-                                            <span className="text-sm text-muted-foreground">This tryout is free to claim</span>
+                                            <span className="text-lg font-bold text-green-600">GRATIS</span>
+                                            <span className="text-sm text-muted-foreground">Tryout ini gratis buat diklaim</span>
                                         </div>
                                         <Button size="lg" className="w-full px-8 font-semibold" disabled={claiming} onClick={() => claimFree(tryout.id)}>
                                             {claiming ? <Loader2 className="animate-spin mr-1.5" /> : <PiGift className="mr-1.5" />}
-                                            Claim for Free
+                                            Klaim Gratis
                                         </Button>
                                     </div>
                                 ) : (
@@ -212,13 +212,13 @@ const tryout = tryoutData?.data
                                             {hasDiscount && (
                                                 <Badge variant="destructive" className="w-fit text-xs mt-1">
                                                     <PiTag className="mr-1" />
-                                                    {discount}% OFF
+                                                    Diskon {discount}%
                                                 </Badge>
                                             )}
                                         </div>
                                         <Button size="lg" className="px-8 font-semibold" disabled={isPending} onClick={() => mutate({id_product: product.id})}>
                                             {isPending ? <Loader2 className="animate-spin mr-1.5" /> : <PiPackage className="mr-1.5" />}
-                                            Buy Now
+                                            Beli Sekarang
                                         </Button>
                                     </div>
                                 )}

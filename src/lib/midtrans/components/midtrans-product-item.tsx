@@ -11,8 +11,8 @@ const ProductItem = () => {
         mutationFn: async (data: {id_product: string}) => await axios.post("/api/midtrans/token", data),
         onSuccess: (data) => {
             window.snap.pay(data.data.data.token, {
-                onSuccess: () => toast.success("Payment successful!"),
-                onError: () => toast.error("Something went wrong."),
+                onSuccess: () => toast.success("Pembayaran berhasil!"),
+                onError: () => toast.error("Terjadi kesalahan."),
             })
         },
         onError: (error) => {
@@ -35,9 +35,9 @@ const ProductItem = () => {
         <div>
             <h1>
                 <Button disabled={isPending} onClick={() => mutate({id_product: "a654e415-f7c8-43cd-96dd-e6064abae30e"})}>
-                    {isPending ? "Loading..." : "Checkout"}
+                    {isPending ? "Memuat..." : "Checkout"}
                 </Button>
-                <Button onClick={handleCheckOrderStatus}>Check Status</Button>
+                <Button onClick={handleCheckOrderStatus}>Periksa Status</Button>
             </h1>
         </div>
     )

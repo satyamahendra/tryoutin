@@ -11,8 +11,8 @@ import {getMyTryoutCategories} from "./services/get-my-tryout-categories"
 import {getMyTryoutTags} from "./services/get-my-tryout-tags"
 
 export const metadata: Metadata = {
-    title: "My Tryouts",
-    description: "Browse and manage all the tryouts you own.",
+    title: "Tryout Saya",
+    description: "Jelajahi dan kelola semua tryout yang kamu miliki.",
 }
 
 type PageProps = {
@@ -32,23 +32,23 @@ const Page = async ({searchParams}: PageProps) => {
         <AnimDiv className="flex flex-col gap-4 h-full min-h-0 overflow-hidden">
             <PageHeader
                 icon={<PiNotebook />}
-                title="Your Tryout Collection"
-                description="Browse and manage all the tryouts you own."
+                title="Koleksi Tryoutmu"
+                description="Jelajahi dan kelola semua tryout yang kamu miliki."
                 subComponent={
                     <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
                         <span className="flex items-center gap-1">
                             <PiSquaresFour className="w-3.5 h-3.5" />
-                            {categories.length} Categories
+                            {categories.length} Kategori
                         </span>
                         <span className="flex items-center gap-1">
                             <PiTag className="w-3.5 h-3.5" />
-                            {allTags.length} Tags
+                            {allTags.length} Tag
                         </span>
                     </div>
                 }
             />
 
-            <FilterSidebar searchPlaceholder="Search my tryouts..." categories={categories} tags={allTags} />
+            <FilterSidebar searchPlaceholder="Cari tryoutku..." categories={categories} tags={allTags} />
 
             <div className="flex flex-col flex-1 min-h-0">
                 <Suspense

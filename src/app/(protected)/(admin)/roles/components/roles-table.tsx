@@ -22,8 +22,8 @@ export async function RolesTable({page, search}: Props) {
                             <EmptyMedia variant="icon">
                                 <PiCardholder />
                             </EmptyMedia>
-                            <EmptyTitle>No roles found</EmptyTitle>
-                            <EmptyDescription>There are currently no roles available.</EmptyDescription>
+                            <EmptyTitle>Tidak ada peran</EmptyTitle>
+                            <EmptyDescription>Saat ini belum ada peran yang tersedia.</EmptyDescription>
                         </EmptyHeader>
                     </Empty>
                 </div>
