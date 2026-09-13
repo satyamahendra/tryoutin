@@ -40,9 +40,10 @@ export async function saveAnswer(input: SaveAnswerInput): Promise<ServerResult<{
 
         const partSession = await prisma.examSessionPart.findFirst({
             where: {session_id: input.sessionId, part_id: question.part_id},
-            select: {status: true},
+            select: {status: true, ends_at: true},
         })
         if (!partSession || partSession.status !== "in_progress") throw new Error("Part is not active")
+        if (partSession.ends_at && new Date() > partSession.ends_at) throw new Error("Waktu untuk bagian ini sudah habis")
 
         const requested = new Set(input.optionIds)
         const allowed = new Set(question.options.filter((o) => o.question_id === input.questionId).map((o) => o.id))

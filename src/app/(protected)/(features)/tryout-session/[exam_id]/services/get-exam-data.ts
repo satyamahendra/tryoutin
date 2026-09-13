@@ -26,7 +26,6 @@ const examDataSelect = Prisma.validator<Prisma.ExamSelect>()({
                     type: true,
                     question_text: true,
                     question_image: true,
-                    explanation: true,
                     order_index: true,
                     options: {
                         orderBy: {order_index: "asc"},
@@ -35,7 +34,6 @@ const examDataSelect = Prisma.validator<Prisma.ExamSelect>()({
                             option_text: true,
                             option_image: true,
                             score: true,
-                            is_correct: true,
                             order_index: true,
                         },
                     },

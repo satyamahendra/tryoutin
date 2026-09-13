@@ -94,6 +94,17 @@ export async function getSession(sessionId: string): Promise<ServerResult<Sessio
 
         if (!examSession) throw new Error("Session not found")
 
+        if (examSession.type !== "practice" && examSession.status !== "completed") {
+            examSession.exam.parts = examSession.exam.parts.map((p) => ({
+                ...p,
+                questions: p.questions.map((q) => ({
+                    ...q,
+                    explanation: null,
+                    options: q.options.map((o) => ({...o, is_correct: false})),
+                })),
+            }))
+        }
+
         return {success: true, message: "Session fetched successfully", data: examSession}
     } catch (error) {
         return handleServerError(error)

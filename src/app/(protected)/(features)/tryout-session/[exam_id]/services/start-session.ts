@@ -31,7 +31,7 @@ const sessionPartSelect = Prisma.validator<Prisma.ExamSessionSelect>()({
 
 export type StartedSession = Prisma.ExamSessionGetPayload<{select: typeof sessionPartSelect}>
 
-export async function startSession(examId: string, entitlementId?: string, sessionType: "simulation" | "practice" = "simulation"): Promise<ServerResult<StartedSession>> {
+export async function startSession(examId: string, _entitlementId?: string, sessionType: "simulation" | "practice" = "simulation"): Promise<ServerResult<StartedSession>> {
     try {
         const session = await authServer()
         if (!session) throw new Error("Unauthorized")
@@ -54,6 +54,7 @@ export async function startSession(examId: string, entitlementId?: string, sessi
             where: {id: examId, is_active: true},
             select: {
                 id: true,
+                product_id: true,
                 parts: {
                     orderBy: {order_index: "asc"},
                     select: {id: true, duration_minutes: true},
@@ -62,6 +63,16 @@ export async function startSession(examId: string, entitlementId?: string, sessi
         })
 
         if (!exam || exam.parts.length === 0) throw new Error("Exam not found")
+
+        let effectiveEntitlementId: string | null = null
+        if (exam.product_id) {
+            const entitlement = await prisma.entitlement.findFirst({
+                where: {user_id: session.user.id, product_id: exam.product_id},
+                select: {id: true},
+            })
+            if (!entitlement) throw new Error("Kamu belum memiliki tryout ini")
+            effectiveEntitlementId = entitlement.id
+        }
 
         const now = new Date()
         const isPractice = sessionType === "practice"
@@ -72,7 +83,7 @@ export async function startSession(examId: string, entitlementId?: string, sessi
                     user_id: session.user.id,
                     exam_id: examId,
                     type: sessionType,
-                    entitlement_id: entitlementId ?? null,
+                    entitlement_id: effectiveEntitlementId,
                     status: "in_progress",
                     started_at: now,
                     ends_at: null,

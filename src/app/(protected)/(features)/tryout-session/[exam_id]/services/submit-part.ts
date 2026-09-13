@@ -32,7 +32,7 @@ export async function submitPart(sessionId: string, partId: string, expired = fa
                 },
                 part_sessions: {
                     orderBy: {part: {order_index: "asc"}},
-                    select: {id: true, part_id: true, status: true},
+                    select: {id: true, part_id: true, status: true, ends_at: true},
                 },
             },
         })
@@ -48,6 +48,10 @@ export async function submitPart(sessionId: string, partId: string, expired = fa
         if (!partSession) throw new Error("Part session not found")
         if (partSession.status !== "in_progress") throw new Error("Part is not the active part")
 
+        // ponytail: the server clock wins — a timed part is expired as soon as ends_at
+        // passes, regardless of what the client claims.
+        const isExpired = expired || (partSession.ends_at != null && now > partSession.ends_at)
+
         const nextIndex = currentIndex + 1
 
         if (nextIndex >= parts.length) {
@@ -57,7 +61,7 @@ export async function submitPart(sessionId: string, partId: string, expired = fa
                 await tx.examSessionPart.update({
                     where: {id: partSession.id},
                     data: {
-                        status: expired ? "expired" : "completed",
+                        status: isExpired ? "expired" : "completed",
                         submitted_at: now,
                     },
                 })
@@ -94,7 +98,7 @@ export async function submitPart(sessionId: string, partId: string, expired = fa
             await tx.examSessionPart.update({
                 where: {id: partSession.id},
                 data: {
-                    status: expired ? "expired" : "completed",
+                    status: isExpired ? "expired" : "completed",
                     submitted_at: now,
                 },
             })

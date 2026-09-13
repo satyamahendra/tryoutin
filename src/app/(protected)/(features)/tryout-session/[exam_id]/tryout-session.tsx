@@ -58,6 +58,7 @@ const TryoutSessionPage = () => {
         onSuccess: (result) => {
             if (result.success) {
                 if (result.data.completed) {
+                    queryClient.invalidateQueries({queryKey: ["session", sessionId]})
                     setPageState("completed")
                 } else if (result.data.nextPartId && result.data.nextPartQuestionId) {
                     const {nextPartId} = result.data

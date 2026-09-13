@@ -34,9 +34,40 @@ export async function POST(req: NextRequest) {
         })
         if (!product) throw new Error("Product not found")
 
+        const productItemId = `${product.type === "bundle" ? "bundle_" : ""}${product.id}`
+
+        // ponytail: idempotent checkout — one pending order per user+product. If one
+        // already exists, continue it (reuse its Snap token/redirect) instead of
+        // minting a duplicate order on every "Beli" click.
+        const pendingOrders = await prisma.order.findMany({
+            where: {user_id: session.user.id, status: "pending"},
+            select: {
+                id: true,
+                midtrans_order_id: true,
+                midtrans_token: true,
+                midtrans_redirect: true,
+                midtrans_request: true,
+                created_at: true,
+            },
+            orderBy: {created_at: "desc"},
+        })
+
+        const existing = pendingOrders.find((o) => {
+            const stored = o.midtrans_request as {item_details?: {id: string}[]} | null
+            return stored?.item_details?.some((item) => item.id === productItemId) ?? false
+        })
+
+        if (existing && existing.midtrans_token && existing.midtrans_redirect) {
+            return apiSuccess(
+                {token: existing.midtrans_token, redirect_url: existing.midtrans_redirect, order: existing},
+                "Order sudah ada, lanjutkan pembayaran",
+                200,
+            )
+        }
+
         const itemDetails = [
             {
-                id: `${product.type === "bundle" ? "bundle_" : ""}${product.id}`,
+                id: productItemId,
                 price: product.price_actual,
                 quantity: 1,
                 name: product.name,

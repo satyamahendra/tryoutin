@@ -35,17 +35,19 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
             status = "expire"
         }
 
-        const order = await prisma.order.findUnique({
+        const order = await prisma.order.findFirst({
             select: {
                 id: true,
                 midtrans_request: true,
                 entitlements: {select: {id: true}},
                 user: {select: {id: true}},
             },
-            where: {midtrans_order_id: midtransOrderId as string},
+            where: {midtrans_order_id: midtransOrderId as string, user_id: session.user.id},
         })
 
-        if (!order) throw new Error("Order not found")
+        if (!order) {
+            return apiError(new Error("Order not found"))
+        }
 
         const midtransRequest = order.midtrans_request as {
             item_details: {id: string; name: string; price: number; quantity: number}[]
